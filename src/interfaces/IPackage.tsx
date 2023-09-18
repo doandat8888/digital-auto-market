@@ -2,10 +2,13 @@ interface IPackage {
     id: Number,
     name: String,
     author: String,
-    like: Number,
-    warning: Number,
+    description: String,
+    likeNumber: Number,
+    warningNumber: Number,
     download: Number,
-    img: String,
+    img: string,
     version: String,
-    mode: String
+    mode: String,
+    slug: String,
+    imgDetail: ISlider[]
 }

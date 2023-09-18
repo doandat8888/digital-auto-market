@@ -1,0 +1,3 @@
+interface ISlider {
+    url: string,
+}

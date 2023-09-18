@@ -1,7 +1,8 @@
-import React from 'react'
 import { Routes, Route } from 'react-router';
 import Home from '../pages/Home.tsx';
 import MyPackage from '../pages/MyPackage.tsx';
+import DetailPackage from '../pages/DetailPackage.tsx';
+import AddPackage from '../pages/AddPackage.tsx';
 
 
 const RoutesApp = () => {
@@ -9,6 +10,8 @@ const RoutesApp = () => {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/mypackage" element={<MyPackage />} />
+            <Route path="/package/:slug" element={<DetailPackage />} />
+            <Route path='/addpackage' element={<AddPackage />}/>
         </Routes>
     )
 }
