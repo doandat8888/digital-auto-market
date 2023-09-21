@@ -66,7 +66,7 @@ const AddPackage = () => {
     const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target?.files?.[0];
         if (file) {
-            let fileName: string = file.name;
+            const fileName: string = file.name;
             setFileZipName(fileName);
             setZipFile(file);
             const reader = new FileReader();
@@ -86,7 +86,7 @@ const AddPackage = () => {
     const onAddNewPackage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         try {
             event.preventDefault();
-            let packageObj: IPackage = {
+            const packageObj: IPackage = {
                 no: packages.length + 1,
                 id: HandleStr.generateRandomString(),
                 name: packageName,
@@ -136,20 +136,20 @@ const AddPackage = () => {
 
     const onDeleteDetailImage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         event.preventDefault();
-        let detailsImg = [...imageDetailList];
+        const detailsImg = [...imageDetailList];
         detailsImg.splice(index, 1);
         setimageDetailList(detailsImg);
     }
 
     const login = async() => {
-        let response = await userService.login("tuan-test@gmail.com", "Abcd1234");
+        const response = await userService.login("tuan-test@gmail.com", "Abcd1234");
         if(response && response.status === 200) {
             console.log(response.data);
         }
     }
 
     const getUser = async() => {
-        let response = await userService.getUser();
+        const response = await userService.getUser();
         if(response && response.status === 200) {
             console.log(response.data);
         }

@@ -6,7 +6,7 @@ interface IProps {
 
 const PackageList = (props: IProps) => {
 
-    let { packages } = props;
+    const { packages } = props;
 
     return (
         <div className="w-full package-list grid lg:grid-cols-3 justify-between sm:grid-cols-2 grid-cols-1">

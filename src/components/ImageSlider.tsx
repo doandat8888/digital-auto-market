@@ -7,7 +7,7 @@ interface IProps {
 
 const Slideshow = (props: IProps) => {
 
-    let {slideImages} = props;
+    const {slideImages} = props;
 
     return (
       <div className="slide-container">
