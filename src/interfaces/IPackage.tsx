@@ -1,14 +1,14 @@
 interface IPackage {
-    id: Number,
-    name: String,
+    no: number
+    id: string,
+    name: string,
     author: String,
     description: String,
-    likeNumber: Number,
-    warningNumber: Number,
-    download: Number,
-    img: string,
+    likeNumber: number,
+    download: number,
+    imgCover: string,
     version: String,
     mode: String,
-    slug: String,
-    imgDetail: ISlider[]
+    imgDetails: string[],
+    source: string
 }

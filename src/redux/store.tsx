@@ -1,14 +1,15 @@
 import { configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
 import packageSlice from "./package/packageSlice";
-import thunk from 'redux-thunk';
 
-const middleware = [...getDefaultMiddleware(), thunk];
+const customizedMiddleware = getDefaultMiddleware({
+    serializableCheck: false
+})
 
 const store = configureStore({
     reducer: {
         packages: packageSlice,
     },
-    middleware: middleware
+    middleware: customizedMiddleware
 });
 
 export type RootState = ReturnType<typeof store.getState>;

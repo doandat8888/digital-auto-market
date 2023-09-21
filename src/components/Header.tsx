@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { GrMenu } from "react-icons/gr";
 import { useState } from "react";
-import { useHref } from "react-router-dom";
 
 const Header = () => {
 
@@ -11,7 +10,6 @@ const Header = () => {
     const pathName = useLocation().pathname;
     let indexActive = _constant.pageList.findIndex(pageItem => pageItem.path === pathName);
     let [showPageList, setShowPageList] = useState<boolean>(false);
-    const href = useHref("/addpackage");
 
     return (
         <div>
@@ -21,7 +19,7 @@ const Header = () => {
                 </Link>
                 <div className="flex items-center mx-4 h-full">
                     {pageList && pageList.length > 0 && pageList.map((page: any, index: Number) => (
-                        <Link className={`hidden custom-link h-full md:flex items-center mx-2 px-2 cursor-pointer page-item ${indexActive === index ? ' border-b-2 border-b-black' : ''}`} to={page.path}>{page.name}</Link>
+                        <Link className={`hidden text-[16px] custom-link h-full md:flex items-center mx-2 px-2 cursor-pointer page-item ${indexActive === index ? ' border-b-2 border-b-black' : ''}`} to={page.path}>{page.name}</Link>
                     ))}
                 </div>
                 <div className="grow"></div>
