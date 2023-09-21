@@ -1,15 +1,41 @@
-import Header from "../components/Header";
 import { Link } from "react-router-dom";
 import { useState } from 'react';
+import userService from "../services/userService";
+import { useDispatch } from "react-redux";
+import { addToken } from "../redux/token/tokenSlice";
 
 const Login = () => {
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const dispatch = useDispatch();
+    
+    const onLogin = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, email: string, password: string) => {
+        event.preventDefault();
+        if(email && password) {
+            try {
+                const response = await userService.login(email, password);
+                if(response && response.status === 200) {
+                    if(response.data.token) {
+                        dispatch(addToken(response.data.token));
+                    }else {
+                        alert("Token not found");
+                    }
+                    console.log("Token local storage: ", localStorage.getItem("token"));
+                    console.log("Token response: ", response.data.token);
+                }else if(response && response.status === 401) {
+                    alert("Email or password is not correct. Please try again");
+                }
+            } catch (error) {
+                console.log(error);
+            }
+            
+        }else {
+            alert("Email and password can't be empty");
+        }
+    }
 
     return (
         <div className="login-page">
-            <Header />
             <section className="bg-gray-50 dark:bg-gray-900">
                 <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                     
@@ -41,7 +67,7 @@ const Login = () => {
                                     </div>
                                     <a href="#" className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password?</a>
                                 </div>
-                                <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+                                <button onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onLogin(event, email, password)} type="submit" className="w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
                                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                     Don’t have an account yet? <Link to={'/register'} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Register</Link>
                                 </p>

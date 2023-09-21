@@ -1,5 +1,4 @@
 import { BsFileZip } from "react-icons/bs";
-import Header from "../components/Header";
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
 import { BiDownload } from "react-icons/bi";
@@ -25,12 +24,8 @@ const AddPackage = () => {
     const [mode, setMode] = useState("public");
     //Dispatch
     const dispatch = useDispatch();
-
-
-    useEffect(() => {
-        login();
-        getUser();
-    }, [])
+    //Token
+    const token = localStorage.getItem("token");
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -50,6 +45,26 @@ const AddPackage = () => {
             });
         }
     };
+
+    const [user, setUser] = useState<IUser>();
+
+    useEffect(() => {
+        getUserInfo();
+    }, [token]);
+
+    const getUserInfo = async () => {
+        if (token !== "") {
+            console.log("Token header: ", token);
+            try {
+                let response = await userService.getUser();
+                if (response && response.status === 200) {
+                    setUser(response.data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 
     const handleInputImgCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target?.files?.[0];
@@ -90,7 +105,7 @@ const AddPackage = () => {
                 no: packages.length + 1,
                 id: HandleStr.generateRandomString(),
                 name: packageName,
-                author: "Dat Doan",
+                author: user?.fullName,
                 description: packageDescription,
                 likeNumber: 0,
                 download: 0,
@@ -98,7 +113,8 @@ const AddPackage = () => {
                 imgDetails: imageDetailList,
                 source: zipBase64,
                 mode: mode,
-                version: "1.0.0"
+                version: "1.0.0",
+                uid: user?.id
             };
             dispatch(addPackage(packageObj));
             alert("Add package successfully!");
@@ -106,7 +122,6 @@ const AddPackage = () => {
             alert("Error when add package");
             console.log(error);
         }
-        
     }
 
     const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
@@ -142,23 +157,8 @@ const AddPackage = () => {
         setimageDetailList(detailsImg);
     }
 
-    const login = async() => {
-        const response = await userService.login("tuan-test@gmail.com", "Abcd1234");
-        if(response && response.status === 200) {
-            console.log(response.data);
-        }
-    }
-
-    const getUser = async() => {
-        const response = await userService.getUser();
-        if(response && response.status === 200) {
-            console.log(response.data);
-        }
-    }
-    
     return (
         <div>
-            <Header />
             <div className="flex justify-center">
                 <form className="w-[90%] p-5 bg-white">
                     <div className="space-y-12">

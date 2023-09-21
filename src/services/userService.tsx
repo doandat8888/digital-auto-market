@@ -1,4 +1,4 @@
-import axios from "../axios.tsx"
+import axios from "../axios.tsx";
 
 const login = (email: string, password: string) => {
     return axios.post("/user/login", {

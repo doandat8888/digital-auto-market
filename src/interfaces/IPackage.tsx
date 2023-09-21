@@ -2,7 +2,7 @@ interface IPackage {
     no: number
     id: string,
     name: string,
-    author: String,
+    author: string | undefined,
     description: String,
     likeNumber: number,
     download: number,
@@ -10,5 +10,6 @@ interface IPackage {
     version: String,
     mode: String,
     imgDetails: string[],
-    source: string
+    source: string,
+    uid: string | undefined
 }

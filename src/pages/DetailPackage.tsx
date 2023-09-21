@@ -1,4 +1,3 @@
-import Header from "../components/Header";
 import { useParams } from "react-router";
 import { BiLike }  from 'react-icons/bi';
 import { BsDownload } from 'react-icons/bs';
@@ -56,7 +55,6 @@ const DetailPackage = () => {
 
     return (
         <div>
-            <Header />
             <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                 <div className="w-full h-full flex items-center justify-center">
                     <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 py-2 md:py-4 rounded-lg">

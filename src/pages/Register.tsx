@@ -1,4 +1,3 @@
-import Header from "../components/Header";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
@@ -9,7 +8,6 @@ const Register = () => {
 
     return (
         <div className="login-page">
-            <Header />
             <section className="bg-gray-50 dark:bg-gray-900">
                 <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                     
