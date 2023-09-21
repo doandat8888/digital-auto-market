@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import _const from '../../const';
 
 const packagesJSON = localStorage.getItem('packages');
 const items = packagesJSON ? JSON.parse(packagesJSON) : []
@@ -17,7 +16,7 @@ const packageSlice = createSlice({
     initialState,
     reducers: {
         addPackage: (state, action: PayloadAction<IPackage>) => {
-            let packageDuplicate = findItem(state.value, action.payload);
+            const packageDuplicate = findItem(state.value, action.payload);
             if(packageDuplicate.length === 0) {
                 state.value = [
                     ...state.value,

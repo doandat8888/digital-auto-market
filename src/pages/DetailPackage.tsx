@@ -2,7 +2,6 @@ import Header from "../components/Header";
 import { useParams } from "react-router";
 import { BiLike }  from 'react-icons/bi';
 import { BsDownload } from 'react-icons/bs';
-import _const from "../const";
 import 'swiper/css';
 import Slideshow from "../components/ImageSlider";
 import { useSelector } from "react-redux";
@@ -28,14 +27,14 @@ const DetailPackage = () => {
         return blob;
     }
     if(packageDetail?.source) {
-        let sourceZip: string = packageDetail?.source;
+        const sourceZip: string = packageDetail?.source;
         zipFile = base64ToBlob(sourceZip);
         base64ToBlob(sourceZip);
     }
 
     
     useEffect(() => {
-        let packageInfo = packages.find((packageItem) => packageItem.id === id);
+        const packageInfo = packages.find((packageItem) => packageItem.id === id);
         if(packageInfo) {
             setPackageDetail(packageInfo);
         }

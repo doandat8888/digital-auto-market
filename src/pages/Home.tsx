@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import PackageList from '../components/PackageList';
-import _const from '../const';
 import { useSelector } from "react-redux";
 import { RootState } from '../redux/store';
 
 const Home = () => {
 
-    let [packageList, setPackageList] = useState<IPackage[]>([]);
-    let [searchValue, setSearchValue] = useState<string>("");
+    const [packageList, setPackageList] = useState<IPackage[]>([]);
+    const [searchValue, setSearchValue] = useState<string>("");
     
     const packages = useSelector((state: RootState) => state.packages.value);
 

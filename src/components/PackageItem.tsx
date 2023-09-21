@@ -1,5 +1,4 @@
 import { BiLike }  from 'react-icons/bi';
-import { CiWarning } from 'react-icons/ci';
 import { BsDownload } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
@@ -9,7 +8,7 @@ interface IProps {
 
 const PackageItem = (props: IProps) => {
 
-    let { packageItem } = props; 
+    const { packageItem } = props; 
     
     return (
         <Link className="custom-link flex px-4 w-[98%] my-2 cursor-pointer py-[20px] bg-white rounded shadow-lg hover:opacity-75" to={`/package/${packageItem.id}`}>

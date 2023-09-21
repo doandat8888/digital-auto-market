@@ -104,6 +104,7 @@ const AddPackage = () => {
             alert("Add package successfully!");
         } catch (error) {
             alert("Error when add package");
+            console.log(error);
         }
         
     }
