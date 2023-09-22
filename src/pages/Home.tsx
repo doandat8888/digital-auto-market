@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from '../redux/store';
 import { removeAllPakage } from '../redux/package/packageSlice';
 import LoadingDialog from '../components/LoadingDialog';
-import userService from '../services/userService';
 
 const Home = () => {
 
@@ -15,37 +14,16 @@ const Home = () => {
     const packages = useSelector((state: RootState) => state.packages.value);
 
     const [isLoading, setIsLoading] = useState(true);
-
-    //user
-    const token = localStorage.getItem("token");
+    
 
     //User info
-    const [user, setUser] = useState<IUser>();
-
-    useEffect(() => {
-        getUserInfo();
-    }, [token]);
-
-    const getUserInfo = async () => {
-        if (token !== "") {
-            console.log("Token header: ", token);
-            try {
-                let response = await userService.getUser();
-                if (response && response.status === 200) {
-                    setUser(response.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     useEffect(() => {
         setPackageList(packages);
         if(packages) {
             setIsLoading(false);
         }
-        getUserInfo();
+        
     }, []);
 
     const onRemoveAllPackage = () => {
@@ -61,6 +39,7 @@ const Home = () => {
 
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>
+            <button onClick={onRemoveAllPackage}>Remove all package</button>
             <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
             <div className="body px-6 py-4">
                 <div className="search flex justify-end mb-6">

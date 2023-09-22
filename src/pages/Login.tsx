@@ -1,22 +1,35 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import userService from "../services/userService";
 import { useDispatch } from "react-redux";
 import { addToken } from "../redux/token/tokenSlice";
+import LoadingDialog from "../components/LoadingDialog";
+import axios from "axios";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
     
     const onLogin = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, email: string, password: string) => {
         event.preventDefault();
+        setIsLoading(true);
         if(email && password) {
             try {
-                const response = await userService.login(email, password);
+                // const response = await userService.login(email, password);
+                const response = await axios.post('https://user-mgmt.digitalauto.tech/api/v1/user/login', {
+                    email, password
+                })
+                //https://user-mgmt.digitalauto.tech/api/v1/user/login
                 if(response && response.status === 200) {
                     if(response.data.token) {
+                        console.log("Token login: ", response.data.token)
+                        //navigate('/');
                         dispatch(addToken(response.data.token));
+                        setIsLoading(false);
+                        window.location.href = 'http://localhost:5173/';
                     }else {
                         alert("Token not found");
                     }
@@ -34,8 +47,13 @@ const Login = () => {
         }
     }
 
+    const onCloseModal= () => {
+        setIsLoading(false);
+    }
+
     return (
         <div className="login-page">
+            <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
             <section className="bg-gray-50 dark:bg-gray-900">
                 <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                     

@@ -114,7 +114,7 @@ const AddPackage = () => {
                 source: zipBase64,
                 mode: mode,
                 version: "1.0.0",
-                uid: user?.id
+                uid: user?._id
             };
             dispatch(addPackage(packageObj));
             alert("Add package successfully!");

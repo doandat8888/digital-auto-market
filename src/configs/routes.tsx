@@ -5,6 +5,7 @@ import DetailPackage from '../pages/DetailPackage.tsx';
 import AddPackage from '../pages/AddPackage.tsx';
 import Login from '../pages/Login.tsx';
 import Register from '../pages/Register.tsx';
+import ManageVersion from '../pages/ManageVersion.tsx';
 
 
 const RoutesApp = () => {
@@ -16,6 +17,7 @@ const RoutesApp = () => {
             <Route path='/addpackage' element={<AddPackage />}/>
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
+            <Route path='/manageversion' element={<ManageVersion />}/>
         </Routes>
     )
 }

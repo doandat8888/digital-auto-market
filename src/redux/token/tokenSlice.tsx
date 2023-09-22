@@ -16,14 +16,12 @@ const tokenSlice = createSlice({
     initialState,
     reducers: {
         addToken: (state, action: PayloadAction<string>) => {
-            if(state.value === "" || state.value !== action.payload) {
-                state.value = action.payload
-            }
+            state.value = action.payload
             localStorage.setItem("token", state.value);
         },
         removeToken: (state) => {
             state.value = "";
-            localStorage.setItem("token", state.value);
+            localStorage.removeItem("token");
         },
     },
 });

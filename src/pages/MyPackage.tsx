@@ -4,6 +4,7 @@ import { RootState } from "../redux/store";
 import userService from "../services/userService";
 import PackageList from "../components/PackageList";
 import LoadingDialog from "../components/LoadingDialog";
+import { useNavigate } from "react-router";
 
 const MyPackage = () => {
 
@@ -13,9 +14,9 @@ const MyPackage = () => {
     const token = localStorage.getItem("token");
     const packages = useSelector((state: RootState) => state.packages.value);
     const [searchValue, setSearchValue] = useState<string>("");
+    const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
-
 
     useEffect(() => {
         getUserInfo();
@@ -23,8 +24,11 @@ const MyPackage = () => {
         if(myPackageList && myPackageList.length > 0) {
             setIsLoading(false);
         }
+        if(token === "") {
+            navigate('/login');
+            setIsLoading(false);
+        }
     }, [user]);
-
     const getUserInfo = async () => {
         if (token !== "") {
             console.log("Token header: ", token);
@@ -41,7 +45,7 @@ const MyPackage = () => {
 
     const getMyPackageList = () => {
         if(user) {
-            const packageList = packages.filter((packageItem) => packageItem.uid === user.id);
+            const packageList = packages.filter((packageItem) => packageItem.uid === user._id);
             setMyPackageList(packageList);
         }
     }
