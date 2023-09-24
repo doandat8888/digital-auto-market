@@ -1,5 +1,4 @@
 import axios from 'axios';
-import _ from 'lodash';
 
 //const userToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTA4MzIxNTRlY2FlY2NlNjQ5NjgxNzgiLCJlbWFpbCI6InR1YW4tdGVzdEBnbWFpbC5jb20iLCJvcmciOiJFVEEiLCJmdWxsTmFtZSI6IlR1YW4tdGVzdCIsImlhdCI6MTY5NTIxOTYxMCwiZXhwIjoxNjk1MjIzMjEwfQ.BO1DWreRTefKLX3Otpz5Ws_MhLH7JtOUP4W9mDz2jUk"
 

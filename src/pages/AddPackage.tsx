@@ -7,9 +7,12 @@ import { RootState } from "../redux/store";
 import { addPackage } from "../redux/package/packageSlice";
 import HandleStr from "../utils/hanldeStr";
 import userService from "../services/userService";
+import LoadingModal from "../components/LoadingDialog";
+import { useNavigate } from "react-router";
 
 const AddPackage = () => {
 
+    const navigate = useNavigate();
     const packages = useSelector((state: RootState) => state.packages.value);
     //Package info
     const [packageName, setPackageName] = useState("");
@@ -26,6 +29,8 @@ const AddPackage = () => {
     const dispatch = useDispatch();
     //Token
     const token = localStorage.getItem("token");
+    //Loading 
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -56,7 +61,7 @@ const AddPackage = () => {
         if (token !== "") {
             console.log("Token header: ", token);
             try {
-                let response = await userService.getUser();
+                const response = await userService.getUser();
                 if (response && response.status === 200) {
                     setUser(response.data);
                 }
@@ -97,30 +102,53 @@ const AddPackage = () => {
     const onChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMode(event.target?.value);
     }
+
+    const validateInfoPackage = (): boolean => {
+        let count = 0;
+        const packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, zipBase64, mode, user?._id];
+        for(let i = 0; i < packageInfoArr.length; i++) {
+            if(packageInfoArr[i] === "") {
+                count++;
+            }
+        }
+        if(count > 0) {
+            return false;
+        }
+        return true;
+    }
     
     const onAddNewPackage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         try {
             event.preventDefault();
-            const packageObj: IPackage = {
-                no: packages.length + 1,
-                id: HandleStr.generateRandomString(),
-                name: packageName,
-                author: user?.fullName,
-                description: packageDescription,
-                likeNumber: 0,
-                download: 0,
-                imgCover: imageCover,
-                imgDetails: imageDetailList,
-                source: zipBase64,
-                mode: mode,
-                version: "1.0.0",
-                uid: user?._id
-            };
-            dispatch(addPackage(packageObj));
-            alert("Add package successfully!");
+            setIsLoading(true);
+            if(validateInfoPackage() === false) {
+                alert("Missing info package. Please try again");
+                setIsLoading(false);
+            }else {
+                const packageObj: IPackage = {
+                    no: packages.length + 1,
+                    id: HandleStr.generateRandomString(),
+                    name: packageName,
+                    author: user?.fullName,
+                    description: packageDescription,
+                    likeNumber: 0,
+                    download: 0,
+                    imgCover: imageCover,
+                    imgDetails: imageDetailList,
+                    source: zipBase64,
+                    mode: mode,
+                    version: "1.0.0",
+                    uid: user?._id
+                };
+                dispatch(addPackage(packageObj));
+                alert("Add package successfully!");
+                setIsLoading(false);
+                navigate('/');
+            }
         } catch (error) {
             alert("Error when add package");
             console.log(error);
+            setIsLoading(false);
         }
     }
 
@@ -157,8 +185,13 @@ const AddPackage = () => {
         setimageDetailList(detailsImg);
     }
 
+    const onCloseModal = () => {
+        setIsLoading(false);
+    }
+
     return (
         <div>
+            <LoadingModal open={isLoading} closeModal={onCloseModal}/>
             <div className="flex justify-center">
                 <form className="w-[90%] p-5 bg-white">
                     <div className="space-y-12">

@@ -9,7 +9,6 @@ const generateRandomString = () => {
     return randomString;
 }
 
-
 export default {
     generateRandomString,
 }

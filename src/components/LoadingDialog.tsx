@@ -1,21 +1,17 @@
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useRef } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { GiSteeringWheel } from "react-icons/gi";
 
 interface IProps {
     open: boolean,
-    closeModal: any
+    closeModal: () => void
 }
 
 const LoadingModal = (props: IProps) => {
-
-    let {open, closeModal} = props;
-
+    const {open, closeModal} = props;
     const onCloseModal = () => {
-        closeModal();
+      closeModal;
     }
-
-
   const cancelButtonRef = useRef(null)
 
   return (

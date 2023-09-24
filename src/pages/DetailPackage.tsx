@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { BiLike }  from 'react-icons/bi';
 import { BsDownload } from 'react-icons/bs';
 import 'swiper/css';
@@ -6,55 +6,96 @@ import Slideshow from "../components/ImageSlider";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useState, useEffect } from 'react';
+import handleFile from "../utils/handleFile";
+import userService from "../services/userService";
+import LoadingModal from "../components/LoadingDialog";
+import { AiOutlineEdit } from "react-icons/ai";
 
 const DetailPackage = () => {
 
+    const [packageDetail, setPackageDetail] = useState<IPackage>();
     const { id } = useParams();
     const packages = useSelector((state: RootState) => state.packages.value);
     let zipFile: Blob | null = null;
+    const [isLoading, setIsLoading] = useState(true);
+    const [canEdit, setCanEdit] = useState(false);
 
-    const [packageDetail, setPackageDetail] = useState<IPackage>();
+    //Navigate
+    const navigate = useNavigate();
 
-    function base64ToBlob(base64: string) {
-        const base64Data = base64.replace(/^data:.*;base64,/, '');
-        const byteCharacters = atob(base64Data);
-        const byteArray = new Uint8Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteArray[i] = byteCharacters.charCodeAt(i);
-        }
-        const blob = new Blob([byteArray], { type: 'application/zip' });
-        return blob;
-    }
     if(packageDetail?.source) {
         const sourceZip: string = packageDetail?.source;
-        zipFile = base64ToBlob(sourceZip);
-        base64ToBlob(sourceZip);
+        zipFile = handleFile.base64ToBlob(sourceZip);
+        handleFile.base64ToBlob(sourceZip);
     }
 
-    
+    //User info
+    const [tokenUser, setTokenUser] = useState<string>("");
+    const [user, setUser] = useState<IUser | null>();
+
+    //Get user info
+    useEffect(() => {
+        const localToken = localStorage.getItem('token') || "";
+        console.log("Token details: " + localToken);
+        setTokenUser(localToken);
+    }, [])
+
+
+    useEffect(() => {
+        if(tokenUser !== "") {
+            getUserInfo();
+        }
+    }, [tokenUser]);
+
+    useEffect(() => {
+        console.log("User info: ", user);
+        if(user) {
+            checkPackage();
+            setIsLoading(false);
+        }
+    }, [user]);
+
+
     useEffect(() => {
         const packageInfo = packages.find((packageItem) => packageItem.id === id);
         if(packageInfo) {
             setPackageDetail(packageInfo);
         }
-    }, [])
+    }, [tokenUser, packageDetail])
+
+    const getUserInfo = async () => {
+        try {
+            const response = await userService.getUser();
+            if (response && response.status === 200) {
+                setUser(response.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const downloadZipFile = () => {
-        if (zipFile) {
-            const url = URL.createObjectURL(zipFile);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'sources.zip';
-            document.body.appendChild(link);
-            link.click();
-            URL.revokeObjectURL(url);
-            document.body.removeChild(link);
+        handleFile.downloadZipFile(zipFile);
+    }
+
+    const onCloseModal = () => {
+        setIsLoading(false);
+    }
+
+    const checkPackage = () => {
+        if(user) {
+            const canEdit = packageDetail && packageDetail.uid === user._id ? true : false;
+            setCanEdit(canEdit);
         }
-        console.log(packageDetail)
+    }
+
+    const updatePackage = (packageDetail: IPackage | undefined) => {
+        navigate(`/updatepackage/${packageDetail?.id}`);
     }
 
     return (
-        <div>
+        <div className={`${isLoading === true ? 'hidden' : ''}`}>
+            <LoadingModal open={isLoading} closeModal={onCloseModal}/>
             <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                 <div className="w-full h-full flex items-center justify-center">
                     <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 py-2 md:py-4 rounded-lg">
@@ -76,15 +117,18 @@ const DetailPackage = () => {
                                 </div>
                                 <div className="grow"></div>
                                 <div className="lg:flex md:flex sm-flex">
-                                    <div className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mr-2 round cursor-pointer hover:opacity-60 bg-blue-500 text-white 
+                                    <div className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-blue-500 text-white 
                                         px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Like</p> <BiLike />
                                     </div>
                                     {zipFile &&
-                                        
-                                        <div onClick={downloadZipFile} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:ml-2 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
+                                        <div onClick={downloadZipFile} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                             px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
                                         </div>
-                                        
+                                    }
+                                    {canEdit &&
+                                        <div onClick={() => updatePackage(packageDetail)} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-yellow-500 text-white 
+                                            px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Edit</p> <AiOutlineEdit />
+                                        </div>
                                     }
                                 </div>
                             </div>

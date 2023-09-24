@@ -1,49 +1,40 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { useState } from 'react';
 import userService from "../services/userService";
 import { useDispatch } from "react-redux";
 import { addToken } from "../redux/token/tokenSlice";
 import LoadingDialog from "../components/LoadingDialog";
-import axios from "axios";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
     
     const onLogin = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, email: string, password: string) => {
         event.preventDefault();
         setIsLoading(true);
         if(email && password) {
             try {
-                // const response = await userService.login(email, password);
-                const response = await axios.post('https://user-mgmt.digitalauto.tech/api/v1/user/login', {
-                    email, password
-                })
-                //https://user-mgmt.digitalauto.tech/api/v1/user/login
+                const response = await userService.login(email, password);
                 if(response && response.status === 200) {
                     if(response.data.token) {
-                        console.log("Token login: ", response.data.token)
-                        //navigate('/');
                         dispatch(addToken(response.data.token));
                         setIsLoading(false);
-                        window.location.href = 'http://localhost:5173/';
+                        window.location.href = import.meta.env.VITE_APP_URL;
                     }else {
                         alert("Token not found");
                     }
-                    console.log("Token local storage: ", localStorage.getItem("token"));
-                    console.log("Token response: ", response.data.token);
-                }else if(response && response.status === 401) {
-                    alert("Email or password is not correct. Please try again");
                 }
-            } catch (error) {
-                console.log(error);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (error: any) {
+                alert(error.response.data.msg);
+                setIsLoading(false);
             }
             
         }else {
-            alert("Email and password can't be empty");
+            alert("Missing email or password value"); 
+            setIsLoading(false);
         }
     }
 
@@ -59,7 +50,7 @@ const Login = () => {
                     
                     <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
                         <Link to={"/"} className="lg:text-2xl sm:text-sm text-base flex justify-center font-bold cursor-pointer select-none bg-gradient-to-r from-[#005072] to-[#a2b039] bg-clip-text text-transparent " >
-                            digital.auto market
+                            digital.auto store
                         </Link>
                         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -97,5 +88,4 @@ const Login = () => {
         </div>
     )
 }
-
 export default Login;

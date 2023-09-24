@@ -14,7 +14,7 @@ const Slideshow = (props: IProps) => {
         <Slide>
          {slideImages && slideImages.length > 0 && slideImages.map((slideImage, index)=> (
             <div key={index}>
-              <img className=" object-cover w-full h-full" src={slideImage} alt="" />
+              <img className=" object-cover w-full h-[500px]" src={slideImage} alt="" />
             </div>
           ))} 
         </Slide>

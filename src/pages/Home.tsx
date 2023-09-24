@@ -14,7 +14,6 @@ const Home = () => {
     const packages = useSelector((state: RootState) => state.packages.value);
 
     const [isLoading, setIsLoading] = useState(true);
-    
 
     //User info
 
