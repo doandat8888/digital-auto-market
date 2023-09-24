@@ -4,11 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { BiDownload } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { addPackage } from "../redux/package/packageSlice";
+import { addPackage, updatePackage } from "../redux/package/packageSlice";
 import HandleStr from "../utils/hanldeStr";
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import handleFile from "../utils/handleFile";
 
 const AddPackage = () => {
 
@@ -31,6 +32,9 @@ const AddPackage = () => {
     const token = localStorage.getItem("token");
     //Loading 
     const [isLoading, setIsLoading] = useState(false);
+    const params = useParams();
+    const { packageId } = params;
+    const [packageUpdate, setPackageUpdate] = useState<IPackage | undefined>();
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -56,6 +60,28 @@ const AddPackage = () => {
     useEffect(() => {
         getUserInfo();
     }, [token]);
+
+    //Update package information
+    useEffect(() => {
+        if(packageId) {
+            const packageUpdateInfo = packages.find(p => p.id === packageId);
+            setPackageUpdate(packageUpdateInfo);
+        }
+    }, [packageId]);
+
+    useEffect(() => {
+        if(packageUpdate) {
+            setPackageName(packageUpdate.name);
+            setPackageDescription(packageUpdate.description);
+            setimageCover(packageUpdate.imgCover);
+            setimageDetailList(packageUpdate.imgDetails);
+            setZipBase64(packageUpdate.source);
+            const zipFileEdit = handleFile.base64ToBlob(packageUpdate.source);
+            setZipFile(zipFileEdit);
+            setMode(packageUpdate.mode);
+        }
+    }, [packageUpdate])
+
 
     const getUserInfo = async () => {
         if (token !== "") {
@@ -117,39 +143,72 @@ const AddPackage = () => {
         return true;
     }
     
-    const onAddNewPackage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        try {
-            event.preventDefault();
-            setIsLoading(true);
-            if(validateInfoPackage() === false) {
-                alert("Missing info package. Please try again");
+    const onSaveInfoPackage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.preventDefault();
+        if(!packageUpdate) {
+            try {
+                setIsLoading(true);
+                if(validateInfoPackage() === false) {
+                    alert("Missing info package. Please try again");
+                    setIsLoading(false);
+                }else {
+                    const packageObj: IPackage = {
+                        no: packages.length + 1,
+                        id: HandleStr.generateRandomString(),
+                        name: packageName,
+                        author: user?.fullName,
+                        description: packageDescription,
+                        likeNumber: 0,
+                        download: 0,
+                        imgCover: imageCover,
+                        imgDetails: imageDetailList,
+                        source: zipBase64,
+                        mode: mode,
+                        version: "1.0.0",
+                        uid: user?._id
+                    };
+                    dispatch(addPackage(packageObj));
+                    setIsLoading(false);
+                    navigate('/');
+                }
+            } catch (error) {
+                alert("Error when add package");
+                console.log(error);
                 setIsLoading(false);
-            }else {
-                const packageObj: IPackage = {
-                    no: packages.length + 1,
-                    id: HandleStr.generateRandomString(),
-                    name: packageName,
-                    author: user?.fullName,
-                    description: packageDescription,
-                    likeNumber: 0,
-                    download: 0,
-                    imgCover: imageCover,
-                    imgDetails: imageDetailList,
-                    source: zipBase64,
-                    mode: mode,
-                    version: "1.0.0",
-                    uid: user?._id
-                };
-                dispatch(addPackage(packageObj));
-                alert("Add package successfully!");
-                setIsLoading(false);
-                navigate('/');
             }
-        } catch (error) {
-            alert("Error when add package");
-            console.log(error);
-            setIsLoading(false);
+        }else {
+            try {
+                setIsLoading(true);
+                if(validateInfoPackage() === false) {
+                    alert("Missing info package. Please try again");
+                    setIsLoading(false);
+                }else {
+                    const packageObj: IPackage = {
+                        no: packageUpdate.no,
+                        id: packageUpdate.id,
+                        name: packageName,
+                        author: user?.fullName,
+                        description: packageDescription,
+                        likeNumber: 0,
+                        download: 0,
+                        imgCover: imageCover,
+                        imgDetails: imageDetailList,
+                        source: zipBase64,
+                        mode: mode,
+                        version: "1.0.0",
+                        uid: user?._id
+                    };
+                    dispatch(updatePackage(packageObj));
+                    setIsLoading(false);
+                    navigate('/');
+                }
+            } catch (error) {
+                alert("Error when add package");
+                console.log(error);
+                setIsLoading(false);
+            }
         }
+        
     }
 
     const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
@@ -209,6 +268,7 @@ const AddPackage = () => {
                                                 className="block flex-1 border-0 bg-transparent py-1.5 px-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                                 placeholder="Enter your package's name"
                                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target?.value)}
+                                                value={packageName}
                                             />
                                         </div>
                                     </div>
@@ -227,6 +287,7 @@ const AddPackage = () => {
                                             placeholder="Write a few sentences about your package."
                                             defaultValue={''}
                                             onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target?.value)}
+                                            value={packageDescription}
                                         />
                                     </div>
                                 </div>
@@ -326,10 +387,10 @@ const AddPackage = () => {
                                             <BsFileZip className="mx-auto h-14 w-14 text-gray-300" aria-hidden="true" />
                                             <div className="grow"></div>
                                             <div className="flex items-center mt-4 justify-between">
-                                                <p className="text-sm opacity-80">{fileZipName}</p>
+                                                <p className="text-sm opacity-80">{fileZipName ? fileZipName : 'source.zip'}</p>
                                                 <a
                                                     href={URL.createObjectURL(zipFile)}
-                                                    download={fileZipName}
+                                                    download={fileZipName ? fileZipName : 'source.zip'}
                                                 >
                                                     <BiDownload />
                                                 </a>
@@ -402,7 +463,7 @@ const AddPackage = () => {
                         <button
                             type="submit"
                             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            onClick={onAddNewPackage}
+                            onClick={onSaveInfoPackage}
                         >
                             Save
                         </button>

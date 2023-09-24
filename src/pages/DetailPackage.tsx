@@ -3,13 +3,14 @@ import { BiLike }  from 'react-icons/bi';
 import { BsDownload } from 'react-icons/bs';
 import 'swiper/css';
 import Slideshow from "../components/ImageSlider";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useState, useEffect } from 'react';
 import handleFile from "../utils/handleFile";
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { AiOutlineEdit } from "react-icons/ai";
+import { removePackage } from "../redux/package/packageSlice";
 
 const DetailPackage = () => {
 
@@ -19,6 +20,8 @@ const DetailPackage = () => {
     let zipFile: Blob | null = null;
     const [isLoading, setIsLoading] = useState(true);
     const [canEdit, setCanEdit] = useState(false);
+    //Dispatch
+    const dispatch = useDispatch();
 
     //Navigate
     const navigate = useNavigate();
@@ -93,9 +96,14 @@ const DetailPackage = () => {
         navigate(`/updatepackage/${packageDetail?.id}`);
     }
 
+    const onRemovePackage = (packageId: string | undefined) => {
+        dispatch(removePackage(packageId ? packageId : ''));
+    }
+
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>
             <LoadingModal open={isLoading} closeModal={onCloseModal}/>
+            <button onClick={() => onRemovePackage(packageDetail?.id)}>Remove package</button>
             <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                 <div className="w-full h-full flex items-center justify-center">
                     <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 py-2 md:py-4 rounded-lg">
