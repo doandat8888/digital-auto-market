@@ -3,13 +3,12 @@ import { BiLike }  from 'react-icons/bi';
 import { BsDownload } from 'react-icons/bs';
 import 'swiper/css';
 import Slideshow from "../components/ImageSlider";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { useDispatch } from "react-redux";
 import { useState, useEffect } from 'react';
 import handleFile from "../utils/handleFile";
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
-import { AiOutlineEdit } from "react-icons/ai";
+//import { AiOutlineEdit } from "react-icons/ai";
 import { removePackage } from "../redux/package/packageSlice";
 import packageService from "../services/packageService";
 
@@ -19,9 +18,9 @@ const DetailPackage = () => {
     const { id } = useParams();
     const [packages, setPackages] = useState<IGetPackage[]>([]);
     //const packages = useSelector((state: RootState) => state.packages.value);
-    let zipFile: Blob | null = null;
+    const zipFile: Blob | null = null;
     const [isLoading, setIsLoading] = useState(true);
-    const [canEdit, setCanEdit] = useState(false);
+    //const [canEdit, setCanEdit] = useState(false);
     //Dispatch
     const dispatch = useDispatch();
 
@@ -63,7 +62,7 @@ const DetailPackage = () => {
 
     const getPackageInfo = async() => {
         if(id) {
-            let response = await packageService.getPackageById(id);
+            const response = await packageService.getPackageById(id);
             if(response) {
                 setPackageDetail(response.data);
             }
@@ -110,16 +109,16 @@ const DetailPackage = () => {
         // }
     }
 
-    const updatePackage = (packageDetail: IUpdatePackage | undefined) => {
-        navigate(`/updatepackage/${packageDetail?._id}`);
-    }
+    // const updatePackage = (packageDetail: IUpdatePackage | undefined) => {
+    //     navigate(`/updatepackage/${packageDetail?._id}`);
+    // }
 
     const onRemovePackage = (packageId: string | undefined) => {
         dispatch(removePackage(packageId ? packageId : ''));
     }
 
     const getAllPackage = async() => {
-        let response = await packageService.getAllPackage();
+        const response = await packageService.getAllPackage();
         if(response && response.data && response.data.data.length > 0) {
             setPackages(response.data.data);
         }
@@ -140,7 +139,7 @@ const DetailPackage = () => {
                                 <div className="lg:flex items-center sm:flex">
                                     <p className="lg:text-xl sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
                                     <div className="grow"></div>
-                                    <p className="text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] opacity-80">v {packageDetail?.version}</p>
+                                    <p className="text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] opacity-80">v {packageDetail?.version.name}</p>
                                 </div>
                                 <p className="text-[12px] sm-text-[14px] lg:text-[16px] opacity-75">{packageDetail?.authors[0]}</p>
                                 <div className="grow"></div>
@@ -158,11 +157,11 @@ const DetailPackage = () => {
                                             px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
                                         </div>
                                     }
-                                    {canEdit &&
+                                    {/* {canEdit &&
                                         <div onClick={() => updatePackage(packageDetail)} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-yellow-500 text-white 
                                             px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Edit</p> <AiOutlineEdit />
                                         </div>
-                                    }
+                                    } */}
                                 </div>
                             </div>
                         </div>

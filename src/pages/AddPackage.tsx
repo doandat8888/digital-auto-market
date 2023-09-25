@@ -56,7 +56,7 @@ const AddPackage = () => {
     const [user, setUser] = useState<IUser>();
 
     const getAllPackage = async() => {
-        let response = await packageService.getAllPackage();
+        const response = await packageService.getAllPackage();
         if(response && response.data && response.data.data.length > 0) {
             setPackages(response.data.data);
         }
@@ -161,11 +161,11 @@ const AddPackage = () => {
                     alert("Missing info package. Please try again");
                     setIsLoading(false);
                 }else {
-                    let authorArr: string[] = [];
+                    const authorArr: string[] = [];
                     if(user) {
                         authorArr.push(user.fullName);
                     }
-                    const packageObj: IPackage = {
+                    const packageObj: IAddPackage = {
                         name: packageName,
                         thumbnail: imageCover,
                         images: imageDetailList,
@@ -178,7 +178,7 @@ const AddPackage = () => {
                         downloadUrl: "abc",
                     };
                     try {
-                        let response = await packageService.addNewPackage(packageObj);
+                        const response = await packageService.addNewPackage(packageObj);
                         if(response && response.status === 201) {
                             alert("Add package successfully!");
                         } 
@@ -201,7 +201,7 @@ const AddPackage = () => {
                     alert("Missing info package. Please try again");
                     setIsLoading(false);
                 }else {
-                    let authorArr: string[] = [];
+                    const authorArr: string[] = [];
                     if(user) {
                         authorArr.push(user.fullName);
                     }
@@ -216,11 +216,10 @@ const AddPackage = () => {
                         license: "abc",
                         visibility: mode,
                         authors: authorArr,
-                        downloadUrl: "abc",
                     };
                     //dispatch(updatePackage(packageObj));
                     try {
-                        let response = await packageService.updatePackage(packageObj);
+                        const response = await packageService.updatePackage(packageObj);
                         if(response && response.status === 201) {
                             alert("Update info successfully!");
                         } 

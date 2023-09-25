@@ -7,7 +7,10 @@ type IPackage = {
     fullDesc: string,
     license: string,
     visibility: string,
-    authors: string[],
+    authors: string[], 
+}
+
+type IAddPackage = IPackage &  {
     downloadUrl: string | undefined,
 }
 
@@ -16,8 +19,8 @@ type IGetPackage = IPackage & {
     deleted: boolean,
     createdBy: string,
     likes: number,
-    version: string,
-    versions: string[]
+    version: IGetVersion,
+    versions: IGetVersion[]
 }
 
 type IUpdatePackage = IPackage & {
