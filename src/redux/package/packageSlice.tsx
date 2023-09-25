@@ -26,6 +26,7 @@ const packageSlice = createSlice({
                     }
                 ]
             }
+            alert("Add package successfully");
             localStorage.setItem("packages", JSON.stringify(state.value.sort((a, b) => a.no > b.no ? 1 : (a.no < b.no) ? -1 : 0 )));
         },
         removePackage: (state, action: PayloadAction<string>) => {

@@ -11,12 +11,14 @@ import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { AiOutlineEdit } from "react-icons/ai";
 import { removePackage } from "../redux/package/packageSlice";
+import packageService from "../services/packageService";
 
 const DetailPackage = () => {
 
-    const [packageDetail, setPackageDetail] = useState<IPackage>();
+    const [packageDetail, setPackageDetail] = useState<IGetPackage>();
     const { id } = useParams();
-    const packages = useSelector((state: RootState) => state.packages.value);
+    const [packages, setPackages] = useState<IGetPackage[]>([]);
+    //const packages = useSelector((state: RootState) => state.packages.value);
     let zipFile: Blob | null = null;
     const [isLoading, setIsLoading] = useState(true);
     const [canEdit, setCanEdit] = useState(false);
@@ -26,11 +28,11 @@ const DetailPackage = () => {
     //Navigate
     const navigate = useNavigate();
 
-    if(packageDetail?.source) {
-        const sourceZip: string = packageDetail?.source;
-        zipFile = handleFile.base64ToBlob(sourceZip);
-        handleFile.base64ToBlob(sourceZip);
-    }
+    // if(packageDetail?.source) {
+    //     const sourceZip: string = packageDetail?.source;
+    //     zipFile = handleFile.base64ToBlob(sourceZip);
+    //     handleFile.base64ToBlob(sourceZip);
+    // }
 
     //User info
     const [tokenUser, setTokenUser] = useState<string>("");
@@ -51,20 +53,36 @@ const DetailPackage = () => {
     }, [tokenUser]);
 
     useEffect(() => {
-        console.log("User info: ", user);
         if(user) {
             checkPackage();
+            setIsLoading(false);
+        }else {
             setIsLoading(false);
         }
     }, [user]);
 
+    const getPackageInfo = async() => {
+        if(id) {
+            let response = await packageService.getPackageById(id);
+            if(response) {
+                setPackageDetail(response.data);
+            }
+        }
+    }
 
     useEffect(() => {
-        const packageInfo = packages.find((packageItem) => packageItem.id === id);
-        if(packageInfo) {
-            setPackageDetail(packageInfo);
-        }
+        getPackageInfo();
     }, [tokenUser, packageDetail])
+
+    useEffect(() => {
+        getAllPackage();
+    }, []);
+
+    useEffect(() => {
+        if(packages.length > 0) {
+            setIsLoading(false);
+        }
+    }, [packages])
 
     const getUserInfo = async () => {
         try {
@@ -86,30 +104,37 @@ const DetailPackage = () => {
     }
 
     const checkPackage = () => {
-        if(user) {
-            const canEdit = packageDetail && packageDetail.uid === user._id ? true : false;
-            setCanEdit(canEdit);
-        }
+        // if(user) {
+        //     const canEdit = packageDetail && packageDetail.uid === user._id ? true : false;
+        //     setCanEdit(canEdit);
+        // }
     }
 
-    const updatePackage = (packageDetail: IPackage | undefined) => {
-        navigate(`/updatepackage/${packageDetail?.id}`);
+    const updatePackage = (packageDetail: IUpdatePackage | undefined) => {
+        navigate(`/updatepackage/${packageDetail?._id}`);
     }
 
     const onRemovePackage = (packageId: string | undefined) => {
         dispatch(removePackage(packageId ? packageId : ''));
     }
 
+    const getAllPackage = async() => {
+        let response = await packageService.getAllPackage();
+        if(response && response.data && response.data.data.length > 0) {
+            setPackages(response.data.data);
+        }
+    }
+
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>
             <LoadingModal open={isLoading} closeModal={onCloseModal}/>
-            <button onClick={() => onRemovePackage(packageDetail?.id)}>Remove package</button>
+            <button onClick={() => onRemovePackage(packageDetail?._id)}>Remove package</button>
             <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                 <div className="w-full h-full flex items-center justify-center">
                     <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 py-2 md:py-4 rounded-lg">
                         <div className="w-full lg:flex md:flex bg-white rounded-lg py-4 pl-3 pr-1 flex max-h-[300px]">
                             <div className="w-1/3 grid lg:place-items-center sm:place-items-center md:place-items-center">
-                                <img src={packageDetail?.imgCover} alt="" className="w-[80%] max-h-[180px] rounded-lg max-w-[300px] object-cover"/>
+                                <img src={packageDetail?.thumbnail} alt="" className="w-[80%] max-h-[180px] rounded-lg max-w-[300px] object-cover"/>
                             </div>
                             <div className="w-2/3 px-6 flex flex-col">
                                 <div className="lg:flex items-center sm:flex">
@@ -117,11 +142,11 @@ const DetailPackage = () => {
                                     <div className="grow"></div>
                                     <p className="text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] opacity-80">v {packageDetail?.version}</p>
                                 </div>
-                                <p className="text-[12px] sm-text-[14px] lg:text-[16px] opacity-75">{packageDetail?.author}</p>
+                                <p className="text-[12px] sm-text-[14px] lg:text-[16px] opacity-75">{packageDetail?.authors[0]}</p>
                                 <div className="grow"></div>
                                 <div className="flex">
-                                    <div className="flex items-center mx-1"><BiLike /><p className="text-[14px] ml-[2px]">{packageDetail?.likeNumber??0}</p></div>
-                                    <div className="flex items-center mx-1"><BsDownload /><p className="text-[14px] ml-[2px]">{packageDetail?.download??0}</p></div>
+                                    <div className="flex items-center mx-1"><BiLike /><p className="text-[14px] ml-[2px]">{packageDetail?.likes??0}</p></div>
+                                   {/*  <div className="flex items-center mx-1"><BsDownload /><p className="text-[14px] ml-[2px]">{packageDetail?.download??0}</p></div> */}
                                 </div>
                                 <div className="grow"></div>
                                 <div className="lg:flex md:flex sm-flex">
@@ -143,9 +168,9 @@ const DetailPackage = () => {
                         </div>
                         <div className="description my-4">
                             <p className="text-xl font-bold">Description</p>
-                            <p>{packageDetail?.description}</p>
+                            <p>{packageDetail?.fullDesc}</p>
                         </div>
-                        <Slideshow slideImages={packageDetail?.imgDetails}/>
+                        <Slideshow slideImages={packageDetail?.images}/>
                     </div>
                 </div>
             </div>

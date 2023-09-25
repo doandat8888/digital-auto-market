@@ -2,19 +2,17 @@ import { BsFileZip } from "react-icons/bs";
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
 import { BiDownload } from "react-icons/bi";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { addPackage, updatePackage } from "../redux/package/packageSlice";
-import HandleStr from "../utils/hanldeStr";
+import { useDispatch } from "react-redux";
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { useNavigate, useParams } from "react-router";
-import handleFile from "../utils/handleFile";
+import packageService from "../services/packageService";
 
 const AddPackage = () => {
 
     const navigate = useNavigate();
-    const packages = useSelector((state: RootState) => state.packages.value);
+    //const packages = useSelector((state: RootState) => state.packages.value);
+    const [packages, setPackages] = useState<IGetPackage[]>([]);
     //Package info
     const [packageName, setPackageName] = useState("");
     const [packageDescription, setPackageDescription] = useState("");
@@ -34,7 +32,7 @@ const AddPackage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const params = useParams();
     const { packageId } = params;
-    const [packageUpdate, setPackageUpdate] = useState<IPackage | undefined>();
+    const [packageUpdate, setPackageUpdate] = useState<IUpdatePackage | undefined>();
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -57,6 +55,17 @@ const AddPackage = () => {
 
     const [user, setUser] = useState<IUser>();
 
+    const getAllPackage = async() => {
+        let response = await packageService.getAllPackage();
+        if(response && response.data && response.data.data.length > 0) {
+            setPackages(response.data.data);
+        }
+    }
+
+    useEffect(() => {
+        getAllPackage();
+    }, [packages])
+
     useEffect(() => {
         getUserInfo();
     }, [token]);
@@ -64,7 +73,7 @@ const AddPackage = () => {
     //Update package information
     useEffect(() => {
         if(packageId) {
-            const packageUpdateInfo = packages.find(p => p.id === packageId);
+            const packageUpdateInfo = packages.find(p => p._id === packageId);
             setPackageUpdate(packageUpdateInfo);
         }
     }, [packageId]);
@@ -72,13 +81,13 @@ const AddPackage = () => {
     useEffect(() => {
         if(packageUpdate) {
             setPackageName(packageUpdate.name);
-            setPackageDescription(packageUpdate.description);
-            setimageCover(packageUpdate.imgCover);
-            setimageDetailList(packageUpdate.imgDetails);
-            setZipBase64(packageUpdate.source);
-            const zipFileEdit = handleFile.base64ToBlob(packageUpdate.source);
-            setZipFile(zipFileEdit);
-            setMode(packageUpdate.mode);
+            setPackageDescription(packageUpdate.fullDesc);
+            setimageCover(packageUpdate.thumbnail);
+            setimageDetailList(packageUpdate.images);
+            //setZipBase64(packageUpdate.source);
+            //const zipFileEdit = handleFile.base64ToBlob(packageUpdate.source);
+            //setZipFile(zipFileEdit);
+            setMode(packageUpdate.visibility);
         }
     }, [packageUpdate])
 
@@ -143,7 +152,7 @@ const AddPackage = () => {
         return true;
     }
     
-    const onSaveInfoPackage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onSaveInfoPackage = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         if(!packageUpdate) {
             try {
@@ -152,22 +161,31 @@ const AddPackage = () => {
                     alert("Missing info package. Please try again");
                     setIsLoading(false);
                 }else {
+                    let authorArr: string[] = [];
+                    if(user) {
+                        authorArr.push(user.fullName);
+                    }
                     const packageObj: IPackage = {
-                        no: packages.length + 1,
-                        id: HandleStr.generateRandomString(),
                         name: packageName,
-                        author: user?.fullName,
-                        description: packageDescription,
-                        likeNumber: 0,
-                        download: 0,
-                        imgCover: imageCover,
-                        imgDetails: imageDetailList,
-                        source: zipBase64,
-                        mode: mode,
-                        version: "1.0.0",
-                        uid: user?._id
+                        thumbnail: imageCover,
+                        images: imageDetailList,
+                        video: "none",
+                        shortDesc: "short desc",
+                        fullDesc: packageDescription,
+                        license: "abc",
+                        visibility: mode,
+                        authors: authorArr,
+                        downloadUrl: "abc",
                     };
-                    dispatch(addPackage(packageObj));
+                    try {
+                        let response = await packageService.addNewPackage(packageObj);
+                        if(response && response.status === 201) {
+                            alert("Add package successfully!");
+                        } 
+                    } catch (error) {
+                        console.log(error);
+                    }
+                    
                     setIsLoading(false);
                     navigate('/');
                 }
@@ -183,24 +201,34 @@ const AddPackage = () => {
                     alert("Missing info package. Please try again");
                     setIsLoading(false);
                 }else {
-                    const packageObj: IPackage = {
-                        no: packageUpdate.no,
-                        id: packageUpdate.id,
+                    let authorArr: string[] = [];
+                    if(user) {
+                        authorArr.push(user.fullName);
+                    }
+                    const packageObj: IUpdatePackage = {
+                        _id: packageUpdate._id,
                         name: packageName,
-                        author: user?.fullName,
-                        description: packageDescription,
-                        likeNumber: 0,
-                        download: 0,
-                        imgCover: imageCover,
-                        imgDetails: imageDetailList,
-                        source: zipBase64,
-                        mode: mode,
-                        version: "1.0.0",
-                        uid: user?._id
+                        thumbnail: imageCover,
+                        images: imageDetailList,
+                        video: "none",
+                        shortDesc: "short desc",
+                        fullDesc: packageDescription,
+                        license: "abc",
+                        visibility: mode,
+                        authors: authorArr,
+                        downloadUrl: "abc",
                     };
-                    dispatch(updatePackage(packageObj));
+                    //dispatch(updatePackage(packageObj));
+                    try {
+                        let response = await packageService.updatePackage(packageObj);
+                        if(response && response.status === 201) {
+                            alert("Update info successfully!");
+                        } 
+                    } catch (error) {
+                        console.log(error);
+                    }
                     setIsLoading(false);
-                    navigate('/');
+                    // navigate('/');
                 }
             } catch (error) {
                 alert("Error when add package");

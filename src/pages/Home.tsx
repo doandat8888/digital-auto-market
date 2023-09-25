@@ -1,29 +1,38 @@
 import { useEffect, useState } from 'react';
 import PackageList from '../components/PackageList';
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from '../redux/store';
 import { removeAllPakage } from '../redux/package/packageSlice';
 import LoadingDialog from '../components/LoadingDialog';
+import packageService from '../services/packageService';
 
 const Home = () => {
 
-    const [packageList, setPackageList] = useState<IPackage[]>([]);
+    const [packageList, setPackageList] = useState<IGetPackage[]>([]);
     const [searchValue, setSearchValue] = useState<string>("");
+    const [tokenUser, setTokenUser] = useState<string>("");
     const dispatch = useDispatch();
-    
-    const packages = useSelector((state: RootState) => state.packages.value);
 
     const [isLoading, setIsLoading] = useState(true);
 
     //User info
 
+    const getAllPackage = async() => {
+        let response = await packageService.getAllPackage();
+        if(response && response.data && response.data.data.length > 0) {
+            setPackageList(response.data.data);
+        }
+    }
+
+
     useEffect(() => {
-        setPackageList(packages);
-        if(packages) {
+        getAllPackage();
+    }, []);
+
+    useEffect(() => {
+        if(packageList.length > 0) {
             setIsLoading(false);
         }
-        
-    }, []);
+    }, [packageList])
 
     const onRemoveAllPackage = () => {
         dispatch(removeAllPakage());
@@ -34,7 +43,7 @@ const Home = () => {
     }
 
     const filterPackageList = searchValue && packageList.length > 0 ? 
-    packageList.filter(item => item.name.toLowerCase().includes(searchValue.toLowerCase()) || item.author?.toLowerCase().includes(searchValue.toLowerCase())) : packageList;
+    packageList.filter(item => item.name.toLowerCase().includes(searchValue.toLowerCase()) || item.authors[0]?.toLowerCase().includes(searchValue.toLowerCase())) : packageList;
 
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>

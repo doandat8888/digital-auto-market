@@ -1,15 +1,26 @@
-interface IPackage {
-    no: number
-    id: string,
+type IPackage = {
     name: string,
-    author: string | undefined,
-    description: string,
-    likeNumber: number,
-    download: number,
-    imgCover: string,
+    thumbnail: string,
+    images: string[],
+    video: string,
+    shortDesc: string,
+    fullDesc: string,
+    license: string,
+    visibility: string,
+    authors: string[],
+    downloadUrl: string | undefined,
+}
+
+type IGetPackage = IPackage & {
+    _id: string,
+    deleted: boolean,
+    createdBy: string,
+    likes: number,
     version: string,
-    mode: string,
-    imgDetails: string[],
-    source: string,
-    uid: string | undefined
+    versions: string[]
+}
+
+type IUpdatePackage = IPackage & {
+    _id: string,
+    
 }
