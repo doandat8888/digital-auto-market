@@ -12,6 +12,7 @@ type IPackage = {
 
 type IAddPackage = IPackage &  {
     downloadUrl: string | undefined,
+    deploymentUrl: string | undefined
 }
 
 type IGetPackage = IPackage & {
@@ -21,9 +22,4 @@ type IGetPackage = IPackage & {
     likes: number,
     version: IGetVersion,
     versions: IGetVersion[]
-}
-
-type IUpdatePackage = IPackage & {
-    _id: string,
-    
 }

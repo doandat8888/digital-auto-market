@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import userService from "../services/userService";
@@ -6,6 +6,7 @@ import PackageList from "../components/PackageList";
 import LoadingDialog from "../components/LoadingDialog";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import packageService from "../services/packageService";
 
 const MyPackage = () => {
 
@@ -14,18 +15,16 @@ const MyPackage = () => {
     //Token
     const token = useSelector((state: RootState) => state.token.value);
     const [tokenUser, setTokenUser] = useState<string>("");
-    const packages = useSelector((state: RootState) => state.packages.value);
+    const [packages, setPackages] = useState<IGetPackage[]>([]);
     const [searchValue, setSearchValue] = useState<string>("");
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
 
-
     useEffect(() => {
         const localToken = localStorage.getItem('token') || ""
         setTokenUser(localToken);
     }, [])
-
 
     useEffect(() => {
         if(tokenUser !== "") {
@@ -46,9 +45,19 @@ const MyPackage = () => {
         }
     }, [token, myPackageList]);
 
+    const getAllPackage = useCallback(async() => {
+        let response = await packageService.getAllPackage();
+        if(response && response.data && response.data.data.length > 0) {
+            setPackages(response.data.data);
+        }
+    }, []);
+
+    useEffect(() => {
+        getAllPackage();
+    }, []);
+
     const getUserInfo = async () => {
         if (token !== "") {
-            console.log("Token header: ", token);
             try {
                 const response = await userService.getUser();
                 if (response && response.status === 200) {
@@ -62,7 +71,7 @@ const MyPackage = () => {
 
     const getMyPackageList = () => {
         if(user) {
-            const packageList = packages.filter((packageItem) => packageItem.uid === user._id);
+            const packageList = packages.filter((packageItem) => packageItem.createdBy === user._id);
             setMyPackageList(packageList);
             setIsLoading(false);
         }
@@ -73,7 +82,7 @@ const MyPackage = () => {
     }
 
     const filterMyPackageList = searchValue && myPackageList.length > 0 ? 
-    myPackageList.filter(item => item.name.toLowerCase().includes(searchValue.toLowerCase()) || item.author?.toLowerCase().includes(searchValue.toLowerCase())) : myPackageList;
+    myPackageList.filter(item => item.name.toLowerCase().includes(searchValue.toLowerCase()) || item.authors[0]?.toLowerCase().includes(searchValue.toLowerCase())) : myPackageList;
 
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>
@@ -84,8 +93,9 @@ const MyPackage = () => {
                 </div>
                 {myPackageList && myPackageList.length > 0 ? 
                     <PackageList packages={filterMyPackageList}/>
-                : <div className="flex justify-center">
-                    <div>You dont have any packages. </div>
+                : <div className="text-center">
+                    <img className="mx-auto my-4 w-[30%]" src="https://th.bing.com/th/id/R.9153c597bf57132f3506e93d9cba5b6b?rik=g733CBa3Z8Jpjg&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_547086.png&ehk=qulzuCrqLFb20imvpzW2r%2fiMIA4HsJX1veyWxYu7r5A%3d&risl=&pid=ImgRaw&r=0" alt="" />
+                    <div>You don't have any packages. </div>
                     <Link to={'/addpackage'} className="text-blue-500">Submit your package</Link>
                 </div>}
             </div>

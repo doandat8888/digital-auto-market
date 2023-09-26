@@ -85,7 +85,6 @@ const Header = () => {
         setShowMenuUser(!showMenuUser);
     };
 
-
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>
             <div className="h-12 px-2 border-b-2 flex items-center lg:text-lg sm:text-sm text-base ">

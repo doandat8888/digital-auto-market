@@ -7,20 +7,22 @@ import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { useNavigate, useParams } from "react-router";
 import packageService from "../services/packageService";
+import axios from "axios";
+import uploadService from "../services/uploadService";
 
 const AddPackage = () => {
 
     const navigate = useNavigate();
     //const packages = useSelector((state: RootState) => state.packages.value);
-    const [packages, setPackages] = useState<IGetPackage[]>([]);
     //Package info
     const [packageName, setPackageName] = useState("");
     const [packageDescription, setPackageDescription] = useState("");
     const [imageDetailList, setimageDetailList] = useState<string[]>([]);
     const [imageCover, setimageCover] = useState<string>("");
     //Zip file
-    const [zipFile, setZipFile] = useState<Blob | null>(null);
-    const [zipBase64, setZipBase64] = useState<string>("");
+    const [zipFile, setZipFile] = useState<string>("");
+    const [deploymentUrl, setDeploymentUrl] = useState("");
+    // const [zipBase64, setZipBase64] = useState<string>("");
     const [fileZipName, setFileZipName] = useState<string>("");
     //Radio type
     const [mode, setMode] = useState("public");
@@ -32,50 +34,48 @@ const AddPackage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const params = useParams();
     const { packageId } = params;
-    const [packageUpdate, setPackageUpdate] = useState<IUpdatePackage | undefined>();
+    const [packageUpdate, setPackageUpdate] = useState<IGetPackage | undefined>();
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files) {
             const imagePromises = Array.from(files).map((file) => {
-                return new Promise<string>((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const base64String = e.target?.result as string;
-                        resolve(base64String);
-                    };
-                    reader.readAsDataURL(file);
+                return new Promise<string>(async(resolve) => {
+                    if (file) {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        let response = await uploadService.uploadFile(formData);
+                        if(response && response.status === 201) {
+                            const imgUrl = response.data.url;
+                            resolve(imgUrl);
+                        }
+                    }
                 });
             });
-            Promise.all(imagePromises).then((base64Strings) => {
-                setimageDetailList((prevImages) => [...prevImages, ...base64Strings]);
+            Promise.all(imagePromises).then((imgUrls) => {
+                setimageDetailList((prevImages) => [...prevImages, ...imgUrls]);
             });
         }
     };
 
     const [user, setUser] = useState<IUser>();
 
-    const getAllPackage = async() => {
-        const response = await packageService.getAllPackage();
-        if(response && response.data && response.data.data.length > 0) {
-            setPackages(response.data.data);
+
+    const getPackageById = async() => {
+        if(packageId) {
+            const response = await packageService.getPackageById(packageId);
+            if(response && response.data) {
+                setPackageUpdate(response.data);
+            }
         }
     }
-
-    useEffect(() => {
-        getAllPackage();
-    }, [packages])
 
     useEffect(() => {
         getUserInfo();
     }, [token]);
 
-    //Update package information
     useEffect(() => {
-        if(packageId) {
-            const packageUpdateInfo = packages.find(p => p._id === packageId);
-            setPackageUpdate(packageUpdateInfo);
-        }
+        getPackageById();
     }, [packageId]);
 
     useEffect(() => {
@@ -84,13 +84,12 @@ const AddPackage = () => {
             setPackageDescription(packageUpdate.fullDesc);
             setimageCover(packageUpdate.thumbnail);
             setimageDetailList(packageUpdate.images);
-            //setZipBase64(packageUpdate.source);
-            //const zipFileEdit = handleFile.base64ToBlob(packageUpdate.source);
-            //setZipFile(zipFileEdit);
+            // setZipBase64(packageUpdate.source);
+            // const zipFileEdit = handleFile.base64ToBlob(packageUpdate.source);
+            // setZipFile(zipFileEdit);
             setMode(packageUpdate.visibility);
         }
     }, [packageUpdate])
-
 
     const getUserInfo = async () => {
         if (token !== "") {
@@ -106,31 +105,41 @@ const AddPackage = () => {
         }
     }
 
-    const handleInputImgCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputImgCoverChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target?.files?.[0];
+        const formData = new FormData();
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const base64String = e.target?.result as string;
-                setimageCover(base64String);
-            };
-            reader.readAsDataURL(file);
+            console.log(file);
+            formData.append('file', file);
+            let response = await uploadService.uploadFile(formData);
+            if(response && response.status === 201) {
+                console.log(response.data.url);
+                setimageCover(response.data.url);
+            }
         }
+        // if (file) {
+        //     const reader = new FileReader();
+        //     reader.onload = (e) => {
+        //         const base64String = e.target?.result as string;
+        //         setimageCover(base64String);
+        //     };
+        //     reader.readAsDataURL(file);
+        // }
     };
 
-    const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileInputChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target?.files?.[0];
         if (file) {
-            const fileName: string = file.name;
-            setFileZipName(fileName);
-            setZipFile(file);
-            const reader = new FileReader();
-
-            reader.onload = (e) => {
-                const base64String = e.target?.result as string;
-                setZipBase64(base64String);
-            };
-            reader.readAsDataURL(file);
+            const formData = new FormData();
+            formData.append('file', file);
+            let response = await uploadService.uploadFile(formData);
+            if(response && response.status === 201) {
+                let zipFileUrl = response.data.url;
+                setZipFile(response.data.url);
+                setDeploymentUrl(response.data.deploymentUrl);
+                const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/", "");
+                setFileZipName(zipFileName);
+            }
         }
     };
  
@@ -140,7 +149,7 @@ const AddPackage = () => {
 
     const validateInfoPackage = (): boolean => {
         let count = 0;
-        const packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, zipBase64, mode, user?._id];
+        const packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, zipFile, mode, user?._id];
         for(let i = 0; i < packageInfoArr.length; i++) {
             if(packageInfoArr[i] === "") {
                 count++;
@@ -176,6 +185,7 @@ const AddPackage = () => {
                         visibility: mode,
                         authors: authorArr,
                         downloadUrl: "abc",
+                        deploymentUrl: deploymentUrl,
                     };
                     try {
                         const response = await packageService.addNewPackage(packageObj);
@@ -205,7 +215,7 @@ const AddPackage = () => {
                     if(user) {
                         authorArr.push(user.fullName);
                     }
-                    const packageObj: IUpdatePackage = {
+                    const packageObj = {
                         _id: packageUpdate._id,
                         name: packageName,
                         thumbnail: imageCover,
@@ -255,20 +265,34 @@ const AddPackage = () => {
         }
     };
 
-    const onDeleteCoverImage = () => {
-        setimageCover("");
+    const onDeleteCoverImage = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
+        event.preventDefault();
+        const imgName = imgLink.replace("http://localhost:9006/data/store-be/", "");
+        let response = await uploadService.deleteFile(imgName);
+        if(response && response.status === 200) {
+            setimageCover("");
+        }
     }
 
-    const onDeleteZipFile = () => {
-        setZipFile(null);
-        setZipBase64("");
+    const onDeleteZipFile = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.preventDefault();
+        let response = await uploadService.deleteFile(fileZipName);
+        if(response && response.status === 200) {
+            setZipFile("");
+            setFileZipName("");
+        }
     }
 
-    const onDeleteDetailImage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
+    const onDeleteDetailImage = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         event.preventDefault();
         const detailsImg = [...imageDetailList];
-        detailsImg.splice(index, 1);
-        setimageDetailList(detailsImg);
+        const imgDelete = detailsImg[index];
+        const imgDeleteName = imgDelete.replace("http://localhost:9006/data/store-be/", "");
+        let response = await uploadService.deleteFile(imgDeleteName);
+        if(response && response.status === 200) {
+            detailsImg.splice(index, 1);
+            setimageDetailList(detailsImg);
+        }
     }
 
     const onCloseModal = () => {
@@ -348,7 +372,7 @@ const AddPackage = () => {
                                                 alt="Uploaded"
                                                 className="w-full object-cover"
                                             />
-                                            <button className="absolute top-2 right-2 rounded-full bg-slate-400 text-white px-4 py-2 z-40" onClick={onDeleteCoverImage}>x</button>
+                                            <button className="absolute top-2 right-2 rounded-full bg-slate-400 text-white px-4 py-2 z-40" onClick={(event) => onDeleteCoverImage(event, imageCover)}>x</button>
                                         </div>
                                     )}
                                 </div>
@@ -416,8 +440,7 @@ const AddPackage = () => {
                                             <div className="flex items-center mt-4 justify-between">
                                                 <p className="text-sm opacity-80">{fileZipName ? fileZipName : 'source.zip'}</p>
                                                 <a
-                                                    href={URL.createObjectURL(zipFile)}
-                                                    download={fileZipName ? fileZipName : 'source.zip'}
+                                                    href={zipFile}
                                                 >
                                                     <BiDownload />
                                                 </a>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PackageList from '../components/PackageList';
 import { useDispatch, useSelector } from "react-redux";
 import { removeAllPakage } from '../redux/package/packageSlice';
@@ -16,13 +16,12 @@ const Home = () => {
 
     //User info
 
-    const getAllPackage = async() => {
+    const getAllPackage = useCallback(async() => {
         let response = await packageService.getAllPackage();
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
         }
-    }
-
+    }, []);
 
     useEffect(() => {
         getAllPackage();

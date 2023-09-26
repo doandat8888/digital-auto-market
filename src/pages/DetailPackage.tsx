@@ -8,9 +8,9 @@ import { useState, useEffect } from 'react';
 import handleFile from "../utils/handleFile";
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
-//import { AiOutlineEdit } from "react-icons/ai";
 import { removePackage } from "../redux/package/packageSlice";
 import packageService from "../services/packageService";
+import { AiOutlineEdit } from "react-icons/ai";
 
 const DetailPackage = () => {
 
@@ -20,7 +20,7 @@ const DetailPackage = () => {
     //const packages = useSelector((state: RootState) => state.packages.value);
     const zipFile: Blob | null = null;
     const [isLoading, setIsLoading] = useState(true);
-    //const [canEdit, setCanEdit] = useState(false);
+    const [canEdit, setCanEdit] = useState(false);
     //Dispatch
     const dispatch = useDispatch();
 
@@ -54,9 +54,6 @@ const DetailPackage = () => {
     useEffect(() => {
         if(user) {
             checkPackage();
-            setIsLoading(false);
-        }else {
-            setIsLoading(false);
         }
     }, [user]);
 
@@ -65,6 +62,9 @@ const DetailPackage = () => {
             const response = await packageService.getPackageById(id);
             if(response) {
                 setPackageDetail(response.data);
+                if(user) {
+                    setIsLoading(false);
+                }
             }
         }
     }
@@ -78,8 +78,19 @@ const DetailPackage = () => {
     }, []);
 
     useEffect(() => {
-        if(packages.length > 0) {
+        if(!tokenUser && packageDetail) {
             setIsLoading(false);
+        }else {
+            if(packageDetail && user) {
+                setIsLoading(false);
+            }
+        }
+        if(packageDetail) {
+            if(!tokenUser) {
+                setIsLoading(false);
+            }else if(user) {
+                setIsLoading(false);
+            }
         }
     }, [packages])
 
@@ -103,18 +114,24 @@ const DetailPackage = () => {
     }
 
     const checkPackage = () => {
-        // if(user) {
-        //     const canEdit = packageDetail && packageDetail.uid === user._id ? true : false;
-        //     setCanEdit(canEdit);
-        // }
+        if(user) {
+            const canEdit = packageDetail && packageDetail.createdBy === user._id ? true : false;
+            setCanEdit(canEdit);
+        }
     }
 
-    // const updatePackage = (packageDetail: IUpdatePackage | undefined) => {
-    //     navigate(`/updatepackage/${packageDetail?._id}`);
-    // }
+    const updatePackage = (packageDetail: IGetPackage | undefined) => {
+        navigate(`/updatepackage/${packageDetail?._id}`);
+    }
 
-    const onRemovePackage = (packageId: string | undefined) => {
-        dispatch(removePackage(packageId ? packageId : ''));
+    const onRemovePackage = async(packageId: string) => {
+        setIsLoading(true);
+        let response = await packageService.removePackage(packageId);
+        if(response && response.status === 200) {
+            alert(response.data.msg);
+            setIsLoading(false);
+            navigate('/');
+        }
     }
 
     const getAllPackage = async() => {
@@ -127,7 +144,7 @@ const DetailPackage = () => {
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>
             <LoadingModal open={isLoading} closeModal={onCloseModal}/>
-            <button onClick={() => onRemovePackage(packageDetail?._id)}>Remove package</button>
+            <button onClick={() => onRemovePackage(packageDetail? packageDetail._id : '')}>Remove package</button>
             <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                 <div className="w-full h-full flex items-center justify-center">
                     <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 py-2 md:py-4 rounded-lg">
@@ -157,11 +174,11 @@ const DetailPackage = () => {
                                             px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
                                         </div>
                                     }
-                                    {/* {canEdit &&
+                                    {canEdit &&
                                         <div onClick={() => updatePackage(packageDetail)} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-yellow-500 text-white 
                                             px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Edit</p> <AiOutlineEdit />
                                         </div>
-                                    } */}
+                                    }
                                 </div>
                             </div>
                         </div>
