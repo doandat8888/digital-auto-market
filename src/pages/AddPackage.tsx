@@ -7,7 +7,6 @@ import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { useNavigate, useParams } from "react-router";
 import packageService from "../services/packageService";
-import axios from "axios";
 import uploadService from "../services/uploadService";
 
 const AddPackage = () => {
@@ -84,9 +83,8 @@ const AddPackage = () => {
             setPackageDescription(packageUpdate.fullDesc);
             setimageCover(packageUpdate.thumbnail);
             setimageDetailList(packageUpdate.images);
-            // setZipBase64(packageUpdate.source);
-            // const zipFileEdit = handleFile.base64ToBlob(packageUpdate.source);
-            // setZipFile(zipFileEdit);
+            setZipFile(packageUpdate.version.downloadUrl);
+            setDeploymentUrl(packageUpdate.version.deploymentUrl);
             setMode(packageUpdate.visibility);
         }
     }, [packageUpdate])
@@ -117,14 +115,6 @@ const AddPackage = () => {
                 setimageCover(response.data.url);
             }
         }
-        // if (file) {
-        //     const reader = new FileReader();
-        //     reader.onload = (e) => {
-        //         const base64String = e.target?.result as string;
-        //         setimageCover(base64String);
-        //     };
-        //     reader.readAsDataURL(file);
-        // }
     };
 
     const handleFileInputChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,7 +174,7 @@ const AddPackage = () => {
                         license: "abc",
                         visibility: mode,
                         authors: authorArr,
-                        downloadUrl: "abc",
+                        downloadUrl: zipFile,
                         deploymentUrl: deploymentUrl,
                     };
                     try {
@@ -207,38 +197,36 @@ const AddPackage = () => {
         }else {
             try {
                 setIsLoading(true);
-                if(validateInfoPackage() === false) {
-                    alert("Missing info package. Please try again");
-                    setIsLoading(false);
-                }else {
-                    const authorArr: string[] = [];
-                    if(user) {
-                        authorArr.push(user.fullName);
-                    }
-                    const packageObj = {
-                        _id: packageUpdate._id,
-                        name: packageName,
-                        thumbnail: imageCover,
-                        images: imageDetailList,
-                        video: "none",
-                        shortDesc: "short desc",
-                        fullDesc: packageDescription,
-                        license: "abc",
-                        visibility: mode,
-                        authors: authorArr,
-                    };
-                    //dispatch(updatePackage(packageObj));
-                    try {
-                        const response = await packageService.updatePackage(packageObj);
-                        if(response && response.status === 201) {
-                            alert("Update info successfully!");
-                        } 
-                    } catch (error) {
-                        console.log(error);
-                    }
-                    setIsLoading(false);
-                    // navigate('/');
+                console.log(zipFile);
+                const authorArr: string[] = [];
+                if(user) {
+                    authorArr.push(user.fullName);
                 }
+                const packageObj = {
+                    _id: packageUpdate._id,
+                    name: packageName,
+                    thumbnail: imageCover,
+                    images: imageDetailList,
+                    video: "none",
+                    shortDesc: "short desc",
+                    fullDesc: packageDescription,
+                    license: "abc",
+                    visibility: mode,
+                    authors: authorArr,
+                    downloadUrl: zipFile,
+                    deploymentUrl: deploymentUrl
+                };
+                //dispatch(updatePackage(packageObj));
+                try {
+                    const response = await packageService.updatePackage(packageObj);
+                    if(response && response.status === 200) {
+                        alert("Update info successfully!");
+                        navigate('/');
+                    } 
+                } catch (error) {
+                    console.log(error);
+                }
+                setIsLoading(false);
             } catch (error) {
                 alert("Error when add package");
                 console.log(error);
@@ -280,6 +268,7 @@ const AddPackage = () => {
         if(response && response.status === 200) {
             setZipFile("");
             setFileZipName("");
+            setDeploymentUrl("");
         }
     }
 

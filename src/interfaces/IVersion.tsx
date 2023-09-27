@@ -10,5 +10,6 @@ type IVersion = {
 type IGetVersion = IVersion &{
     createdAt: string,
     updatedAt: string,
+    deploymentUrl: string,
     __v: number
 }

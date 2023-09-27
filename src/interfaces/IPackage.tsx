@@ -21,5 +21,5 @@ type IGetPackage = IPackage & {
     createdBy: string,
     likes: number,
     version: IGetVersion,
-    versions: IGetVersion[]
+    versions: IGetVersion[],
 }

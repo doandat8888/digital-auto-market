@@ -11,7 +11,7 @@ const addNewPackage = (packageAdd: IAddPackage) => {
         license: "1.0.0",
         visibility: packageAdd.visibility,
         authors: packageAdd.authors,
-        downloadUrl: "abc",
+        downloadUrl: packageAdd.downloadUrl,
         deploymentUrl: packageAdd.deploymentUrl,
     })
 }
@@ -24,18 +24,11 @@ const getPackageById = (packageId: string) => {
     return axios.get(`/package/${packageId}`);
 }
 
-const updatePackage = (packageUpdate: IUpdatePackage) => {
+const updatePackage = (packageUpdate: any) => {
     return axios.put(`/package/${packageUpdate._id}`, {
-        name: packageUpdate.name,
-        thumbnail: packageUpdate.thumbnail,
-        images: packageUpdate.images,
+       ...packageUpdate,
         video: "none",
-        shortDesc: packageUpdate.shortDesc,
-        fullDesc: packageUpdate.fullDesc,
         license: "1.0.0",
-        visibility: packageUpdate.visibility,
-        authors: packageUpdate.authors,
-        downloadUrl: "abc",
     });
 }
 

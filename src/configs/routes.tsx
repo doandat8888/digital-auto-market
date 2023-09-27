@@ -17,7 +17,7 @@ const RoutesApp = () => {
             <Route path='/addpackage' element={<AddPackage />}/>
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
-            <Route path='/manageversion' element={<ManageVersion />}/>
+            <Route path='/manageversion/:packageId' element={<ManageVersion />}/>
             <Route path='/updatepackage/:packageId' element={<AddPackage />}/>
         </Routes>
     )

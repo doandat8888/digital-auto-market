@@ -11,6 +11,8 @@ import LoadingModal from "../components/LoadingDialog";
 import { removePackage } from "../redux/package/packageSlice";
 import packageService from "../services/packageService";
 import { AiOutlineEdit } from "react-icons/ai";
+import { Link } from "react-router-dom";
+import NotFound from "../components/404NotFound";
 
 const DetailPackage = () => {
 
@@ -74,17 +76,6 @@ const DetailPackage = () => {
     }, [tokenUser, packageDetail])
 
     useEffect(() => {
-        getAllPackage();
-    }, []);
-
-    useEffect(() => {
-        if(!tokenUser && packageDetail) {
-            setIsLoading(false);
-        }else {
-            if(packageDetail && user) {
-                setIsLoading(false);
-            }
-        }
         if(packageDetail) {
             if(!tokenUser) {
                 setIsLoading(false);
@@ -134,15 +125,9 @@ const DetailPackage = () => {
         }
     }
 
-    const getAllPackage = async() => {
-        const response = await packageService.getAllPackage();
-        if(response && response.data && response.data.data.length > 0) {
-            setPackages(response.data.data);
-        }
-    }
-
     return (
-        <div className={`${isLoading === true ? 'hidden' : ''}`}>
+        <div>
+            {packageDetail ?  <div className={`${isLoading === true ? 'hidden' : ''}`}>
             <LoadingModal open={isLoading} closeModal={onCloseModal}/>
             <button onClick={() => onRemovePackage(packageDetail? packageDetail._id : '')}>Remove package</button>
             <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
@@ -156,7 +141,7 @@ const DetailPackage = () => {
                                 <div className="lg:flex items-center sm:flex">
                                     <p className="lg:text-xl sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
                                     <div className="grow"></div>
-                                    <p className="text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] opacity-80">v {packageDetail?.version.name}</p>
+                                    <Link to={`/manageversion/${packageDetail?._id}`} className="text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] opacity-80">v {packageDetail?.version.name}</Link>
                                 </div>
                                 <p className="text-[12px] sm-text-[14px] lg:text-[16px] opacity-75">{packageDetail?.authors[0]}</p>
                                 <div className="grow"></div>
@@ -169,10 +154,10 @@ const DetailPackage = () => {
                                     <div className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-blue-500 text-white 
                                         px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Like</p> <BiLike />
                                     </div>
-                                    {zipFile &&
-                                        <div onClick={downloadZipFile} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
+                                    {packageDetail?.version.downloadUrl &&
+                                        <a href={packageDetail.version.downloadUrl} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                             px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
-                                        </div>
+                                        </a>
                                     }
                                     {canEdit &&
                                         <div onClick={() => updatePackage(packageDetail)} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-yellow-500 text-white 
@@ -190,7 +175,9 @@ const DetailPackage = () => {
                     </div>
                 </div>
             </div>
+        </div> : <NotFound />}
         </div>
+       
     )
 }
 
