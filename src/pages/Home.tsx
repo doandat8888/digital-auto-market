@@ -5,6 +5,7 @@ import { removeAllPakage } from '../redux/package/packageSlice';
 import LoadingDialog from '../components/LoadingDialog';
 import packageService from '../services/packageService';
 import NotFound from '../components/404NotFound';
+import NoPackage from '../components/NoPackage';
 
 const Home = () => {
 
@@ -19,8 +20,6 @@ const Home = () => {
         let response = await packageService.getAllPackage();
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
-        }else {
-            setIsLoading(false);
         }
     }, []);
 
@@ -30,6 +29,8 @@ const Home = () => {
 
     useEffect(() => {
         if(packageList.length > 0) {
+            setIsLoading(false);
+        }else {
             setIsLoading(false);
         }
     }, [packageList])
@@ -47,7 +48,7 @@ const Home = () => {
 
     return (
         <div>
-            {packageList ? <div className={`${isLoading === true ? 'hidden' : ''}`}>
+            {packageList && packageList.length > 0 ? <div className={`${isLoading === true ? 'hidden' : ''}`}>
             <button onClick={onRemoveAllPackage}>Remove all package</button>
             <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
             <div className="body px-6 py-4">
@@ -57,7 +58,7 @@ const Home = () => {
                 <button hidden onClick={onRemoveAllPackage}>Remove all package</button>
                 <PackageList packages={filterPackageList}/>
             </div>
-        </div> : <NotFound />}
+        </div> : <NoPackage content="There is no packages in the system" />}
         </div>
         
     )
