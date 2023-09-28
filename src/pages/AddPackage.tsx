@@ -1,13 +1,14 @@
-import { BsFileZip } from "react-icons/bs";
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
-import { BiDownload } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { useNavigate, useParams } from "react-router";
 import packageService from "../services/packageService";
 import uploadService from "../services/uploadService";
+import UploadFile from "../components/UploadFile";
+import TextInput from '../components/TextInput';
+import TextArea from '../components/TextArea';
 
 const AddPackage = () => {
 
@@ -39,12 +40,12 @@ const AddPackage = () => {
         const files = event.target.files;
         if (files) {
             const imagePromises = Array.from(files).map((file) => {
-                return new Promise<string>(async(resolve) => {
+                return new Promise<string>(async (resolve) => {
                     if (file) {
                         const formData = new FormData();
                         formData.append('file', file);
                         let response = await uploadService.uploadFile(formData);
-                        if(response && response.status === 201) {
+                        if (response && response.status === 201) {
                             const imgUrl = response.data.url;
                             resolve(imgUrl);
                         }
@@ -60,10 +61,10 @@ const AddPackage = () => {
     const [user, setUser] = useState<IUser>();
 
 
-    const getPackageById = async() => {
-        if(packageId) {
+    const getPackageById = async () => {
+        if (packageId) {
             const response = await packageService.getPackageById(packageId);
-            if(response && response.data) {
+            if (response && response.data) {
                 setPackageUpdate(response.data);
             }
         }
@@ -78,7 +79,7 @@ const AddPackage = () => {
     }, [packageId]);
 
     useEffect(() => {
-        if(packageUpdate) {
+        if (packageUpdate) {
             setPackageName(packageUpdate.name);
             setPackageDescription(packageUpdate.fullDesc);
             setimageCover(packageUpdate.thumbnail);
@@ -103,27 +104,27 @@ const AddPackage = () => {
         }
     }
 
-    const handleInputImgCoverChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputImgCoverChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target?.files?.[0];
         const formData = new FormData();
         if (file) {
             console.log(file);
             formData.append('file', file);
             let response = await uploadService.uploadFile(formData);
-            if(response && response.status === 201) {
+            if (response && response.status === 201) {
                 console.log(response.data.url);
                 setimageCover(response.data.url);
             }
         }
     };
 
-    const handleFileInputChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target?.files?.[0];
         if (file) {
             const formData = new FormData();
             formData.append('file', file);
             let response = await uploadService.uploadFile(formData);
-            if(response && response.status === 201) {
+            if (response && response.status === 201) {
                 let zipFileUrl = response.data.url;
                 setZipFile(response.data.url);
                 setDeploymentUrl(response.data.deploymentUrl);
@@ -132,7 +133,7 @@ const AddPackage = () => {
             }
         }
     };
- 
+
     const onChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMode(event.target?.value);
     }
@@ -140,28 +141,28 @@ const AddPackage = () => {
     const validateInfoPackage = (): boolean => {
         let count = 0;
         const packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, zipFile, mode, user?._id];
-        for(let i = 0; i < packageInfoArr.length; i++) {
-            if(packageInfoArr[i] === "") {
+        for (let i = 0; i < packageInfoArr.length; i++) {
+            if (packageInfoArr[i] === "") {
                 count++;
             }
         }
-        if(count > 0) {
+        if (count > 0) {
             return false;
         }
         return true;
     }
-    
-    const onSaveInfoPackage = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+
+    const onSaveInfoPackage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        if(!packageUpdate) {
+        if (!packageUpdate) {
             try {
                 setIsLoading(true);
-                if(validateInfoPackage() === false) {
+                if (validateInfoPackage() === false) {
                     alert("Missing info package. Please try again");
                     setIsLoading(false);
-                }else {
+                } else {
                     const authorArr: string[] = [];
-                    if(user) {
+                    if (user) {
                         authorArr.push(user.fullName);
                     }
                     const packageObj: IAddPackage = {
@@ -179,13 +180,13 @@ const AddPackage = () => {
                     };
                     try {
                         const response = await packageService.addNewPackage(packageObj);
-                        if(response && response.status === 201) {
+                        if (response && response.status === 201) {
                             alert("Add package successfully!");
-                        } 
+                        }
                     } catch (error) {
                         console.log(error);
                     }
-                    
+
                     setIsLoading(false);
                     navigate('/');
                 }
@@ -194,12 +195,12 @@ const AddPackage = () => {
                 console.log(error);
                 setIsLoading(false);
             }
-        }else {
+        } else {
             try {
                 setIsLoading(true);
                 console.log(zipFile);
                 const authorArr: string[] = [];
-                if(user) {
+                if (user) {
                     authorArr.push(user.fullName);
                 }
                 const packageObj = {
@@ -219,10 +220,10 @@ const AddPackage = () => {
                 //dispatch(updatePackage(packageObj));
                 try {
                     const response = await packageService.updatePackage(packageObj);
-                    if(response && response.status === 200) {
+                    if (response && response.status === 200) {
                         alert("Update info successfully!");
                         navigate('/');
-                    } 
+                    }
                 } catch (error) {
                     console.log(error);
                 }
@@ -233,7 +234,7 @@ const AddPackage = () => {
                 setIsLoading(false);
             }
         }
-        
+
     }
 
     const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
@@ -253,32 +254,32 @@ const AddPackage = () => {
         }
     };
 
-    const onDeleteCoverImage = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
+    const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
         event.preventDefault();
         const imgName = imgLink.replace("http://localhost:9006/data/store-be/", "");
         let response = await uploadService.deleteFile(imgName);
-        if(response && response.status === 200) {
+        if (response && response.status === 200) {
             setimageCover("");
         }
     }
 
-    const onDeleteZipFile = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onDeleteZipFile = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         let response = await uploadService.deleteFile(fileZipName);
-        if(response && response.status === 200) {
+        if (response && response.status === 200) {
             setZipFile("");
             setFileZipName("");
             setDeploymentUrl("");
         }
     }
 
-    const onDeleteDetailImage = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
+    const onDeleteDetailImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         event.preventDefault();
         const detailsImg = [...imageDetailList];
         const imgDelete = detailsImg[index];
         const imgDeleteName = imgDelete.replace("http://localhost:9006/data/store-be/", "");
         let response = await uploadService.deleteFile(imgDeleteName);
-        if(response && response.status === 200) {
+        if (response && response.status === 200) {
             detailsImg.splice(index, 1);
             setimageDetailList(detailsImg);
         }
@@ -290,50 +291,14 @@ const AddPackage = () => {
 
     return (
         <div>
-            <LoadingModal open={isLoading} closeModal={onCloseModal}/>
+            <LoadingModal open={isLoading} closeModal={onCloseModal} />
             <div className="flex justify-center">
                 <form className="w-[90%] p-5 bg-white">
                     <div className="space-y-12">
                         <div className="border-b border-gray-900/10 pb-12">
                             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3">
-                                <div className="sm:col-span-4">
-                                    <label htmlFor="packagename" className="block text-sm font-bold leading-6 text-gray-900">
-                                        Package's name
-                                    </label>
-                                    <div className="mt-2">
-                                        <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                                            <input
-                                                required
-                                                type="text"
-                                                className="block flex-1 border-0 bg-transparent py-1.5 px-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                                placeholder="Enter your package's name"
-                                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target?.value)}
-                                                value={packageName}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-span-full">
-                                    <label htmlFor="about" className="block text-sm font-bold leading-6 text-gray-900">
-                                        Description
-                                    </label>
-                                    <div className="mt-2">
-                                        <textarea
-                                            required
-                                            id="about"
-                                            name="about"
-                                            rows={3}
-                                            className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                            placeholder="Write a few sentences about your package."
-                                            defaultValue={''}
-                                            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target?.value)}
-                                            value={packageDescription}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-span-full">
-
-                                </div>
+                                <TextInput title="Package name" value={packageName} placeholderStr="Enter your package name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
+                                <TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" />
                                 <div className="col-span-full">
                                     <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
                                         Cover photo
@@ -347,7 +312,7 @@ const AddPackage = () => {
                                                     className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                                 >
                                                     <span>Upload image</span>
-                                                    <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only"/>
+                                                    <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only" />
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>
                                             </div>
@@ -378,7 +343,7 @@ const AddPackage = () => {
                                                     className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                                 >
                                                     <span>Upload images</span>
-                                                    <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file" className="sr-only" onDrag={handleDrag}/>
+                                                    <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file" className="sr-only" onDrag={handleDrag} />
                                                 </label>
                                                 <p className="pl-1">or drag and drop</p>
                                             </div>
@@ -390,7 +355,7 @@ const AddPackage = () => {
                                     {imageDetailList && imageDetailList.length > 0 && imageDetailList.map((base64, index) => (
                                         <div className="relative mx-2">
                                             <img
-                                                className="pt-4 w-full h-[200px] object-cover" 
+                                                className="pt-4 w-full h-[200px] object-cover"
                                                 key={index}
                                                 src={base64}
                                                 alt={`Uploaded ${index}`}
@@ -399,47 +364,7 @@ const AddPackage = () => {
                                         </div>
                                     ))}
                                 </div>
-                                <div className="col-span-full">
-                                    <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
-                                        Source code
-                                    </label>
-                                    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                                        <div className="text-center">
-                                            <BsFileZip className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-                                            <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                                <label
-                                                    htmlFor="file-upload"
-                                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                                >
-                                                    <span>Upload zip file</span>
-                                                    <input accept=".zip" required id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileInputChange}/>
-                                                </label>
-                                                <p className="pl-1">or drag and drop</p>
-                                            </div>
-                                            <p className="text-xs leading-5 text-gray-600">File up to 10MB</p>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                <div className="file-container py-[20px] col-span-full">
-                                    {zipFile && (
-                                        <div className=" relative w-1/2 sm:w-1/3 lg:w-1/5 px-2 py-2 border border-gray-400 rounded-lg">
-                                            <BsFileZip className="mx-auto h-14 w-14 text-gray-300" aria-hidden="true" />
-                                            <div className="grow"></div>
-                                            <div className="flex items-center mt-4 justify-between">
-                                                <p className="text-sm opacity-80">{fileZipName ? fileZipName : 'source.zip'}</p>
-                                                <a
-                                                    href={zipFile}
-                                                >
-                                                    <BiDownload />
-                                                </a>
-                                                
-                                            </div>
-                                            <button className=" hover:opacity-80 absolute top-1 right-2 rounded-[50%] text-[10px] bg-slate-400 text-white px-[8px] py-[4px] z-40" onClick={onDeleteZipFile}>x</button>
-                                        </div>
-                                    )}
-                                   
-                                </div>
+                                <UploadFile zipFile={zipFile} fileZipName={fileZipName} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />
                             </div>
                         </div>
                         <div className="border-b border-gray-900/10 pb-12">

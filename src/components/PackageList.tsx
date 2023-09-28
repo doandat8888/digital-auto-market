@@ -1,7 +1,7 @@
 import PackageItem from "./PackageItem";
 
 interface IProps {
-    packages: IPackage[];
+    packages: IGetPackage[];
 }
 
 const PackageList = (props: IProps) => {
@@ -10,7 +10,7 @@ const PackageList = (props: IProps) => {
 
     return (
         <div className="w-full package-list grid lg:grid-cols-3 justify-between sm:grid-cols-2 grid-cols-1">
-            {packages && packages.length > 0 && packages.map((packageItem: IPackage) => (
+            {packages && packages.length > 0 && packages.map((packageItem: IGetPackage) => (
                 <PackageItem packageItem={packageItem}/>
             ))}
         </div>

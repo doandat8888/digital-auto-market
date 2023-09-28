@@ -4,7 +4,7 @@ import { BsDownload } from 'react-icons/bs';
 import 'swiper/css';
 import Slideshow from "../components/ImageSlider";
 import { useDispatch } from "react-redux";
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, version } from 'react';
 import handleFile from "../utils/handleFile";
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
@@ -23,6 +23,8 @@ const DetailPackage = () => {
     const zipFile: Blob | null = null;
     const [isLoading, setIsLoading] = useState(true);
     const [canEdit, setCanEdit] = useState(false);
+    const [currentVersion, setCurrentVersion] = useState<IGetVersion>();
+    const [currentVersionId, setCurrentVersionId] = useState<string>("");
     //Dispatch
     const dispatch = useDispatch();
 
@@ -59,6 +61,12 @@ const DetailPackage = () => {
         }
     }, [user]);
 
+    useEffect(() => {
+        if(packageDetail) {
+            setCurrentVersion(packageDetail.version);
+        }
+    }, [packageDetail])
+
     const getPackageInfo = async() => {
         if(id) {
             const response = await packageService.getPackageById(id);
@@ -73,17 +81,7 @@ const DetailPackage = () => {
 
     useEffect(() => {
         getPackageInfo();
-    }, [tokenUser, packageDetail])
-
-    useEffect(() => {
-        if(packageDetail) {
-            if(!tokenUser) {
-                setIsLoading(false);
-            }else if(user) {
-                setIsLoading(false);
-            }
-        }
-    }, [packages])
+    }, [user])
 
     const getUserInfo = async () => {
         try {
@@ -125,6 +123,19 @@ const DetailPackage = () => {
         }
     }
 
+    const handleChangeVersion = (versionId: string) => {
+        setIsLoading(true);
+        findVersionById(versionId);
+        setIsLoading(false);
+    }
+
+    const findVersionById = (versionId: string) => {
+        if(packageDetail && packageDetail.versions) {
+            const version: IGetVersion | undefined = packageDetail.versions.find((version) => version._id === versionId);
+            setCurrentVersion(version);
+        }
+    }
+
     return (
         <div>
             {packageDetail ?  <div className={`${isLoading === true ? 'hidden' : ''}`}>
@@ -141,6 +152,12 @@ const DetailPackage = () => {
                                 <div className="lg:flex items-center sm:flex">
                                     <p className="lg:text-xl sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
                                     <div className="grow"></div>
+                                    <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)} className="border px-2 py-1 border-gray-500 rounded">
+                                        {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
+                                            <option value={version._id}>{version.name}</option>
+                                        ))}
+                                    </select>
+                                    
                                     <Link to={`/manageversion/${packageDetail?._id}`} className="text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] opacity-80">v {packageDetail?.version.name}</Link>
                                 </div>
                                 <p className="text-[12px] sm-text-[14px] lg:text-[16px] opacity-75">{packageDetail?.authors[0]}</p>
@@ -155,7 +172,7 @@ const DetailPackage = () => {
                                         px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Like</p> <BiLike />
                                     </div>
                                     {packageDetail?.version.downloadUrl &&
-                                        <a href={packageDetail.version.downloadUrl} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
+                                        <a href={currentVersion?.downloadUrl} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                             px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
                                         </a>
                                     }

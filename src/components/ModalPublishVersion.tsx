@@ -1,23 +1,32 @@
-import {Box, Modal, Typography} from "@mui/material"
-import { useState } from "react";
-import { BsFileZip } from "react-icons/bs";
+import {Box, Modal} from "@mui/material"
+import { useEffect, useState } from "react";
 import uploadService from "../services/uploadService";
-import { BiDownload } from "react-icons/bi";
+import UploadFile from "./UploadFile";
+import TextInput from "./TextInput";
+import TextArea from "./TextArea";
+import versionService from "../services/versionService";
 
 interface IProps {
     open: boolean,
-    handleClose: () => void
+    handleClose: () => void,
+    packageId: string,
+    refreshData: () => void,
+    versionUpdate: IUpdateVersion | undefined
 }
 
 const ModalPublishVersion = (props: IProps) => {
 
-    const {open, handleClose} = props;
+    const {open, handleClose, packageId, refreshData, versionUpdate} = props;
+    //Version info
+    const [versionName, setVersionName] = useState("");
+    const [versionDesc, setVersionDesc] = useState("");
 
     //Zip file
     const [zipFile, setZipFile] = useState<string>("");
     const [deploymentUrl, setDeploymentUrl] = useState("");
     // const [zipBase64, setZipBase64] = useState<string>("");
     const [fileZipName, setFileZipName] = useState<string>("");
+    
 
     const style = {
         position: 'absolute' as 'absolute',
@@ -29,7 +38,9 @@ const ModalPublishVersion = (props: IProps) => {
         boxShadow: 24,
         p: 4,
         borderRadius: 2,
-        width: "80%"
+        width: "80%",
+        overflow: "scroll",
+        height: "100vh",
     };
 
     const handleFileInputChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,54 +69,94 @@ const ModalPublishVersion = (props: IProps) => {
         }
     }
 
+    const emptyData = () => {
+        setVersionName("");
+        setVersionDesc("");
+        setZipFile("");
+        setFileZipName("");
+        setDeploymentUrl("");
+    }
+
+    const onSaveInfoVersion = async() => {
+        if(!versionUpdate) {
+            let versionAdd: IAddVersion = {
+                name: versionName,
+                downloadUrl: zipFile,
+                deploymentUrl: deploymentUrl,
+                desc: versionDesc,
+                packageId: packageId
+            }
+            try {
+                const response = await versionService.addVersion(versionAdd);
+                if(response && response.status === 201) {
+                    alert("Add new version successfully!");
+                    emptyData();
+                    refreshData();
+                    handleClose();
+                }
+            } catch (error) {
+                console.log(error);
+            }
+            
+        }else {
+            let versionEdit: IUpdateVersion = {
+                name: versionName,
+                downloadUrl: zipFile,
+                deploymentUrl: deploymentUrl,
+                desc: versionDesc,
+                packageId: packageId,
+                _id: versionUpdate._id
+            }
+            try {
+                const response = await versionService.updateVersion(versionEdit);
+                if(response && response.status === 200) {
+                    alert("Update version successfully!");
+                    emptyData();
+                    refreshData();
+                    handleClose();
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        
+    }
+
+    useEffect(() => {
+        if(versionUpdate) {
+            setVersionName(versionUpdate.name);
+            setVersionDesc(versionUpdate.desc);
+            setDeploymentUrl(versionUpdate.deploymentUrl);
+            setZipFile(versionUpdate.downloadUrl);
+        }
+    }, [versionUpdate])
+
+    const onCloseModal = () => {
+        emptyData();
+        handleClose();
+    }
+
     return (
         <div>
             <Modal
                 open={open}
-                onClose={handleClose}
+                onClose={onCloseModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
+                
             >
                 <Box sx={style}>
-                    <div className="col-span-full">
-                        <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
-                            Source code
-                        </label>
-                        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                            <div className="text-center">
-                                <BsFileZip className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-                                <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                    <label
-                                        htmlFor="file-upload"
-                                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                    >
-                                        <span>Upload zip file</span>
-                                        <input accept=".zip" required id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileInputChange}/>
-                                    </label>
-                                    <p className="pl-1">or drag and drop</p>
-                                </div>
-                                <p className="text-xs leading-5 text-gray-600">File up to 10MB</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="file-container py-[20px] col-span-full">
-                        {zipFile && (
-                            <div className=" relative w-1/2 sm:w-1/3 lg:w-1/5 px-2 py-2 border border-gray-400 rounded-lg">
-                                <BsFileZip className="mx-auto h-14 w-14 text-gray-300" aria-hidden="true" />
-                                <div className="grow"></div>
-                                <div className="flex items-center mt-4 justify-between">
-                                    <p className="text-sm opacity-80">{fileZipName ? fileZipName : 'source.zip'}</p>
-                                    <a
-                                        href={zipFile}
-                                    >
-                                        <BiDownload />
-                                    </a>
-                                    
-                                </div>
-                                <button className=" hover:opacity-80 absolute top-1 right-2 rounded-[50%] text-[10px] bg-slate-400 text-white px-[8px] py-[4px] z-40" onClick={onDeleteZipFile}>x</button>
-                            </div>
-                        )}
-                        
+                    <TextInput title="Version name" value={versionName} placeholderStr="Enter your version name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setVersionName(event.target.value)}/>
+                    <TextArea title="Description" value={versionDesc} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setVersionDesc(event.target.value)} placeHolderStr="Write some sentences about your version"/>
+                    <UploadFile zipFile={zipFile} fileZipName={fileZipName} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile}/>
+                    <div className="w-full flex justify-end">
+                        <button
+                            type="submit"
+                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            onClick={onSaveInfoVersion}
+                        >
+                            Save
+                        </button>
                     </div>
                 </Box>
             </Modal>
