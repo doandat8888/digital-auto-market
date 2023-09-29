@@ -50,12 +50,12 @@ const ModalPublishVersion = (props: IProps) => {
         if (file) {
             const formData = new FormData();
             formData.append('file', file);
-            let response = await uploadService.uploadFile(formData);
+            const response = await uploadService.uploadFile(formData);
             if(response && response.status === 201) {
-                let zipFileUrl = response.data.url;
+                const zipFileUrl = response.data.url;
                 setZipFile(response.data.url);
                 setDeploymentUrl(response.data.deploymentUrl);
-                const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/", "");
+                const zipFileName = zipFileUrl.replace(import.meta.env.VITE_APP_DATA_STORAGE_URL, "");
                 setFileZipName(zipFileName);
             }
         }
@@ -63,7 +63,7 @@ const ModalPublishVersion = (props: IProps) => {
 
     const onDeleteZipFile = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        let response = await uploadService.deleteFile(fileZipName);
+        const response = await uploadService.deleteFile(fileZipName);
         if(response && response.status === 200) {
             setZipFile("");
             setFileZipName("");
@@ -82,7 +82,7 @@ const ModalPublishVersion = (props: IProps) => {
     const onSaveInfoVersion = async() => {
         setIsLoading(true);
         if(!versionUpdate) {
-            let versionAdd: IAddVersion = {
+            const versionAdd: IAddVersion = {
                 name: versionName,
                 downloadUrl: zipFile,
                 deploymentUrl: deploymentUrl,
@@ -103,7 +103,7 @@ const ModalPublishVersion = (props: IProps) => {
             }
             
         }else {
-            let versionEdit: IUpdateVersion = {
+            const versionEdit: IUpdateVersion = {
                 name: versionName,
                 downloadUrl: zipFile,
                 deploymentUrl: deploymentUrl,
