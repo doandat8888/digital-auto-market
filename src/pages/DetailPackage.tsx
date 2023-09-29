@@ -4,38 +4,29 @@ import { BsDownload } from 'react-icons/bs';
 import 'swiper/css';
 import Slideshow from "../components/ImageSlider";
 import { useDispatch } from "react-redux";
-import React, { useState, useEffect, version } from 'react';
-import handleFile from "../utils/handleFile";
+import React, { useState, useEffect } from 'react';
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
-import { removePackage } from "../redux/package/packageSlice";
 import packageService from "../services/packageService";
-import { AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineComment, AiOutlineEdit } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import NotFound from "../components/404NotFound";
+import ModalCommentRating from "../components/ModalCommentRating";
 
 const DetailPackage = () => {
 
     const [packageDetail, setPackageDetail] = useState<IGetPackage>();
     const { id } = useParams();
-    const [packages, setPackages] = useState<IGetPackage[]>([]);
     //const packages = useSelector((state: RootState) => state.packages.value);
-    const zipFile: Blob | null = null;
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [canEdit, setCanEdit] = useState(false);
     const [currentVersion, setCurrentVersion] = useState<IGetVersion>();
-    const [currentVersionId, setCurrentVersionId] = useState<string>("");
+    const [openModalCommentRating, setOpenModalCommentRating] = useState<boolean>(false);
     //Dispatch
     const dispatch = useDispatch();
 
     //Navigate
     const navigate = useNavigate();
-
-    // if(packageDetail?.source) {
-    //     const sourceZip: string = packageDetail?.source;
-    //     zipFile = handleFile.base64ToBlob(sourceZip);
-    //     handleFile.base64ToBlob(sourceZip);
-    // }
 
     //User info
     const [tokenUser, setTokenUser] = useState<string>("");
@@ -44,22 +35,15 @@ const DetailPackage = () => {
     //Get user info
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
-        console.log("Token details: " + localToken);
         setTokenUser(localToken);
     }, [])
 
-
     useEffect(() => {
         if(tokenUser !== "") {
+            setIsLoading(true);
             getUserInfo();
         }
     }, [tokenUser]);
-
-    useEffect(() => {
-        if(user) {
-            checkPackage();
-        }
-    }, [user]);
 
     useEffect(() => {
         if(packageDetail) {
@@ -70,8 +54,9 @@ const DetailPackage = () => {
     const getPackageInfo = async() => {
         if(id) {
             const response = await packageService.getPackageById(id);
-            if(response) {
+            if(response && response.data) {
                 setPackageDetail(response.data);
+                checkPackage();
                 if(user) {
                     setIsLoading(false);
                 }
@@ -92,10 +77,6 @@ const DetailPackage = () => {
         } catch (error) {
             console.log(error);
         }
-    }
-
-    const downloadZipFile = () => {
-        handleFile.downloadZipFile(zipFile);
     }
 
     const onCloseModal = () => {
@@ -138,61 +119,69 @@ const DetailPackage = () => {
 
     return (
         <div>
-            {packageDetail ?  <div className={`${isLoading === true ? 'hidden' : ''}`}>
-            <LoadingModal open={isLoading} closeModal={onCloseModal}/>
-            <button onClick={() => onRemovePackage(packageDetail? packageDetail._id : '')}>Remove package</button>
-            <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
-                <div className="w-full h-full flex items-center justify-center">
-                    <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 py-2 md:py-4 rounded-lg">
-                        <div className="w-full lg:flex md:flex bg-white rounded-lg py-4 pl-3 pr-1 flex max-h-[300px]">
-                            <div className="w-1/3 grid lg:place-items-center sm:place-items-center md:place-items-center">
-                                <img src={packageDetail?.thumbnail} alt="" className="w-[80%] max-h-[180px] rounded-lg max-w-[300px] object-cover"/>
-                            </div>
-                            <div className="w-2/3 px-6 flex flex-col">
-                                <div className="lg:flex items-center sm:flex">
-                                    <p className="lg:text-xl sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
-                                    <div className="grow"></div>
-                                    <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)} className="border px-2 py-1 border-gray-500 rounded">
-                                        {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
-                                            <option value={version._id}>{version.name}</option>
-                                        ))}
-                                    </select>
-                                    
-                                    <Link to={`/manageversion/${packageDetail?._id}`} className="text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] opacity-80">v {packageDetail?.version.name}</Link>
+            {packageDetail ?  
+            <div className={`${isLoading === true ? 'hidden' : ''}`}>
+                <LoadingModal open={isLoading} closeModal={onCloseModal}/>
+                <button onClick={() => onRemovePackage(packageDetail? packageDetail._id : '')}>Remove package</button>
+                <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
+                    <div className="w-full h-full flex items-center justify-center">
+                        <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 py-2 md:py-4 rounded-lg">
+                            <div className="w-full lg:flex md:flex bg-white rounded-lg py-4 pl-3 pr-1 flex max-h-[300px]">
+                                <div className="w-1/3 grid lg:place-items-center sm:place-items-center md:place-items-center">
+                                    <img src={packageDetail?.thumbnail} alt="" className="w-[80%] max-h-[180px] rounded-lg max-w-[300px] object-cover"/>
                                 </div>
-                                <p className="text-[12px] sm-text-[14px] lg:text-[16px] opacity-75">{packageDetail?.authors[0]}</p>
-                                <div className="grow"></div>
-                                <div className="flex">
-                                    <div className="flex items-center mx-1"><BiLike /><p className="text-[14px] ml-[2px]">{packageDetail?.likes??0}</p></div>
-                                   {/*  <div className="flex items-center mx-1"><BsDownload /><p className="text-[14px] ml-[2px]">{packageDetail?.download??0}</p></div> */}
-                                </div>
-                                <div className="grow"></div>
-                                <div className="lg:flex md:flex sm-flex">
-                                    <div className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-blue-500 text-white 
-                                        px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Like</p> <BiLike />
+                                <div className="w-2/3 px-6 flex flex-col">
+                                    <div className="lg:flex items-center sm:flex">
+                                        <p className="lg:text-xl sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
+                                        <div className="grow"></div>
+                                        <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)} className="border px-2 py-1 border-gray-500 rounded">
+                                            {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
+                                                <option value={version._id}>{version.name}</option>
+                                            ))}
+                                        </select>
+                                        <Link to={`/manageversion/${packageDetail?._id}`} className="mx-2 text-[10px] sm:text-[12px] md:text-[12px] lg:text-[14px] opacity-80">Realse versions</Link>
                                     </div>
-                                    {packageDetail?.version.downloadUrl &&
-                                        <a href={currentVersion?.downloadUrl} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
-                                            px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
-                                        </a>
-                                    }
-                                    {canEdit &&
-                                        <div onClick={() => updatePackage(packageDetail)} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-yellow-500 text-white 
-                                            px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Edit</p> <AiOutlineEdit />
+                                    <p className="text-[12px] sm-text-[14px] lg:text-[16px] opacity-75">{packageDetail?.authors[0]}</p>
+                                    <div className="grow"></div>
+                                    <div className="flex">
+                                        <div className="flex items-center mx-1"><BiLike /><p className="text-[14px] ml-[2px]">{packageDetail?.likes??0}</p></div>
+                                    </div>
+                                    <div className="grow"></div>
+                                    <div className="lg:flex md:flex sm-flex">
+                                        <div className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-blue-500 text-white 
+                                            px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Like</p> <BiLike />
                                         </div>
-                                    }
+                                        {packageDetail?.version.downloadUrl &&
+                                            <a href={currentVersion?.downloadUrl} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
+                                                px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
+                                            </a>
+                                        }
+                                        {canEdit &&
+                                            <div onClick={() => updatePackage(packageDetail)} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-yellow-500 text-white 
+                                                px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Update</p> <AiOutlineEdit />
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
+                            <div className="my-4 flex">
+                                <div className="description">
+                                    <p className="text-xl font-bold">Description</p>
+                                    <p>{packageDetail?.fullDesc}</p>
+                                </div>
+                            </div>
+                            <Slideshow slideImages={packageDetail?.images}/>
+                            <div className="comment-rating my-6">
+                                <div className="flex justify-between">
+                                    <div className="text-xl">Reviews</div>
+                                    <button onClick={() => setOpenModalCommentRating(true)} className="border-none text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 text-white items-center cursor-pointer rounded bg-orange-500"><AiOutlineComment /><p className="sm:block sm:ml-2 hidden ">Comment & rating</p></button>
+                                </div>
+                            </div>
+                            <ModalCommentRating packageId={packageDetail._id} createdBy={packageDetail.createdBy} versionId={currentVersion ? currentVersion._id : ''} open={openModalCommentRating} onCloseModal={() => setOpenModalCommentRating(false)}/>
                         </div>
-                        <div className="description my-4">
-                            <p className="text-xl font-bold">Description</p>
-                            <p>{packageDetail?.fullDesc}</p>
-                        </div>
-                        <Slideshow slideImages={packageDetail?.images}/>
                     </div>
                 </div>
-            </div>
-        </div> : <NotFound />}
+            </div> : <NotFound />}
         </div>
        
     )

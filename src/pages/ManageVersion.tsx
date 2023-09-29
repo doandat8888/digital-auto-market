@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
 import ManageVersionTable from "../components/ManageVersionTable";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import versionService from "../services/versionService";
 import packageService from "../services/packageService";
 import LoadingModal from "../components/LoadingDialog";
 import userService from "../services/userService";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import ModalPublishVersion from "../components/ModalPublishVersion";
+import ModalConfirmDelete from "../components/ModalConfirmDelete";
 
 const ManageVersion = () => {
 
     const [versionList, setVersionList] = useState<IGetVersion[]>([]);
+    const [versionDeleteId, setVersionDeleteId] = useState<string>("");
     const [canEdit, setCanEdit] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const { packageId } = useParams();
     const [packageDetail, setPackageDetail] = useState<IGetPackage>();
     //User info
@@ -21,13 +23,19 @@ const ManageVersion = () => {
 
     //Open modal publish version
     const [openModalPublish, setOpenModalPublish] = useState<boolean>(false);
+    const [openModalConfirmDelete, setopenModalConfirmDelete] = useState(false);
+
+    //Navigate
+    const navigate = useNavigate();
 
     //Get user info
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
-        console.log("Token details: " + localToken);
-        setTokenUser(localToken);
-    }, [])
+        if(localToken !== "") {
+            setIsLoading(true);
+            setTokenUser(localToken);
+        }
+    }, []);
 
     //Update version
     const [versionUpdate, setVersionUpdate] = useState<IUpdateVersion | undefined>();
@@ -75,14 +83,22 @@ const ManageVersion = () => {
     }
 
     const onDeleteVersion = async(versionId: string) => {
-        try {
-            const response = await versionService.deleteVersion(versionId);
-            if(response && response.status === 200) {
-                alert("Delete version successfully!");
-                getVersionList();
+        setopenModalConfirmDelete(true);
+        setVersionDeleteId(versionId);
+        
+    }
+
+    const removeVersion = async() => {
+        if(versionDeleteId) {
+            try {
+                const response = await versionService.deleteVersion(versionDeleteId);
+                if(response && response.status === 200) {
+                    alert("Delete version successfully!");
+                    getVersionList();
+                }
+            } catch (error) {
+                console.log(error);
             }
-        } catch (error) {
-            
         }
     }
 
@@ -118,11 +134,12 @@ const ManageVersion = () => {
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>
             <LoadingModal open={isLoading} closeModal={onCloseModal}/>
-            <div className="title my-10 text-center font-bold text-2xl">RELEASE VERSION</div>
+            <div className="title my-10 text-center font-bold text-2xl">RELEASE VERSIONS</div>
             <div className="body mx-6">
-                <button onClick={() => setOpenModalPublish(true)} className=" my-4 border-none outline-none flex justify-center mr-2 px-4 py-2 text-white items-center cursor-pointer rounded bg-green-400"><AiOutlineCloudUpload /><p className="lg:block lg:ml-2">Publish new version</p></button>
+                {canEdit && <button onClick={() => setOpenModalPublish(true)} className=" my-4 border-none outline-none flex justify-center mr-2 px-4 py-2 text-white items-center cursor-pointer rounded bg-green-400"><AiOutlineCloudUpload /><p className="lg:block lg:ml-2">Publish new version</p></button>}
                 <ManageVersionTable onDeleteVersion={onDeleteVersion} canEdit={canEdit} versionList={versionList} onUpdateVersion={onUpdateVersion}/>
                 <ModalPublishVersion versionUpdate={versionUpdate} refreshData={getVersionList} open={openModalPublish} handleClose={handleCloseModal} packageId={packageId ? packageId : ''}/>
+                <ModalConfirmDelete remove={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)}/>
             </div>
         </div>
     )

@@ -5,6 +5,7 @@ import UploadFile from "./UploadFile";
 import TextInput from "./TextInput";
 import TextArea from "./TextArea";
 import versionService from "../services/versionService";
+import LoadingModal from "./LoadingDialog";
 
 interface IProps {
     open: boolean,
@@ -26,8 +27,9 @@ const ModalPublishVersion = (props: IProps) => {
     const [deploymentUrl, setDeploymentUrl] = useState("");
     // const [zipBase64, setZipBase64] = useState<string>("");
     const [fileZipName, setFileZipName] = useState<string>("");
-    
 
+    const [isLoading, setIsLoading] = useState(false);
+    
     const style = {
         position: 'absolute' as 'absolute',
         top: '50%',
@@ -78,6 +80,7 @@ const ModalPublishVersion = (props: IProps) => {
     }
 
     const onSaveInfoVersion = async() => {
+        setIsLoading(true);
         if(!versionUpdate) {
             let versionAdd: IAddVersion = {
                 name: versionName,
@@ -93,6 +96,7 @@ const ModalPublishVersion = (props: IProps) => {
                     emptyData();
                     refreshData();
                     handleClose();
+                    setIsLoading(false);
                 }
             } catch (error) {
                 console.log(error);
@@ -114,6 +118,7 @@ const ModalPublishVersion = (props: IProps) => {
                     emptyData();
                     refreshData();
                     handleClose();
+                    setIsLoading(false);
                 }
             } catch (error) {
                 console.log(error);
@@ -138,6 +143,7 @@ const ModalPublishVersion = (props: IProps) => {
 
     return (
         <div>
+            <LoadingModal open={isLoading} closeModal={() => setIsLoading(false)}/>
             <Modal
                 open={open}
                 onClose={onCloseModal}
