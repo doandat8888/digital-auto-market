@@ -12,6 +12,8 @@ import { AiOutlineComment, AiOutlineEdit } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import NotFound from "../components/404NotFound";
 import ModalCommentRating from "../components/ModalCommentRating";
+import reviewService from "../services/reviewService";
+import ReviewItem from "../components/ReviewItem";
 
 const DetailPackage = () => {
 
@@ -32,6 +34,10 @@ const DetailPackage = () => {
     const [tokenUser, setTokenUser] = useState<string>("");
     const [user, setUser] = useState<IUser | null>();
 
+    //Review
+    const [reviews, setReviews] = useState<IReview[]>();
+    const [reviewsFilter, setReviewsFilter] = useState<IReview[]>();
+
     //Get user info
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
@@ -48,6 +54,9 @@ const DetailPackage = () => {
     useEffect(() => {
         if(packageDetail) {
             setCurrentVersion(packageDetail.version);
+            if(reviews && reviews.length > 0) {
+                getFilterReview();
+            }
         }
     }, [packageDetail])
 
@@ -117,6 +126,34 @@ const DetailPackage = () => {
         }
     }
 
+    useEffect(() => {
+        getAllReview();
+    }, [reviews])
+
+    const getAllReview = async() => {
+        const response = await reviewService.getAllReview();
+        if(response && response.data && response.data.data.length > 0) {
+            setReviews(response.data.data);
+        }
+    }
+
+    const getFilterReview = () => {
+        if(reviews && reviews.length > 0) {
+            const reviewsFiler = reviews.filter((review) => review.packageId === packageDetail?._id && review.versionId === currentVersion?._id);
+            if(reviewsFiler && reviewsFiler.length > 0) {
+                setReviewsFilter(reviewsFiler);
+            }
+        }
+    }
+
+    const onClickBtnReview = () => {
+        if(!tokenUser) {
+            navigate('/login');
+        }else {
+            setOpenModalCommentRating(true);
+        }
+    }
+
     return (
         <div>
             {packageDetail ?  
@@ -174,10 +211,15 @@ const DetailPackage = () => {
                             <div className="comment-rating my-6">
                                 <div className="flex justify-between">
                                     <div className="text-xl">Reviews</div>
-                                    <button onClick={() => setOpenModalCommentRating(true)} className="border-none text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 text-white items-center cursor-pointer rounded bg-orange-500"><AiOutlineComment /><p className="sm:block sm:ml-2 hidden ">Comment & rating</p></button>
+                                    <button onClick={onClickBtnReview} className="border-none text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 text-white items-center cursor-pointer rounded bg-orange-500"><AiOutlineComment /><p className="sm:block sm:ml-2 hidden ">Comment & rating</p></button>
+                                </div>
+                                <div className="w-full bg-white rounded-lg mt-4 py-4 pl-3 pr-1">
+                                    {reviewsFilter && reviewsFilter.length > 0 && reviewsFilter.map((review) => (
+                                        <ReviewItem rating={review.rating} comment={review.content} createdBy={review.createdBy}/>
+                                    ))}
                                 </div>
                             </div>
-                            <ModalCommentRating packageId={packageDetail._id} createdBy={packageDetail.createdBy} versionId={currentVersion ? currentVersion._id : ''} open={openModalCommentRating} onCloseModal={() => setOpenModalCommentRating(false)}/>
+                            <ModalCommentRating refreshData={getFilterReview} packageId={packageDetail._id} createdBy={packageDetail.createdBy} versionId={currentVersion ? currentVersion._id : ''} open={openModalCommentRating} onCloseModal={() => setOpenModalCommentRating(false)}/>
                         </div>
                     </div>
                 </div>

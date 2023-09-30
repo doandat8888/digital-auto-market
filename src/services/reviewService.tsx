@@ -6,6 +6,12 @@ const addReview = (review: IReview) => {
     })
 }
 
+
+const getAllReview = () => {
+    return axios.get('/review');
+}
+
 export default {
-    addReview
+    addReview,
+    getAllReview
 }

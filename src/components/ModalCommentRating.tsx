@@ -2,8 +2,6 @@ import { Box, Modal } from "@mui/material";
 import TextArea from "./TextArea";
 import { useState } from "react";
 import Rating from "./Rating";
-import { AiFillStar } from "react-icons/ai";
-import versionService from "../services/versionService";
 import reviewService from "../services/reviewService";
 
 interface IProps {
@@ -12,11 +10,12 @@ interface IProps {
     packageId: string,
     versionId: string,
     createdBy: string,
+    refreshData: () => void
 }
 
 const ModalCommentRating = (props: IProps) => {
 
-    const { open, onCloseModal, packageId, versionId, createdBy } = props;
+    const { open, onCloseModal, packageId, versionId, createdBy, refreshData } = props;
     const [stars, setStars] = useState<number>(0);
     const starArr = [1, 2, 3, 4, 5];
     const [comment, setComment] = useState("");
@@ -58,6 +57,8 @@ const ModalCommentRating = (props: IProps) => {
                 const response = await reviewService.addReview(review);
                 if(response && response.status === 201) {
                     alert("Sucessfully!");
+                    refreshData();
+                    onCloseModal();
                     emptyData();
                 }
             } catch (error: any) {
@@ -71,10 +72,15 @@ const ModalCommentRating = (props: IProps) => {
         setStars(0);
     }
 
+    const onCloseModalCommentRating = () => {
+        emptyData();
+        onCloseModal();
+    }
+
     return (
         <Modal
             open={open}
-            onClose={onCloseModal}
+            onClose={onCloseModalCommentRating}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
