@@ -26,8 +26,6 @@ const AddPackage = () => {
     const [fileZipName, setFileZipName] = useState<string>("");
     //Radio type
     const [mode, setMode] = useState("public");
-    //Dispatch
-    const dispatch = useDispatch();
     //Token
     const token = localStorage.getItem("token");
     //Loading 
@@ -40,11 +38,11 @@ const AddPackage = () => {
         const files = event.target.files;
         if (files) {
             const imagePromises = Array.from(files).map((file) => {
-                return new Promise<string>(async (resolve) => {
+                return new Promise<string>(async(resolve) => {
                     if (file) {
                         const formData = new FormData();
                         formData.append('file', file);
-                        let response = await uploadService.uploadFile(formData);
+                        const response = await uploadService.uploadFile(formData);
                         if (response && response.status === 201) {
                             const imgUrl = response.data.url;
                             resolve(imgUrl);
@@ -110,7 +108,7 @@ const AddPackage = () => {
         if (file) {
             console.log(file);
             formData.append('file', file);
-            let response = await uploadService.uploadFile(formData);
+            const response = await uploadService.uploadFile(formData);
             if (response && response.status === 201) {
                 console.log(response.data.url);
                 setimageCover(response.data.url);
@@ -123,9 +121,9 @@ const AddPackage = () => {
         if (file) {
             const formData = new FormData();
             formData.append('file', file);
-            let response = await uploadService.uploadFile(formData);
+            const response = await uploadService.uploadFile(formData);
             if (response && response.status === 201) {
-                let zipFileUrl = response.data.url;
+                const zipFileUrl = response.data.url;
                 setZipFile(response.data.url);
                 setDeploymentUrl(response.data.deploymentUrl);
                 const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/", "");
@@ -256,8 +254,8 @@ const AddPackage = () => {
 
     const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
         event.preventDefault();
-        const imgName = imgLink.replace("http://localhost:9006/data/store-be/", "");
-        let response = await uploadService.deleteFile(imgName);
+        const imgName = imgLink.replace(import.meta.env.VITE_APP_DATA_STORAGE_URL, "");
+        const response = await uploadService.deleteFile(imgName);
         if (response && response.status === 200) {
             setimageCover("");
         }
@@ -265,7 +263,7 @@ const AddPackage = () => {
 
     const onDeleteZipFile = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        let response = await uploadService.deleteFile(fileZipName);
+        const response = await uploadService.deleteFile(fileZipName);
         if (response && response.status === 200) {
             setZipFile("");
             setFileZipName("");
@@ -277,8 +275,8 @@ const AddPackage = () => {
         event.preventDefault();
         const detailsImg = [...imageDetailList];
         const imgDelete = detailsImg[index];
-        const imgDeleteName = imgDelete.replace("http://localhost:9006/data/store-be/", "");
-        let response = await uploadService.deleteFile(imgDeleteName);
+        const imgDeleteName = imgDelete.replace(import.meta.env.VITE_APP_DATA_STORAGE_URL, "");
+        const response = await uploadService.deleteFile(imgDeleteName);
         if (response && response.status === 200) {
             detailsImg.splice(index, 1);
             setimageDetailList(detailsImg);
