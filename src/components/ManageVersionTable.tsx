@@ -1,5 +1,6 @@
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import { BiDownload } from "react-icons/bi";
+import NoPackage from "./NoPackage";
 
 interface IProps {
     versionList: IGetVersion[],
@@ -14,7 +15,8 @@ const ManageVersionTable = (props: IProps) => {
 
     return (
         <div>
-            <table className="items-center mx-auto w-full border-collapse bg-white rounded shadow-lg">
+            {versionList ? 
+                <table className="items-center mx-auto w-full border-collapse bg-white rounded shadow-lg">
                 <thead>
                     <tr>
                         <th className="px-2 sm:px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
@@ -57,7 +59,9 @@ const ManageVersionTable = (props: IProps) => {
                     ))
                     }
                 </tbody>
-            </table>
+            </table> : <NoPackage content="Package not found"/>
+            }
+            
         </div>
     )
 }

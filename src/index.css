@@ -81,3 +81,30 @@ body {
 .custom-link {
     color: #2e2c2c !important;
 }
+
+.slick-next {
+  right: -20px !important;
+  padding: 30px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.slick-prev {
+  right: -20px !important;
+  padding: 30px;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 400;
+}
+
+.slick-next::before {
+    font-size: 3rem !important;
+}
+
+.slick-prev::before {
+    font-size: 3rem !important;
+}
+
+

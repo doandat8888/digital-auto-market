@@ -1,6 +1,5 @@
 import { PhotoIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from "react-redux";
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { useNavigate, useParams } from "react-router";
@@ -82,8 +81,8 @@ const AddPackage = () => {
             setPackageDescription(packageUpdate.fullDesc);
             setimageCover(packageUpdate.thumbnail);
             setimageDetailList(packageUpdate.images);
-            setZipFile(packageUpdate.version.downloadUrl);
-            setDeploymentUrl(packageUpdate.version.deploymentUrl);
+            // setZipFile(packageUpdate.version.downloadUrl);
+            // setDeploymentUrl(packageUpdate.version.deploymentUrl);
             setMode(packageUpdate.visibility);
         }
     }, [packageUpdate])
@@ -217,7 +216,7 @@ const AddPackage = () => {
                 };
                 //dispatch(updatePackage(packageObj));
                 try {
-                    const response = await packageService.updatePackage(packageObj);
+                    const response = await packageService.updatePackage(packageObj, packageUpdate._id);
                     if (response && response.status === 200) {
                         alert("Update info successfully!");
                         navigate('/');
@@ -294,7 +293,7 @@ const AddPackage = () => {
                 <form className="w-[90%] p-5 bg-white">
                     <div className="space-y-12">
                         <div className="border-b border-gray-900/10 pb-12">
-                            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3">
+                            <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-4">
                                 <TextInput title="Package name" value={packageName} placeholderStr="Enter your package name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
                                 <TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" />
                                 <div className="col-span-full">
@@ -362,14 +361,14 @@ const AddPackage = () => {
                                         </div>
                                     ))}
                                 </div>
-                                <UploadFile zipFile={zipFile} fileZipName={fileZipName} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />
+                                {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
                             </div>
                         </div>
                         <div className="border-b border-gray-900/10 pb-12">
                             <div className="mt-10 space-y-10">
                                 <fieldset>
                                     <legend className="text-sm font-semibold leading-6 text-gray-900">Mode</legend>
-                                    <div className="mt-6 space-y-6">
+                                    <div className="mt-3 space-y-3">
                                         <div className="flex items-center gap-x-3">
                                             <input
                                                 checked={mode === "public"}
@@ -419,9 +418,6 @@ const AddPackage = () => {
                     </div>
 
                     <div className="mt-6 flex items-center justify-end gap-x-6">
-                        <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
-                            Cancel
-                        </button>
                         <button
                             type="submit"
                             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

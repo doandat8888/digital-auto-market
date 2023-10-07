@@ -53,8 +53,12 @@ const ManageVersion = () => {
 
     const checkPackage = () => {
         if(user) {
-            const canEdit = packageDetail && packageDetail.createdBy === user._id ? true : false;
-            setCanEdit(canEdit);
+            console.log("Created by: ", packageDetail?.createdBy._id);
+            console.log("User create id: ", user._id)
+
+            const canEditVersion = packageDetail && packageDetail.createdBy._id === user?._id ? true : false;
+            console.log(canEditVersion);
+            setCanEdit(canEditVersion);
             setIsLoading(false);
         }
     }
@@ -96,8 +100,9 @@ const ManageVersion = () => {
                     alert("Delete version successfully!");
                     getVersionList();
                 }
-            } catch (error) {
-                console.log(error);
+            } catch (error: any) {
+                alert(error.response.data.msg);
+                setopenModalConfirmDelete(false);
             }
         }
     }

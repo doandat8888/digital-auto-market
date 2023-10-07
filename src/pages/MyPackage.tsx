@@ -15,7 +15,7 @@ const MyPackage = () => {
     //Token
     const token = useSelector((state: RootState) => state.token.value);
     const [tokenUser, setTokenUser] = useState<string>("");
-    const [packages, setPackages] = useState<IGetPackage[]>([]);
+    const [packages, setPackages] = useState<IListPackage>([]);
     const [searchValue, setSearchValue] = useState<string>("");
     const navigate = useNavigate();
 

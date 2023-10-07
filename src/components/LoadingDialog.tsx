@@ -16,7 +16,7 @@ const LoadingModal = (props: IProps) => {
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={onCloseModal}>
+      <Dialog as="div" className="relative z-50" initialFocus={cancelButtonRef} onClose={onCloseModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"

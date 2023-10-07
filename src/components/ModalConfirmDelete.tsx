@@ -33,10 +33,9 @@ const ModalConfirmDelete = (props: IProps) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <div className="w-full flex-col flex">
+                    <div className="w-full flex flex-col">
                         <p>Do you want to delete?</p>
-                        <div className="col"></div>
-                        <div className="flex-grow"></div>
+                        <div className="grow"></div>
                         <div className="flex justify-end">
                             <button
                                 onClick={remove}
@@ -48,6 +47,7 @@ const ModalConfirmDelete = (props: IProps) => {
                             <button
                                 type="submit"
                                 className="bg-gray-400 rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                onClick={handleClose}
                             >
                                 Cancel
                             </button>

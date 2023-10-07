@@ -18,8 +18,17 @@ type IAddPackage = IPackage &  {
 type IGetPackage = IPackage & {
     _id: string,
     deleted: boolean,
-    createdBy: string,
-    likes: number,
+    createdBy: {
+        _id: string,
+        fullName: string,
+        avatar: string
+    },
+    likes: number[],
     version: IGetVersion,
     versions: IGetVersion[],
+    downloads: number
 }
+
+type IListPackage = (Omit<IPackage, 'createdBy'> & {
+    createdBy: string
+})[]

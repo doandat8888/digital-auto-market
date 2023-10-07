@@ -3,5 +3,22 @@ interface IReview {
     versionId: string,
     rating: number,
     content: string,
-    createdBy: string
+    createdBy: {
+        _id: string,
+        fullName: string,
+        avatar: string
+    }
+}
+
+type IGetReview = IReview & {
+    _id: string,
+    createdBy: {
+        _id: string,
+        fullName: string,
+        avatar: string
+    }
+}
+
+type IUpdateReview = IReview & {
+   _id: string
 }

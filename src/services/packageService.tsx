@@ -17,15 +17,19 @@ const addNewPackage = (packageAdd: IAddPackage) => {
 }
 
 const getAllPackage = () => {
-    return axios.get('/package');
+    return axios.get(`/package`);
+}
+
+const getAllPackageByPage = (limit: number, page: number) => {
+    return axios.get(`/package?limit=${limit}&page=${page}`);
 }
 
 const getPackageById = (packageId: string) => {
     return axios.get(`/package/${packageId}`);
 }
 
-const updatePackage = (packageUpdate: any) => {
-    return axios.put(`/package/${packageUpdate._id}`, {
+const updatePackage = (packageUpdate: any, packageId: string) => {
+    return axios.put(`/package/${packageId}`, {
        ...packageUpdate,
         video: "none",
         license: "1.0.0",
@@ -41,5 +45,6 @@ export default {
     getAllPackage,
     getPackageById,
     updatePackage,
-    removePackage
+    removePackage,
+    getAllPackageByPage
 }

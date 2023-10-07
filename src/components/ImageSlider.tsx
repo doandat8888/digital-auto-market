@@ -1,24 +1,50 @@
-import { Slide } from 'react-slideshow-image';
-import 'react-slideshow-image/dist/styles.css'
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 interface IProps {
     slideImages: string[] | undefined
 }
+
+const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 2,
+  slidesToScroll: 1,
+  swipeToSlide: true,
+  edgeFriction: 0.15,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        infinite: true,
+        dots: true
+      }
+    },
+    
+    {
+      breakpoint: 680,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1
+      }
+    }
+  ]
+};
 
 const Slideshow = (props: IProps) => {
 
     const {slideImages} = props;
 
     return (
-      <div className="slide-container">
-        <Slide>
+        <Slider {...settings}>
          {slideImages && slideImages.length > 0 && slideImages.map((slideImage, index)=> (
-            <div key={index}>
-              <img className=" object-cover w-full h-[500px]" src={slideImage} alt="" />
-            </div>
+              <img className="px-2 rounded-[20px] object-cover h-[200px]" src={slideImage} alt="image" />
           ))} 
-        </Slide>
-      </div>
+        </Slider>
     )
 }
 

@@ -80,51 +80,53 @@ const ModalPublishVersion = (props: IProps) => {
     }
 
     const onSaveInfoVersion = async() => {
-        setIsLoading(true);
-        if(!versionUpdate) {
-            const versionAdd: IAddVersion = {
-                name: versionName,
-                downloadUrl: zipFile,
-                deploymentUrl: deploymentUrl,
-                desc: versionDesc,
-                packageId: packageId
-            }
-            try {
-                const response = await versionService.addVersion(versionAdd);
-                if(response && response.status === 201) {
-                    alert("Add new version successfully!");
-                    emptyData();
-                    refreshData();
-                    handleClose();
-                    setIsLoading(false);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-            
+        if(!versionName || !zipFile || !deploymentUrl || !versionDesc || !packageId) {
+            alert("Missing version info. Please try again!");
         }else {
-            const versionEdit: IUpdateVersion = {
-                name: versionName,
-                downloadUrl: zipFile,
-                deploymentUrl: deploymentUrl,
-                desc: versionDesc,
-                packageId: packageId,
-                _id: versionUpdate._id
-            }
-            try {
-                const response = await versionService.updateVersion(versionEdit);
-                if(response && response.status === 200) {
-                    alert("Update version successfully!");
-                    emptyData();
-                    refreshData();
-                    handleClose();
-                    setIsLoading(false);
+            setIsLoading(true);
+            handleClose();
+            if(!versionUpdate) {
+                const versionAdd: IAddVersion = {
+                    name: versionName,
+                    downloadUrl: zipFile,
+                    deploymentUrl: deploymentUrl,
+                    desc: versionDesc,
+                    packageId: packageId
                 }
-            } catch (error) {
-                console.log(error);
+                try {
+                    const response = await versionService.addVersion(versionAdd);
+                    if(response && response.status === 201) {
+                        alert("Add new version successfully!");
+                        emptyData();
+                        refreshData();
+                        setIsLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+                
+            }else {
+                const versionEdit: IUpdateVersion = {
+                    name: versionName,
+                    downloadUrl: zipFile,
+                    deploymentUrl: deploymentUrl,
+                    desc: versionDesc,
+                    packageId: packageId,
+                    _id: versionUpdate._id
+                }
+                try {
+                    const response = await versionService.updateVersion(versionEdit);
+                    if(response && response.status === 200) {
+                        alert("Update version successfully!");
+                        emptyData();
+                        refreshData();
+                        setIsLoading(false);
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
-        
     }
 
     useEffect(() => {
@@ -162,6 +164,13 @@ const ModalPublishVersion = (props: IProps) => {
                             onClick={onSaveInfoVersion}
                         >
                             Save
+                        </button>
+                        <button
+                            type="submit"
+                            className="bg-gray-400 rounded-md px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            onClick={handleClose}
+                        >
+                            Cancel
                         </button>
                     </div>
                 </Box>
