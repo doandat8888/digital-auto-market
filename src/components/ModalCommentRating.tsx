@@ -24,6 +24,7 @@ const ModalCommentRating = (props: IProps) => {
     const [stars, setStars] = useState<number>(0);
     const starArr = [1, 2, 3, 4, 5];
     const [comment, setComment] = useState("");
+    const [disabled, setDisabled] = useState(false);
 
     const style = {
         position: 'absolute' as 'absolute',
@@ -114,6 +115,14 @@ const ModalCommentRating = (props: IProps) => {
         }
     }, [reviewUpdate]);
 
+    useEffect(() => {
+        if(!comment || stars === 0) {
+            setDisabled(true);
+        }else {
+            setDisabled(false);
+        }
+    }, [comment, stars]);
+
     return (
         <div>
             <LoadingModal open={isLoading} closeModal={onCloseModalLoading}/>
@@ -126,9 +135,12 @@ const ModalCommentRating = (props: IProps) => {
                 <Box sx={style}>
                     <TextArea title="Comment" value={comment} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setComment(event.target.value)} placeHolderStr="Write some sentences about this package"/>
                     <div className="col-span-full">
-                        <label htmlFor="about" className="block text-sm font-bold leading-6 text-gray-900">
-                            Rating
-                        </label>
+                        <div className="flex">
+                            <label htmlFor="about" className="block text-sm font-bold leading-6 text-gray-900">
+                                Rating
+                            </label>
+                            <p className="required text-red-500 ml-1">*</p>
+                        </div>
                         <div className="mt-2">
                             <Rating starArr={starArr} stars={stars} onClickStar={(value: number) => setStars(value)}/>
                         </div>
@@ -136,8 +148,9 @@ const ModalCommentRating = (props: IProps) => {
                     <div className="w-full flex justify-end">
                         <button
                             type="submit"
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className={`rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${disabled ? 'hidden' : ''}`}
                             onClick={onSaveInfo}
+                           
                         >
                             Save
                         </button>

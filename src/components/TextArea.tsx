@@ -11,9 +11,12 @@ const TextArea = (props: IProps) => {
 
     return (
         <div className="col-span-full my-4">
-            <label htmlFor="about" className="block text-sm font-bold leading-6 text-gray-900">
-                {title}
-            </label>
+            <div className="flex">
+                <label htmlFor="about" className="block text-sm font-bold leading-6 text-gray-900">
+                    {title}
+                </label>
+                <p className="required text-red-500 ml-1">*</p>
+            </div>
             <div className="mt-2">
                 <textarea
                     maxLength={1024}

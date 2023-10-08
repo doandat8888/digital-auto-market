@@ -253,9 +253,12 @@ const AddPackage = () => {
 
     const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
         event.preventDefault();
+        console.log(imgLink);
         const imgName = imgLink.replace(import.meta.env.VITE_APP_DATA_STORAGE_URL, "");
+        console.log("Img cover delete name: ", imgName);
         const response = await uploadService.deleteFile(imgName);
         if (response && response.status === 200) {
+            alert("Delete cover img successfully")
             setimageCover("");
         }
     }
@@ -302,7 +305,7 @@ const AddPackage = () => {
                                     </label>
                                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                         <div className="text-center">
-                                            <PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+                                            <PhotoIcon className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
                                             <div className="mt-4 flex text-sm leading-6 text-gray-600" onDrop={handleImgCoverDrop} onDragOver={handleDrag}>
                                                 <label
                                                     htmlFor="cover-img-upload"
@@ -333,7 +336,7 @@ const AddPackage = () => {
                                     </label>
                                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                         <div className="text-center">
-                                            <PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+                                            <PhotoIcon className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
                                             <div className="mt-4 flex text-sm leading-6 text-gray-600">
                                                 <label
                                                     htmlFor="detail-imgs-upload"

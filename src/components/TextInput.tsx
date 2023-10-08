@@ -8,12 +8,16 @@ interface IProps {
 const TextInput = (props: IProps) => {
 
     const {title, value, handleFileTextChange, placeholderStr} = props;
+    
 
     return (
         <div className="sm:col-span-4 my-4">
-            <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">
-                {title}
-            </label>
+            <div className="flex">
+                <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">
+                    {title}
+                </label>
+                <p className="required text-red-500 ml-1">*</p>
+            </div>
             <div className="mt-2">
                 <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                     <input

@@ -20,7 +20,7 @@ const UploadFile = (props: IProps) => {
                     </label>
                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                         <div className="text-center">
-                            <BsFileZip className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+                            <BsFileZip className="mx-auto h-20 w-20 text-gray-300" aria-hidden="true" />
                             <div className="mt-4 flex text-sm leading-6 text-gray-600">
                                 <label
                                     htmlFor="file-upload"
@@ -38,7 +38,7 @@ const UploadFile = (props: IProps) => {
                 <div className="file-container py-[20px] col-span-full">
                     {zipFile && (
                         <div className=" relative w-1/2 sm:w-1/3 lg:w-1/5 px-2 py-2 border border-gray-400 rounded-lg">
-                            <BsFileZip className="mx-auto h-14 w-14 text-gray-300" aria-hidden="true" />
+                            <BsFileZip className="mx-auto h-20 w-20 text-gray-300" aria-hidden="true" />
                             <div className="grow"></div>
                             <div className="flex items-center mt-4 justify-between">
                                 <p className="text-sm opacity-80">{fileZipName ? fileZipName : 'source.zip'}</p>
