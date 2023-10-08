@@ -69,13 +69,18 @@ const DetailPackage = () => {
             const response = await packageService.getPackageById(id);
             if(response && response.data) {
                 setPackageDetail(response.data);
-                checkPackage();
                 if(user) {
                     setIsLoading(false);
                 }
             }
         }
     }
+
+    useEffect(() => {
+        if(packageDetail) {
+            checkPackage();
+        }
+    }, [packageDetail])
 
     useEffect(() => {
         getPackageInfo();
@@ -104,8 +109,6 @@ const DetailPackage = () => {
 
     const checkPackage = () => {
         if(user && packageDetail) {
-            console.log("User id: ", user._id);
-            console.log("Created by id: ", packageDetail?.createdBy._id);
             const canEdit = packageDetail && packageDetail.createdBy._id === user._id ? true : false;
             setCanEdit(canEdit);
         }
@@ -202,7 +205,7 @@ const DetailPackage = () => {
                 <LoadingModal open={isLoading} closeModal={onCloseModal}/>
                 <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                     <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 py-2 md:py-4 rounded-lg">
+                        <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
                             <div className="w-full sm:flex bg-white rounded-lg p-6 flex max-h-[400px]">
                                 <div className="w-1/5">
                                     <img src={packageDetail?.thumbnail} alt="" className="sm:w-[180px] sm:h-[180px] w-[90px] h-[90px] rounded-lg object-cover"/>
@@ -210,16 +213,21 @@ const DetailPackage = () => {
                                 <div className="w-4/5 pl-3 flex flex-col ml-4">
                                     <div className="items-center flex">
                                         <p className="lg:text-xl sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
+                                        {canEdit &&
+                                            <div onClick={() => updatePackage(packageDetail)} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black border border-gray-500
+                                                rounded-lg"><AiOutlineEdit /><p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Update</p> 
+                                            </div>
+                                        }
                                         <div className="grow"></div>
-                                        <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)} className="sm:text-sm my-2 text-[10px] border px-2 py-1 border-gray-500 rounded">
+                                        <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)} className="sm:text-sm text-[10px] border px-2 py-1 border-gray-500 rounded">
                                             {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
                                                 <option value={version._id}>{version.name}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
-                                        <p className="text-[12px] opacity-75">{packageDetail?.authors[0]}</p>
-                                        <Link to={`/manageversion/${packageDetail?._id}`} className="sm:mx-2 text-[12px] sm:text-[12px] opacity-80">Version histories</Link>
+                                        <p className="text-[12px] sm:text-[14px] opacity-75">{packageDetail?.authors[0]}</p>
+                                        <Link to={`/manageversion/${packageDetail?._id}`} className="sm:mx-2 text-[12px] sm:text-[14px] opacity-80">Version histories</Link>
                                     </div>
                                    
                                     <div className="grow"></div>
@@ -230,16 +238,10 @@ const DetailPackage = () => {
                                     </div>
                                     <div className="grow"></div>
                                     <div style={{display: "block"}} className="w-full">
-                                        
                                         {packageDetail?.version.downloadUrl &&
                                             <a href={currentVersion?.downloadUrl} className="w-full lg:w-1/3 sm:w-1/3 my-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                                 px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
                                             </a>
-                                        }
-                                        {canEdit &&
-                                            <div onClick={() => updatePackage(packageDetail)} className="w-full lg:w-1/3 sm:w-1/3 my-4 lg:mx-2 round cursor-pointer hover:opacity-60 bg-yellow-500 text-white 
-                                                px-6 py-2 rounded-lg flex items-center justify-center"><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Update</p> <AiOutlineEdit />
-                                            </div>
                                         }
                                     </div>
                                 </div>

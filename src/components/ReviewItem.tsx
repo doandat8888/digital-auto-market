@@ -3,6 +3,7 @@ import userService from "../services/userService";
 import { Rating } from "@mui/material";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import ReviewAction from "./ReviewAction";
+import handleDate from "../utils/handleDate";
 
 interface IProps {
     rating: number,
@@ -10,12 +11,13 @@ interface IProps {
     createdBy: string,
     user: IUser,
     onUpdateReview: () => void,
-    onDeleteReview: () => void
+    onDeleteReview: () => void,
+    createdAt: string
 }
 
 const ReviewItem = (props: IProps) => {
 
-    const { rating, comment, createdBy, user, onUpdateReview, onDeleteReview } = props;
+    const { rating, comment, createdBy, user, onUpdateReview, onDeleteReview, createdAt } = props;
     const [currentUser, setCurrentUser] = useState<IUser>();
     const [canEdit, setCanEdit] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
@@ -48,11 +50,11 @@ const ReviewItem = (props: IProps) => {
                     {showMenu && <ReviewAction onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} triggerRef={ref.current} onClose={() => setShowMenu(false)}/>}
                 </div>}
             </div>
-            <div className="flex">
-                <Rating className="mt-[10px]" readOnly size="small" value={rating}/>
-                
+            <div className="flex items-center mt-[10px]">
+                <Rating readOnly size="small" value={rating}/>
+                <div className="ml-1 text-[12px] opacity-80">{handleDate.convertToDate(createdAt)}</div>
             </div>
-            <div className="text-[14px] mt-[10px] opacity-80">{comment}</div>
+            <div className="text-[14px] mt-[10px] opacity-80">{comment.length >= 300 ? comment.slice(0, 300) + "..." : comment}</div>
         </div>
     )
 }

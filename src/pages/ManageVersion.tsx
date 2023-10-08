@@ -55,7 +55,6 @@ const ManageVersion = () => {
         if(user) {
             console.log("Created by: ", packageDetail?.createdBy._id);
             console.log("User create id: ", user._id)
-
             const canEditVersion = packageDetail && packageDetail.createdBy._id === user?._id ? true : false;
             console.log(canEditVersion);
             setCanEdit(canEditVersion);
@@ -131,10 +130,10 @@ const ManageVersion = () => {
     }, [tokenUser]);
 
     useEffect(() => {
-        if(user) {
+        if(user && packageDetail) {
             checkPackage();
         }
-    }, [user]);
+    }, [user, packageDetail]);
 
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>

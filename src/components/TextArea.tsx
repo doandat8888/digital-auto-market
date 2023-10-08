@@ -16,6 +16,7 @@ const TextArea = (props: IProps) => {
             </label>
             <div className="mt-2">
                 <textarea
+                    maxLength={1024}
                     required
                     id="about"
                     name="about"

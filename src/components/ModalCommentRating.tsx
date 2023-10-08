@@ -56,7 +56,7 @@ const ModalCommentRating = (props: IProps) => {
             openModalLoading();
             onCloseModalCommentRating();
             if(!reviewUpdate) {
-                let review: IReview = {
+                const review: IReview = {
                     packageId: packageId,
                     versionId: versionId,
                     rating: stars,
@@ -75,7 +75,7 @@ const ModalCommentRating = (props: IProps) => {
                     alert(error.response.data.msg);
                 }
             }else {
-                let review: IReview = {
+                const review: IReview = {
                     packageId: packageId,
                     versionId: versionId,
                     rating: stars,
@@ -144,7 +144,7 @@ const ModalCommentRating = (props: IProps) => {
                         <button
                             type="submit"
                             className="bg-gray-400 rounded-md px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                            onClick={onCloseModal}
+                            onClick={onCloseModalCommentRating}
                         >
                             Cancel
                         </button>

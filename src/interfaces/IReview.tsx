@@ -16,9 +16,11 @@ type IGetReview = IReview & {
         _id: string,
         fullName: string,
         avatar: string
-    }
+    },
 }
 
 type IUpdateReview = IReview & {
-   _id: string
+   _id: string,
+   createdAt: string,
 }
+
