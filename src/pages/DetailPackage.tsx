@@ -226,7 +226,7 @@ const DetailPackage = () => {
             <div className={`${isLoading === true ? 'hidden' : ''}`}>
                 <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                     <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-full max-w-[960px] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
+                        <div className="w-[90%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
                             <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
                                 <div className="sm:w-[20%] w-[30%]">
                                     <img src={packageDetail?.thumbnail} alt="" className="sm:w-[180px] sm:h-[180px] w-[100px] h-[100px] rounded-lg object-cover"/>

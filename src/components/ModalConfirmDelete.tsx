@@ -33,7 +33,7 @@ const ModalConfirmDelete = (props: IProps) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <div className="w-full flex flex-col">
+                    <div className="w-full h-full flex flex-col">
                         <p>Do you want to delete?</p>
                         <div className="grow"></div>
                         <div className="flex justify-end">

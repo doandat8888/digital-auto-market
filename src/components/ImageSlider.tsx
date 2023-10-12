@@ -55,7 +55,7 @@ const Slideshow = (props: IProps) => {
       <div>
             <Slider {...settings}>
             {slideImages && slideImages.length > 0 && slideImages.map((slideImage, index)=> (
-                  <img className="px-2 rounded-[20px] object-cover h-[200px] cursor-pointer" onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
+                  <img className="px-2 rounded-[18px] object-cover h-[240px] cursor-pointer" onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
               ))} 
             </Slider>
             <Modal

@@ -332,7 +332,7 @@ const AddPackage = () => {
         <div>
             <LoadingModal open={isLoading} closeModal={onCloseModal} />
             <div className="flex justify-center">
-                <form className="w-[90%] p-5 bg-white">
+                <form className="sm:w-[60%] w-[90%] p-5 bg-white">
                     <div className="space-y-12">
                         <div className="border-b border-gray-900/10 pb-12">
                             <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-4">
