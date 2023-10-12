@@ -12,12 +12,12 @@ const PackageItem = (props: IProps) => {
     
     return (
         <Link className="custom-link flex p-4 w-[96%] my-2 cursor-pointer bg-white rounded shadow-sm hover:opacity-75" to={`/package/${packageItem._id}`}>
-            <div className="left w-[100px]">
-                <img className="w-[100px] h-[100px] rounded object-cover" src={packageItem?.thumbnail} alt="" />
+            <div className="left w-[30%]">
+                <img className="w-full aspect-square rounded object-cover" src={packageItem?.thumbnail} alt="" />
             </div>
-            <div className="right mx-4 w-[50%] flex flex-col justify-between">
+            <div className="right mx-4 w-[70%] flex flex-col justify-between">
                 <div className="flex text-[110%] justify-between font-520 font-semibold">
-                    <p className='w-[100%] text-[16px] truncate'>{packageItem.name}</p>
+                    <p className='w-[100%] text-[18px] truncate'>{packageItem.name}</p>
                 </div>
                 <div className="text-[12px] opacity-80">{packageItem?.authors[0]}</div>
                 
@@ -34,8 +34,6 @@ const PackageItem = (props: IProps) => {
                             <div className='text-[12px] ml-1 opacity-80'>{packageItem.visibility}</div>
                         </div>
                     }
-                    
-                    
                 </div>
                 
             </div>

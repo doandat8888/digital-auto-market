@@ -226,10 +226,10 @@ const DetailPackage = () => {
             <div className={`${isLoading === true ? 'hidden' : ''}`}>
                 <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                     <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-[90%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
+                        <div className="w-[60%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
                             <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
-                                <div className="sm:w-[20%] w-[30%]">
-                                    <img src={packageDetail?.thumbnail} alt="" className="sm:w-[180px] sm:h-[180px] w-[100px] h-[100px] rounded-lg object-cover"/>
+                                <div className="sm:w-[20%] w-[20%] flex items-center">
+                                    <img src={packageDetail?.thumbnail} alt="" className="w-[100%] aspect-square rounded-lg object-cover"/>
                                 </div>
                                 <div className="sm:w-[80%] w-[70%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
                                     <div className="items-center sm:flex">
@@ -255,7 +255,7 @@ const DetailPackage = () => {
                                         <Link to={`/manageversion/${packageDetail?._id}`} className="mx-2 text-[12px] sm:text-[14px] opacity-80 truncate">Version histories</Link>
                                     </div>
                                    
-                                    <div className="grow"></div>
+                                   
                                     <div className="flex mt-2">
                                         <div onClick={() => onToggleLike(isLike === true ? "unlike" : "like")} className="py-1.5 px-2 round flex items-center cursor-pointer hover:opacity-60 bg-blue-500 text-white 
                                             rounded-lg"><BiLike /><p className="text-[12px] sm:text-[12px] ml-1">{isLike === false ? "Like" : "Unlike"}</p> 
@@ -264,7 +264,7 @@ const DetailPackage = () => {
                                     <div className="grow"></div>
                                     <div className="w-full sm:block">
                                         {packageDetail?.version.downloadUrl &&
-                                            <button onClick={onDownLoadPackage} className="w-full lg:w-1/3 sm:w-1/3 my-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
+                                            <button onClick={onDownLoadPackage} className="w-full lg:w-1/3 sm:w-1/3 mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                                 px-6 py-2 rounded-lg items-center justify-center">
                                                 <a className="w-full flex items-center justify-center" href={currentVersion?.downloadUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
                                                 </a>
@@ -283,7 +283,7 @@ const DetailPackage = () => {
                             <Slideshow slideImages={packageDetail?.images}/>
                             <div className="comment-rating my-6">
                                 <div className="flex justify-between">
-                                    <div className="text-xl">Reviews</div>
+                                    <div className="text-xl font-semibold">Reviews</div>
                                     <button onClick={onClickBtnCommentRating} className="text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 items-center cursor-pointer rounded border-2 border-black text-black"><AiOutlineComment /><p className="sm:block sm:ml-2 hidden ">Comment & rating</p></button>
                                 </div>
                                 <div className="w-full rounded-lg py-4">
