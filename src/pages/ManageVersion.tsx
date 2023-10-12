@@ -140,7 +140,7 @@ const ManageVersion = () => {
             <LoadingModal open={isLoading} closeModal={onCloseModal}/>
             <div className="title my-10 text-center font-bold text-2xl">RELEASE VERSIONS</div>
             <div className="body mx-6">
-                {canEdit && <button onClick={() => setOpenModalPublish(true)} className=" my-4 border-none outline-none flex justify-center mr-2 px-4 py-2 text-white items-center cursor-pointer rounded bg-green-400"><AiOutlineCloudUpload /><p className="lg:block lg:ml-2">Publish new version</p></button>}
+                {canEdit && <button onClick={() => setOpenModalPublish(true)} className=" my-4 border-none outline-none flex justify-center mr-2 px-4 py-2 text-white items-center cursor-pointer rounded bg-green-400"><AiOutlineCloudUpload /><p className="lg:block text-[12px] lg:ml-2 ml-2">Publish new version</p></button>}
                 <ManageVersionTable onDeleteVersion={onDeleteVersion} canEdit={canEdit} versionList={versionList} onUpdateVersion={onUpdateVersion}/>
                 <ModalPublishVersion versionUpdate={versionUpdate} refreshData={getVersionList} open={openModalPublish} handleClose={handleCloseModal} packageId={packageId ? packageId : ''}/>
                 <ModalConfirmDelete remove={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)}/>

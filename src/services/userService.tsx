@@ -7,10 +7,11 @@ const login = (email: string, password: string) => {
     });
 }
 
-const register = (email: string, password: string) => {
+const register = (email: string, password: string, fullName: string) => {
     return axios.post("/user/register", {
         email: email,
-        password: password
+        password: password,
+        fullName: fullName
     });
 }
 

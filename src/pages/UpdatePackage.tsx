@@ -9,7 +9,7 @@ import UploadFile from "../components/UploadFile";
 import TextInput from '../components/TextInput';
 import TextArea from '../components/TextArea';
 
-const AddPackage = () => {
+const UpdatePackage = () => {
 
     const navigate = useNavigate();
     //const packages = useSelector((state: RootState) => state.packages.value);
@@ -35,7 +35,7 @@ const AddPackage = () => {
     const { packageId } = params;
     const [packageUpdate, setPackageUpdate] = useState<IGetPackage | undefined>();
     //Show btn save
-    const [showBtnSave, setShowBtnSave] = useState(false);
+    const [showBtnSave, setShowBtnSave] = useState(true);
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -60,6 +60,7 @@ const AddPackage = () => {
     };
 
     const [user, setUser] = useState<IUser>();
+
 
     const getPackageById = async () => {
         if (packageId) {
@@ -121,12 +122,12 @@ const AddPackage = () => {
     }
 
     useEffect(() => {
-        if(packageName && packageDescription && imageCover && imageDetailList && zipFile && mode) {
+        if(packageName && packageDescription && imageCover && imageDetailList && mode) {
             setShowBtnSave(true);
         }else {
             setShowBtnSave(false);
         }
-    }, [packageName, packageDescription, imageCover, imageDetailList, zipFile]);
+    }, [packageName, packageDescription, imageCover, imageDetailList]);
 
 
     const getUserInfo = async () => {
@@ -177,10 +178,6 @@ const AddPackage = () => {
         setMode(event.target?.value);
     }
 
-    const navigateToDetail = (packageId: string) => {
-        navigate(`/package/${packageId}`);
-    }
-
     const onSaveInfoPackage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         if (!packageUpdate) {
@@ -210,14 +207,14 @@ const AddPackage = () => {
                     try {
                         const response = await packageService.addNewPackage(packageObj);
                         if (response && response.status === 201) {
-                            let id = response.data._id;
-                            navigateToDetail(id);
+                            alert("Add package successfully!");
                         }
                     } catch (error) {
                         console.log(error);
                     }
 
                     setIsLoading(false);
+                    navigate('/');
                 }
             } catch (error) {
                 alert("Error when add package");
@@ -250,7 +247,6 @@ const AddPackage = () => {
                         downloadUrl: zipFile,
                         deploymentUrl: deploymentUrl
                     };
-                    //dispatch(updatePackage(packageObj));
                     try {
                         const response = await packageService.updatePackage(packageObj, packageUpdate._id);
                         if (response && response.status === 200) {
@@ -270,6 +266,10 @@ const AddPackage = () => {
             
         }
 
+    }
+
+    const navigateToDetail = (packageId: string) => {
+        navigate(`/package/${packageId}`);
     }
 
     const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
@@ -369,7 +369,7 @@ const AddPackage = () => {
                                                 alt="Uploaded"
                                                 className="w-full object-cover"
                                             />
-                                            <button className="absolute top-2 right-2 rounded-full bg-slate-400 text-white px-4 py-2 z-40" onClick={(event) => onDeleteCoverImage(event, imageCover)}>x</button>
+                                            <button className="absolute top-2 right-2 rounded-full bg-slate-400 text-white px-4 py-2 z-40" onClick={(event) => onDeleteCoverImage(event, imageCover)}><p className='opacity-80'>x</p></button>
                                         </div>
                                     )}
                                 </div>
@@ -406,7 +406,7 @@ const AddPackage = () => {
                                                 src={base64}
                                                 alt={`Uploaded ${index}`}
                                             />
-                                            <button className="absolute top-6 right-2 rounded-full bg-slate-400 text-white px-4 py-2 z-40" onClick={(event) => onDeleteDetailImage(event, index)}><p className='opacity-80'></p>x</button>
+                                            <button className="absolute top-6 right-2 rounded-full bg-slate-400 text-white px-4 py-2 z-40" onClick={(event) => onDeleteDetailImage(event, index)}>x</button>
                                         </div>
                                     ))}
                                 </div>
@@ -458,7 +458,7 @@ const AddPackage = () => {
                     <div className="mt-6 flex items-center justify-end gap-x-6">
                         <button
                             type="submit"
-                            className={`${showBtnSave ? '' : 'hidden'} rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                            className={`${showBtnSave === true ? '' : 'hidden'} rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                             onClick={onSaveInfoPackage}
                         >
                             Save
@@ -470,4 +470,4 @@ const AddPackage = () => {
     )
 }
 
-export default AddPackage;
+export default UpdatePackage;

@@ -11,6 +11,7 @@ import NoPackage from "../components/NoPackage";
 const MyPackage = () => {
 
     const [myPackageList, setMyPackageList] = useState<IPackage[]>([]);
+    const [myPackageListByPage, setMyPackageListByPage] = useState<IGetPackage[]>([]);
     const [user, setUser] = useState<IUser>();
     //Token
     const token = useSelector((state: RootState) => state.token.value);
@@ -20,6 +21,11 @@ const MyPackage = () => {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
+
+    //Pagination
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [totalPage, setTotalPage] = useState<number>(0);
+    const limit = 8;
 
     useEffect(() => {
         const localToken = localStorage.getItem('token') || ""
@@ -45,16 +51,44 @@ const MyPackage = () => {
         }
     }, [token, myPackageList]);
 
-    const getAllPackage = useCallback(async() => {
-        let response = await packageService.getAllPackage();
+    const getMyPackageList = useCallback(async() => {
+        let response = await packageService.getPackageOfCurrentUser();
         if(response && response.data && response.data.data.length > 0) {
-            setPackages(response.data.data);
+            let packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
+            setMyPackageList(packages);
         }
+        setIsLoading(false);
     }, []);
 
     useEffect(() => {
-        getAllPackage();
-    }, []);
+        getMyPackageList();
+    }, [limit]);
+
+    useEffect(() => {
+        if(myPackageList) {
+            getMyPackageByPage();
+        }
+    }, [currentPage]);
+
+    useEffect(() => {
+        if(myPackageList) {
+            let totalPages = 0;
+            if(myPackageList.length === myPackageListByPage.length) {
+                if(searchValue) {
+                    totalPages = Math.floor(filterMyPackageList.length / limit) + 1;
+                }else {
+                    totalPages = Math.floor(myPackageList.length / limit) + 1;
+                }
+            }else {
+                if(searchValue) {
+                    totalPages = Math.floor(filterMyPackageList.length / limit) + 1;
+                }else {
+                    totalPages = Math.floor(myPackageList.length / limit) + 1;
+                }
+            }
+            setTotalPage(totalPages);
+        }
+    }, [myPackageList, searchValue, myPackageListByPage]);
 
     const getUserInfo = async () => {
         if (token !== "") {
@@ -69,20 +103,23 @@ const MyPackage = () => {
         }
     }
 
-    const getMyPackageList = () => {
-        if(user) {
-            const packageList = packages.filter((packageItem) => packageItem.createdBy === user._id);
-            setMyPackageList(packageList);
-            setIsLoading(false);
+
+    const getMyPackageByPage = async() => {
+        let response = await packageService.getMyPackageByPage(limit, currentPage);
+        if(response && response.data && response.data.data.length > 0) {
+            if(response && response.data && response.data.data.length > 0) {
+                let packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
+                setMyPackageListByPage(packages);
+            }
         }
-    }
+    };
 
     const onCloseModal= () => {
         setIsLoading(false);
     }
 
     const filterMyPackageList = searchValue && myPackageList.length > 0 ? 
-    myPackageList.filter(item => item.name.toLowerCase().includes(searchValue.toLowerCase()) || item.authors[0]?.toLowerCase().includes(searchValue.toLowerCase())) : myPackageList;
+    myPackageList.filter(item => item.name.toLowerCase().includes(searchValue.toLowerCase()) || item.authors[0]?.toLowerCase().includes(searchValue.toLowerCase())) : myPackageListByPage;
 
     return (
         <div className={`${isLoading === true ? 'hidden' : ''}`}>
@@ -92,7 +129,7 @@ const MyPackage = () => {
                     <input className='text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search info package (name, author,...)' onChange={(e) => setSearchValue(e.target.value)}/>
                 </div>
                 {myPackageList && myPackageList.length > 0 ? 
-                    <PackageList packages={filterMyPackageList}/>
+                    <PackageList showMode={true} packages={filterMyPackageList}/>
                 : <NoPackage content="You don't have any packages"/>}
             </div>
         </div>

@@ -15,9 +15,12 @@ const UploadFile = (props: IProps) => {
     return (
         <div className="col-span-full">
             <div className="col-span-full">
-                    <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
-                        Source code
-                    </label>
+                    <div className="flex">
+                        <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
+                            Source code
+                        </label>
+                        <p className="required text-red-500 ml-1">*</p>
+                    </div>
                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                         <div className="text-center">
                             <BsFileZip className="mx-auto h-20 w-20 text-gray-300" aria-hidden="true" />

@@ -27,6 +27,8 @@ const ModalPublishVersion = (props: IProps) => {
     const [deploymentUrl, setDeploymentUrl] = useState("");
     // const [zipBase64, setZipBase64] = useState<string>("");
     const [fileZipName, setFileZipName] = useState<string>("");
+    //Disable save btn
+    const [disabled, setDisabled] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
     
@@ -38,7 +40,7 @@ const ModalPublishVersion = (props: IProps) => {
         bgcolor: 'background.paper',
         border: '2px solid #000',
         boxShadow: 24,
-        p: 4,
+        padding: "0 20px",
         borderRadius: 2,
         width: "80%",
         overflow: "scroll",
@@ -63,7 +65,9 @@ const ModalPublishVersion = (props: IProps) => {
 
     const onDeleteZipFile = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        const response = await uploadService.deleteFile(fileZipName);
+        console.log(zipFile);
+        const fileDeleteName = zipFile.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
+        const response = await uploadService.deleteFile(fileDeleteName);
         if(response && response.status === 200) {
             setZipFile("");
             setFileZipName("");
@@ -143,12 +147,19 @@ const ModalPublishVersion = (props: IProps) => {
         handleClose();
     }
 
+    useEffect(() => {
+        if(versionName && versionDesc && zipFile) {
+            setDisabled(false);
+        }else {
+            setDisabled(true);
+        }
+    }, [versionName, versionDesc, zipFile])
+
     return (
         <div>
             <LoadingModal open={isLoading} closeModal={() => setIsLoading(false)}/>
             <Modal
                 open={open}
-                onClose={onCloseModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
                 
@@ -160,7 +171,7 @@ const ModalPublishVersion = (props: IProps) => {
                     <div className="w-full flex justify-end">
                         <button
                             type="submit"
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className={`${disabled ? 'hidden' : ''} rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                             onClick={onSaveInfoVersion}
                         >
                             Save
@@ -168,7 +179,7 @@ const ModalPublishVersion = (props: IProps) => {
                         <button
                             type="submit"
                             className="bg-gray-400 rounded-md px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                            onClick={handleClose}
+                            onClick={onCloseModal}
                         >
                             Cancel
                         </button>

@@ -10,6 +10,10 @@ type IPackage = {
     authors: string[], 
 }
 
+type IMyPackage = IListPackage & {
+    deleted: boolean
+}
+
 type IAddPackage = IPackage &  {
     downloadUrl: string | undefined,
     deploymentUrl: string | undefined
@@ -26,9 +30,11 @@ type IGetPackage = IPackage & {
     likes: number[],
     version: IGetVersion,
     versions: IGetVersion[],
-    downloads: number
+    downloads: number,
+    userLike: boolean
 }
 
 type IListPackage = (Omit<IPackage, 'createdBy'> & {
-    createdBy: string
+    createdBy: string,
+    deleted: boolean
 })[]

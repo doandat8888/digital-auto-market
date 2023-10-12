@@ -17,19 +17,21 @@ const Home = () => {
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
-    const limit = 6;
+    const limit = 8;
 
     const getAllPackageByPage = async() => {
         let response = await packageService.getAllPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
-            setPackageListByPage(response.data.data);
+            let packagePublic: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.visibility === "public" && packageItem.deleted === false);
+            setPackageListByPage(packagePublic);
         }
     };
 
     const getAllPackage = async () => {
         let response = await packageService.getAllPackage();
         if(response && response.data && response.data.data.length > 0) {
-            setPackageList(response.data.data);
+            let packagePublic: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.visibility === "public" && packageItem.deleted === false);
+            setPackageList(packagePublic);
         }
     }
 
@@ -53,10 +55,23 @@ const Home = () => {
 
     useEffect(() => {
         if(packageList) {
-            const totalPages = Math.floor(filterPackageList.length / limit) + 1;
+            let totalPages = 0;
+            if(filterPackageList.length === packageListByPage.length) {
+                if(searchValue) {
+                    totalPages = Math.floor(filterPackageList.length / limit) + 1;
+                }else {
+                    totalPages = Math.floor(packageList.length / limit) + 1;
+                }
+            }else {
+                if(searchValue) {
+                    totalPages = Math.floor(filterPackageList.length / limit) + 1;
+                }else {
+                    totalPages = Math.floor(packageList.length / limit) + 1;
+                }
+            }
             setTotalPage(totalPages);
         }
-    }, [packageList, searchValue]);
+    }, [packageList, searchValue, packageListByPage]);
 
     useEffect(() => {
         if(packageList.length > 0) {
@@ -76,9 +91,9 @@ const Home = () => {
                     <div className="search flex justify-end mb-6">
                         <input className='text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={(e) => setSearchValue(e.target.value)}/>
                     </div>
-                    <PackageList packages={filterPackageList}/>
+                    <PackageList showMode={false} packages={filterPackageList}/>
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${packageList.length < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
+                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${packageList.length <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
             </div> : <NoPackage content="There is no packages in the system"/>}
         </div>
         

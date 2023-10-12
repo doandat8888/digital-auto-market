@@ -24,6 +24,11 @@ const getAllPackageByPage = (limit: number, page: number) => {
     return axios.get(`/package?limit=${limit}&page=${page}`);
 }
 
+
+const getMyPackageByPage = (limit: number, page: number) => {
+    return axios.get(`/package/current?limit=${limit}&page=${page}`);
+}
+
 const getPackageById = (packageId: string) => {
     return axios.get(`/package/${packageId}`);
 }
@@ -36,8 +41,24 @@ const updatePackage = (packageUpdate: any, packageId: string) => {
     });
 }
 
+const updateDownLoad = (packageId: string) => {
+    return axios.post(`/package/${packageId}/download`);
+}
+
+const toggleLikePackage = (packageId: string, type: string) => {
+    if(type === "like") {
+        return axios.post(`/package/${packageId}/like?value=1`);
+    }else if(type === "unlike") {
+        return axios.post(`/package/${packageId}/like?value=0`);
+    }
+}
+
 const removePackage = (packageId: string) => {
     return axios.delete(`/package/${packageId}`);
+}
+
+const getPackageOfCurrentUser = () => {
+    return axios.get(`/package/current`);
 }
 
 export default {
@@ -46,5 +67,9 @@ export default {
     getPackageById,
     updatePackage,
     removePackage,
-    getAllPackageByPage
+    getAllPackageByPage,
+    updateDownLoad,
+    toggleLikePackage,
+    getPackageOfCurrentUser,
+    getMyPackageByPage
 }

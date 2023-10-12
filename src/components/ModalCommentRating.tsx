@@ -127,8 +127,7 @@ const ModalCommentRating = (props: IProps) => {
         <div>
             <LoadingModal open={isLoading} closeModal={onCloseModalLoading}/>
             <Modal
-            open={open}
-                onClose={onCloseModalCommentRating}
+                open={open}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >

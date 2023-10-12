@@ -1,6 +1,15 @@
-const NotFound = () => {
+import { useState } from "react";
+
+interface IProps {
+    
+}
+
+const NotFound = (props: IProps) => {
+
+    
+
     return (
-        <div className="notfound">
+        <div className={`notfound`}>
             <img className="w-[30%] mx-auto my-auto" src="https://juststickers.in/wp-content/uploads/2016/12/404-error-not-found.png" alt="notfound" />
         </div>
     )
