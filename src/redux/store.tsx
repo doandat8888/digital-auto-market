@@ -1,5 +1,4 @@
 import { configureStore, getDefaultMiddleware} from "@reduxjs/toolkit";
-import packageSlice from "./package/packageSlice";
 import tokenSlice from "./token/tokenSlice";
 
 const customizedMiddleware = getDefaultMiddleware({
@@ -8,7 +7,6 @@ const customizedMiddleware = getDefaultMiddleware({
 
 const store = configureStore({
     reducer: {
-        packages: packageSlice,
         token: tokenSlice
     },
     middleware: customizedMiddleware
