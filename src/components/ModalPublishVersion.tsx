@@ -43,8 +43,7 @@ const ModalPublishVersion = (props: IProps) => {
         padding: "0 20px",
         borderRadius: 2,
         width: "80%",
-        overflow: "scroll",
-        height: "100vh",
+        height: "auto",
     };
 
     const handleFileInputChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,7 +177,7 @@ const ModalPublishVersion = (props: IProps) => {
                         </button>
                         <button
                             type="submit"
-                            className="bg-gray-400 rounded-md px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            className="bg-gray-400 rounded-md px-3 py-2 ml-2 mb-4 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                             onClick={onCloseModal}
                         >
                             Cancel

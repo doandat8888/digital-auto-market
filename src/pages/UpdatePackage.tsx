@@ -350,7 +350,7 @@ const UpdatePackage = () => {
                                         <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                             <div className="text-center">
                                                 <PhotoIcon className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
-                                                <div className="mt-4 flex text-sm leading-6 text-gray-600" onDrop={handleImgCoverDrop} onDragOver={handleDrag}>
+                                                <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600" onDrop={handleImgCoverDrop} onDragOver={handleDrag}>
                                                     <label
                                                         htmlFor="cover-img-upload"
                                                         className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
@@ -358,9 +358,9 @@ const UpdatePackage = () => {
                                                         <span>Upload image</span>
                                                         <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only" />
                                                     </label>
-                                                    <p className="pl-1">or drag and drop</p>
+                                                    {/* <p className="pl-1">or drag and drop</p> */}
                                                 </div>
-                                                <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                                                <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 100MB</p>
                                             </div>
                                         </div>
                                         {imageCover && (
@@ -384,7 +384,7 @@ const UpdatePackage = () => {
                                         <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                             <div className="text-center">
                                                 <PhotoIcon className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
-                                                <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                                                <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                                                     <label
                                                         htmlFor="detail-imgs-upload"
                                                         className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
@@ -392,9 +392,9 @@ const UpdatePackage = () => {
                                                         <span>Upload images</span>
                                                         <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file" className="sr-only" onDrag={handleDrag} />
                                                     </label>
-                                                    <p className="pl-1">or drag and drop</p>
+                                                    {/* <p className="pl-1">or drag and drop</p> */}
                                                 </div>
-                                                <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                                                <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 100MB</p>
                                             </div>
                                         </div>
                                     </div>

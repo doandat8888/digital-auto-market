@@ -22,16 +22,16 @@ const Home = () => {
     const getAllPackageByPage = async() => {
         let response = await packageService.getAllPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
-            let packagePublic: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.visibility === "public" && packageItem.deleted === false);
-            setPackageListByPage(packagePublic);
+            let packagePublic: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
+            setPackageListByPage(response.data.data);
         }
     };
 
     const getAllPackage = async () => {
         let response = await packageService.getAllPackage();
         if(response && response.data && response.data.data.length > 0) {
-            let packagePublic: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.visibility === "public" && packageItem.deleted === false);
-            setPackageList(packagePublic);
+            let packagePublic: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
+            setPackageList(response.data.data);
         }
     }
 
@@ -57,12 +57,17 @@ const Home = () => {
         if(packageList) {
             let totalPages = 0;
             if(filterPackageList.length === packageListByPage.length) {
+                console.log("Heluuuuuuu");
+                console.log("Length: ", packageList);
                 if(searchValue) {
                     totalPages = Math.floor(filterPackageList.length / limit) + 1;
+                    
                 }else {
                     totalPages = Math.floor(packageList.length / limit) + 1;
+                    console.log("total pages 1: ", totalPages);
                 }
             }else {
+                console.log("Helooooooooooo");
                 if(searchValue) {
                     totalPages = Math.floor(filterPackageList.length / limit) + 1;
                 }else {
@@ -93,7 +98,7 @@ const Home = () => {
                     </div>
                     <PackageList showMode={false} packages={filterPackageList}/>
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${packageList.length <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
+                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${packageList.length < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
             </div> : <NoPackage content="There is no packages in the system"/>}
         </div>
         

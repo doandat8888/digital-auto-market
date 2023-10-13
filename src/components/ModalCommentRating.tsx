@@ -94,7 +94,6 @@ const ModalCommentRating = (props: IProps) => {
                 }
             }
         }
-       
     }
 
     const emptyData = () => {
@@ -129,6 +128,7 @@ const ModalCommentRating = (props: IProps) => {
                 open={open}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
+                className="sm:w-[80%] lg:w-[60%] mx-auto"
             >
                 <Box sx={style}>
                     <TextArea title="Comment" value={comment} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setComment(event.target.value)} placeHolderStr="Write some sentences about this package"/>
