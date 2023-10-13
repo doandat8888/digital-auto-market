@@ -124,17 +124,7 @@ const DetailPackage = () => {
     const updatePackage = (packageDetail: IGetPackage | undefined) => {
         navigate(`/updatepackage/${packageDetail?._id}`);
     }
-
-    const onRemovePackage = async(packageId: string) => {
-        setIsLoading(true);
-        let response = await packageService.removePackage(packageId);
-        if(response && response.status === 200) {
-            alert(response.data.msg);
-            setIsLoading(false);
-            navigate('/');
-        }
-    }
-
+    
     const handleChangeVersion = (versionId: string) => {
         setIsLoading(true);
         findVersionById(versionId);
@@ -202,9 +192,17 @@ const DetailPackage = () => {
 
     const onToggleLike = async(status: string) => {
         if(status === "unlike") {
-            let response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "unlike");
+            try {
+                let response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "unlike");
+            } catch (error: any) {
+                console.log(error.response.data.msg);
+            }
         }else {
-            let response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "like");
+            try {
+                let response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "like");
+            } catch (error: any) {
+                console.log(error.response.data.msg);
+            }
         }
         setIsLike(!isLike);
     }
@@ -226,7 +224,7 @@ const DetailPackage = () => {
             <div className={`${isLoading === true ? 'hidden' : ''}`}>
                 <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                     <div className="w-full h-full flex items-center justify-center">
-                        <div className="sm:w-[60%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
+                        <div className="sm:w-[60%] lg:w-[80%] xl:w-[60%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
                             <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
                                 <div className="sm:w-[20%] w-[30%] aspect-square flex">
                                     <img src={packageDetail?.thumbnail} alt="" className="w-[100%] sm:h-[100%] h-[70%] aspect-square rounded-lg object-cover"/>

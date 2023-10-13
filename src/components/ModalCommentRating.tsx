@@ -37,7 +37,6 @@ const ModalCommentRating = (props: IProps) => {
         p: 4,
         borderRadius: 2,
         width: "80%",
-        overflow: "scroll",
     };
 
     console.log("created by modal comment: ", createdBy)
