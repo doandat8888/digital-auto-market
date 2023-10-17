@@ -199,7 +199,8 @@ const UpdatePackage = () => {
                         authors: authorArr,
                         downloadUrl: zipFile,
                         deploymentUrl: deploymentUrl,
-                        category: category
+                        category: category,
+                        entryPoint: entryPoint
                     };
                     try {
                         const response = await packageService.updatePackage(packageObj, packageUpdate._id);

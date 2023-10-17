@@ -13,6 +13,8 @@ const addNewPackage = (packageAdd: IAddPackage) => {
         authors: packageAdd.authors,
         downloadUrl: packageAdd.downloadUrl,
         deploymentUrl: packageAdd.deploymentUrl,
+        category: packageAdd.category,
+        entryPoint: packageAdd.entryPoint
     })
 }
 
