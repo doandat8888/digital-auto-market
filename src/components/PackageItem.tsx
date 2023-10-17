@@ -35,7 +35,6 @@ const PackageItem = (props: IProps) => {
                         </div>
                     }
                 </div>
-                
             </div>
         </Link>
     )

@@ -8,6 +8,7 @@ type IPackage = {
     license: string,
     visibility: string,
     authors: string[], 
+    entryPoint: string
 }
 
 type IMyPackage = IListPackage & {
@@ -16,7 +17,8 @@ type IMyPackage = IListPackage & {
 
 type IAddPackage = IPackage &  {
     downloadUrl: string | undefined,
-    deploymentUrl: string | undefined
+    deploymentUrl: string | undefined,
+    category: string | undefined
 }
 
 type IGetPackage = IPackage & {
@@ -31,7 +33,8 @@ type IGetPackage = IPackage & {
     version: IGetVersion,
     versions: IGetVersion[],
     downloads: number,
-    userLike: boolean
+    userLike: boolean,
+    category: string
 }
 
 type IListPackage = (Omit<IPackage, 'createdBy'> & {

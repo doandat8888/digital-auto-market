@@ -22,7 +22,6 @@ const Home = () => {
     const getAllPackageByPage = async() => {
         let response = await packageService.getAllPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
-            let packagePublic: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
             setPackageListByPage(response.data.data);
         }
     };
@@ -30,7 +29,6 @@ const Home = () => {
     const getAllPackage = async () => {
         let response = await packageService.getAllPackage();
         if(response && response.data && response.data.data.length > 0) {
-            let packagePublic: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
             setPackageList(response.data.data);
         }
     }
@@ -57,17 +55,13 @@ const Home = () => {
         if(packageList) {
             let totalPages = 0;
             if(filterPackageList.length === packageListByPage.length) {
-                console.log("Heluuuuuuu");
-                console.log("Length: ", packageList);
                 if(searchValue) {
                     totalPages = Math.floor(filterPackageList.length / limit) + 1;
                     
                 }else {
                     totalPages = Math.floor(packageList.length / limit) + 1;
-                    console.log("total pages 1: ", totalPages);
                 }
             }else {
-                console.log("Helooooooooooo");
                 if(searchValue) {
                     totalPages = Math.floor(filterPackageList.length / limit) + 1;
                 }else {

@@ -64,7 +64,6 @@ const ModalPublishVersion = (props: IProps) => {
 
     const onDeleteZipFile = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        console.log(zipFile);
         const fileDeleteName = zipFile.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
         const response = await uploadService.deleteFile(fileDeleteName);
         if(response && response.status === 200) {
@@ -170,12 +169,14 @@ const ModalPublishVersion = (props: IProps) => {
                     <div className="w-full flex justify-end">
                         <button
                             type="submit"
-                            className={`${disabled ? 'hidden' : ''} rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                            disabled={disabled}
+                            className={`disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 mb-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                             onClick={onSaveInfoVersion}
                         >
                             Save
                         </button>
                         <button
+                            
                             type="submit"
                             className="bg-gray-400 rounded-md px-3 py-2 ml-2 mb-4 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                             onClick={onCloseModal}

@@ -25,7 +25,6 @@ const ReviewItem = (props: IProps) => {
 
     useEffect(() => {
         getUserById(createdBy);
-        console.log("Crated by review item: ", createdBy);
         if(user._id === createdBy) {
             setCanEdit(true);
         }

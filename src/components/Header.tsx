@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { removeToken } from "../redux/token/tokenSlice";
 import UserInfo from "./UserInfo";
+import _const from "../const";
 
 const Header = () => {
     const pageList: IPage[] = _constant.pageList;
@@ -38,7 +39,6 @@ const Header = () => {
             setIsLoading(false);
 
         }else if(tokenUser !== "") {
-            console.log("token header: ", tokenUser)
             getUserInfo();
         }
     }, [tokenUser])
@@ -71,8 +71,6 @@ const Header = () => {
             navigate('/login');
         }
     }
-
-    console.log(user);
 
     const onLogout = () => {
         setIsLoading(true);

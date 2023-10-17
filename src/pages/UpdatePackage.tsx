@@ -8,6 +8,8 @@ import uploadService from "../services/uploadService";
 import UploadFile from "../components/UploadFile";
 import TextInput from '../components/TextInput';
 import TextArea from '../components/TextArea';
+import CategorySelectUpdate from '../components/CategorySelectUpdate';
+import _const from '../const';
 
 const UpdatePackage = () => {
 
@@ -16,9 +18,11 @@ const UpdatePackage = () => {
     //Package info
     const [packageName, setPackageName] = useState("");
     const [packageShortDesc, setPackageShortDesc] = useState("");
+    const [category, setCategory] = useState<string>("");
     const [packageDescription, setPackageDescription] = useState("");
     const [imageDetailList, setimageDetailList] = useState<string[]>([]);
     const [imageCover, setimageCover] = useState<string>("");
+    const [entryPoint, setEntryPoint] = useState<string>("");
     //Zip file
     const [zipFile, setZipFile] = useState<string>("");
     const [deploymentUrl, setDeploymentUrl] = useState("");
@@ -87,26 +91,13 @@ const UpdatePackage = () => {
             setPackageDescription(packageUpdate.fullDesc);
             setimageCover(packageUpdate.thumbnail);
             setimageDetailList(packageUpdate.images);
+            setCategory(packageUpdate.category);
             // setZipFile(packageUpdate.version.downloadUrl);
             // setDeploymentUrl(packageUpdate.version.deploymentUrl);
             setMode(packageUpdate.visibility);
             setIsLoading(false);
         }
     }, [packageUpdate])
-
-    const validateInfoPackage = (): boolean => {
-        let count = 0;
-        const packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, zipFile, mode, user?._id];
-        for (let i = 0; i < packageInfoArr.length; i++) {
-            if (packageInfoArr[i] === "") {
-                count++;
-            }
-        }
-        if (count > 0) {
-            return false;
-        }
-        return true;
-    }
 
     const validateInfoPackageUpdate = (): boolean => {
         let count = 0;
@@ -123,12 +114,12 @@ const UpdatePackage = () => {
     }
 
     useEffect(() => {
-        if (packageName && packageDescription && imageCover && imageDetailList && mode) {
+        if (packageName && packageDescription && imageCover && imageDetailList && mode && category && entryPoint) {
             setShowBtnSave(true);
         } else {
             setShowBtnSave(false);
         }
-    }, [packageName, packageDescription, imageCover, imageDetailList]);
+    }, [packageName, packageDescription, imageCover, imageDetailList, mode, category, entryPoint]);
 
 
     const getUserInfo = async () => {
@@ -149,7 +140,6 @@ const UpdatePackage = () => {
         const file = event.target?.files?.[0];
         const formData = new FormData();
         if (file) {
-            console.log(file);
             formData.append('file', file);
             const response = await uploadService.uploadFile(formData);
             if (response && response.status === 201) {
@@ -179,57 +169,19 @@ const UpdatePackage = () => {
         setMode(event.target?.value);
     }
 
+    const navigateToDetail = (packageId: string) => {
+        navigate(`/package/${packageId}`);
+    }
+
     const onSaveInfoPackage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        if (!packageUpdate) {
-            try {
-                setIsLoading(true);
-                if (validateInfoPackage() === false) {
-                    alert("Missing info package. Please try again");
-                    setIsLoading(false);
-                } else {
-                    const authorArr: string[] = [];
-                    if (user) {
-                        authorArr.push(user.fullName);
-                    }
-                    const packageObj: IAddPackage = {
-                        name: packageName,
-                        thumbnail: imageCover,
-                        images: imageDetailList,
-                        video: "none",
-                        shortDesc: packageShortDesc,
-                        fullDesc: packageDescription,
-                        license: "abc",
-                        visibility: mode,
-                        authors: authorArr,
-                        downloadUrl: zipFile,
-                        deploymentUrl: deploymentUrl,
-                    };
-                    try {
-                        const response = await packageService.addNewPackage(packageObj);
-                        if (response && response.status === 201) {
-                            alert("Add package successfully!");
-                        }
-                    } catch (error) {
-                        console.log(error);
-                    }
-
-                    setIsLoading(false);
-                    navigate('/');
-                }
-            } catch (error) {
-                alert("Error when add package");
-                console.log(error);
-                setIsLoading(false);
-            }
-        } else {
+        if (packageUpdate) {
             if (validateInfoPackageUpdate() === false) {
                 alert("Missing info package. Please try again");
                 setIsLoading(false);
             } else {
                 try {
                     setIsLoading(true);
-                    console.log(zipFile);
                     const authorArr: string[] = [];
                     if (user) {
                         authorArr.push(user.fullName);
@@ -246,7 +198,8 @@ const UpdatePackage = () => {
                         visibility: mode,
                         authors: authorArr,
                         downloadUrl: zipFile,
-                        deploymentUrl: deploymentUrl
+                        deploymentUrl: deploymentUrl,
+                        category: category
                     };
                     try {
                         const response = await packageService.updatePackage(packageObj, packageUpdate._id);
@@ -264,13 +217,7 @@ const UpdatePackage = () => {
                     setIsLoading(false);
                 }
             }
-
         }
-
-    }
-
-    const navigateToDetail = (packageId: string) => {
-        navigate(`/package/${packageId}`);
     }
 
     const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
@@ -292,9 +239,7 @@ const UpdatePackage = () => {
 
     const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
         event.preventDefault();
-        console.log(imgLink);
         const imgName = imgLink.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
-        console.log("Img cover delete name: ", imgName);
         const response = await uploadService.deleteFile(imgName);
         if (response && response.status === 200) {
             alert("Delete cover img successfully")
@@ -338,6 +283,7 @@ const UpdatePackage = () => {
                             <div className="border-b border-gray-900/10 pb-12">
                                 <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-4">
                                     <TextInput title="Package name" value={packageName} placeholderStr="Enter your package name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
+                                    <CategorySelectUpdate listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} categoryName={category}/>
                                     <TextInput title="Short description" value={packageShortDesc} placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} />
                                     <TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" />
                                     <div className="col-span-full">
@@ -412,6 +358,9 @@ const UpdatePackage = () => {
                                         ))}
                                     </div>
                                     {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
+                                    <div className="col-span-full">
+                                        <TextInput title="Entry point" value={packageName} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} />
+                                    </div>
                                 </div>
                             </div>
                             <div className="border-b border-gray-900/10 pb-12">

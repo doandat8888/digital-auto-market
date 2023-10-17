@@ -16,6 +16,7 @@ import reviewService from "../services/reviewService";
 import ReviewList from "../components/ReviewList";
 import { removeToken } from "../redux/token/tokenSlice";
 import ModalConfirmDelete from "../components/ModalConfirmDelete";
+import { CiShare1 } from "react-icons/ci";
 
 const DetailPackage = () => {
 
@@ -90,7 +91,6 @@ const DetailPackage = () => {
 
     useEffect(() => {
         getPackageInfo();
-        console.log("Is like: ", isLike);
     }, [user, id])
 
     const getUserInfo = async () => {
@@ -154,7 +154,6 @@ const DetailPackage = () => {
     const onUpdateReview = (review: IUpdateReview) => {
         setOpenModalCommentRating(true);
         setReviewUpdate(review);
-        console.log("Review update: ", reviewUpdate);
     }
 
     const onDeleteReview = (reviewId: string) => {
@@ -260,16 +259,27 @@ const DetailPackage = () => {
                                         </div>
                                     </div>
                                     <div className="grow"></div>
-                                    <div className="w-full sm:block">
-                                        {packageDetail?.version.downloadUrl &&
-                                            <button onClick={onDownLoadPackage} className="w-full lg:w-1/3 sm:w-1/3 mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
-                                                px-6 py-2 rounded-lg items-center justify-center">
-                                                <a className="w-full flex items-center justify-center" href={currentVersion?.downloadUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
-                                                </a>
-                                            </button>
-                                            
-                                        }
+                                    <div className="sm:flex justify-between">
+                                        <div className="w-full sm:block mr-8">
+                                            {packageDetail?.version.downloadUrl &&
+                                                <button onClick={onDownLoadPackage} className="w-full mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
+                                                    px-6 py-2 rounded-lg items-center justify-center">
+                                                    <a className="w-full flex items-center justify-center" href={currentVersion?.downloadUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
+                                                    </a>
+                                                </button>
+                                            }
+                                        </div>
+                                        <div className="w-full sm:block">
+                                            {packageDetail?.version.downloadUrl &&
+                                                <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
+                                                    px-6 py-2 rounded-lg items-center justify-center">
+                                                    <a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={currentVersion?.deploymentUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
+                                                    </a>
+                                                </button>
+                                            }
+                                        </div>
                                     </div>
+                                    
                                 </div>
                             </div>
                             <div className="my-4 flex">

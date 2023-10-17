@@ -39,8 +39,6 @@ const ModalCommentRating = (props: IProps) => {
         width: "80%",
     };
 
-    console.log("created by modal comment: ", createdBy)
-
     const reviewData = [stars, comment];
 
     const onSaveInfo = async() => {
@@ -145,8 +143,9 @@ const ModalCommentRating = (props: IProps) => {
                     </div>
                     <div className="w-full flex justify-end">
                         <button
+                            disabled={disabled}
                             type="submit"
-                            className={`rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${disabled ? 'hidden' : ''}`}
+                            className={` disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                             onClick={onSaveInfo}
                            
                         >
