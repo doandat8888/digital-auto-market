@@ -380,7 +380,7 @@ const AddPackage = () => {
                                 </div>
                                 {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
                                 <div className="col-span-full">
-                                    <TextInput title="Entry point" value={packageName} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} />
+                                    <TextInput title="Entry point" value={entryPoint} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} />
                                 </div>
                             </div>
                         </div>
