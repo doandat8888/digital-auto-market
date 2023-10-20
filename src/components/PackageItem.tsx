@@ -13,7 +13,7 @@ const PackageItem = (props: IProps) => {
     return (
         <Link className="custom-link flex p-4 w-[96%] my-2 cursor-pointer bg-white rounded shadow-sm hover:opacity-75" to={`/package/${packageItem._id}`}>
             <div className="left sm:w-[30%] lg:w-[40%] w-[40%] xl:w-[30%] min-w-[100px]">
-                <img className="w-full aspect-square rounded object-cover" src={packageItem.thumbnail ? packageItem.thumbnail : "https://media.istockphoto.com/vectors/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-vector-id1128826884?k=6&m=1128826884&s=170667a&w=0&h=F6kUwTcsLXUojmGFxN2wApEKgjx63zcIshCSOmnfEFs="} alt="" />
+                <img className="w-full aspect-square rounded object-cover" src={packageItem.thumbnail != 'abc' ? packageItem.thumbnail : "https://media.istockphoto.com/vectors/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-vector-id1128826884?k=6&m=1128826884&s=170667a&w=0&h=F6kUwTcsLXUojmGFxN2wApEKgjx63zcIshCSOmnfEFs="} alt="" />
             </div>
             <div className="right mx-4 w-[60%] sm:w-[70%] lg:w-[60%] xl:w-[70%] flex flex-col justify-between">
                 <div className="flex justify-between font-520 font-semibold">

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import userService from "../services/userService";
@@ -18,8 +18,6 @@ const MyPackage = () => {
     //Token
     const token = useSelector((state: RootState) => state.token.value);
     const [tokenUser, setTokenUser] = useState<string>("");
-    const [packages, setPackages] = useState<IListPackage>([]);
-    const [searchValue, setSearchValue] = useState<string>("");
     const navigate = useNavigate();
     const [total, setTotal] = useState(0);
 
@@ -55,28 +53,31 @@ const MyPackage = () => {
     }, [token, myPackageList]);
 
     const getTotalPage = async() => {
-        let response = await packageService.getMyPackageByPage(limit, currentPage);
+        const response = await packageService.getMyPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
             setTotal(response.data.total);
+            console.log("Total my package: ", response.data.total);
         }
     };
 
     const getMyPackageList = async() => {
-        let response = await packageService.getPackageOfCurrentUser(limit, currentPage);
+        const response = await packageService.getPackageOfCurrentUser(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
-            let packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
+            const packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
             setMyPackageList(packages);
+            const totalPages = Math.floor(response.data.total / limit) + 1;
+            setTotalPage(totalPages);
         }
         setIsLoading(false);
     };
+    
+    console.log("My packge list: ", myPackageList);
 
     const getMyPackageByName = async(packageName: string) => {
-        let response = await packageService.getMyPackageByName(packageName);
+        const response = await packageService.getMyPackageByName(limit, currentPage, packageName);
         if(response && response.data && response.data.data.length > 0) {
             setMyPackageList(response.data.data);
-            let totalPages = Math.floor(response.data.total / limit) + 1;
-            setTotalPage(totalPages);
-            console.log(totalPages);
+            
         }
     }
 

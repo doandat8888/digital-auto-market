@@ -52,7 +52,7 @@ const DetailPackage = () => {
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
         setTokenUser(localToken);
-    }, [])
+    }, [id])
 
     useEffect(() => {
         if(tokenUser !== "") {
@@ -211,13 +211,13 @@ const DetailPackage = () => {
     const onToggleLike = async(status: string) => {
         if(status === "unlike") {
             try {
-                let response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "unlike");
+                const response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "unlike");
             } catch (error: any) {
                 console.log(error.response.data.msg);
             }
         }else {
             try {
-                let response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "like");
+                const response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "like");
             } catch (error: any) {
                 console.log(error.response.data.msg);
             }
@@ -227,7 +227,7 @@ const DetailPackage = () => {
 
     const onDownLoadPackage = async() => {
         try {
-            let response = await packageService.updateDownLoad(packageDetail ? packageDetail._id : '');
+            const response = await packageService.updateDownLoad(packageDetail ? packageDetail._id : '');
         } catch (error: any) {
             alert(error.response.data.msg);
         }

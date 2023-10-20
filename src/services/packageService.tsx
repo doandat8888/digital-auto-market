@@ -30,8 +30,8 @@ const getPackageTypeByPage = (category: string, limit: number, page: number) => 
     return axios.get(`/package?category=${category}&limit=${limit}&page=${page}`);
 }
 
-const getPackageByCategory = (category: string) => {
-    return axios.get(`/package?category=${category}`);
+const getPackageByCategory = (limit: number, currentPage: number, category: string) => {
+    return axios.get(`/package?category=${category}&limit=${limit}&page=${currentPage}`);
 }
 
 
@@ -72,11 +72,15 @@ const getPackageOfCurrentUser = (limit: number, currentPage: number) => {
 }
 
 const getPackageByName = (limit: number, currentPage: number, packageName: string) => {
-    return axios.get(`/package?name=${packageName}&limit=${limit}&page=${currentPage}`)
+    return axios.get(`/package?name=${packageName}&limit=${limit}&page=${currentPage}`);
 }
 
-const getMyPackageByName = (packageName: string) => {
-    return axios.get(`/package/current?name=${packageName}`)
+const getMyPackageByName = (limit: number, currentPage: number, packageName: string) => {
+    return axios.get(`/package/current?name=${packageName}&limit=${limit}&page=${currentPage}`);
+}
+
+const getPackageByCategoryAndName = (limit: number, currentPage: number, packageName: string, category: string) => {
+    return axios.get(`/package?category=${category}&limit=${limit}&page=${currentPage}&name=${packageName}`);
 }
 
 export default {
@@ -92,6 +96,7 @@ export default {
     getMyPackageByPage,
     getPackageTypeByPage,
     getPackageByCategory,
+    getPackageByCategoryAndName,
     getPackageByName,
-    getMyPackageByName
+    getMyPackageByName,
 }

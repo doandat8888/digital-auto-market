@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PackageList from '../components/PackageList';
 import LoadingDialog from '../components/LoadingDialog';
 import packageService from '../services/packageService';
@@ -9,13 +9,13 @@ import _ from 'lodash';
 const Home = () => {
 
     const [packageList, setPackageList] = useState<IGetPackage[]>([]);
-    const [packageListByPage, setPackageListByPage] = useState<IGetPackage[]>([]);
-    const [searchValue, setSearchValue] = useState<string>("");
+    // const [packageListByPage, setPackageListByPage] = useState<IGetPackage[]>([]);
+    // const [searchValue, setSearchValue] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [total, setTotal] = useState(0);
     //User info
     const [user, setUser] = useState<IUser | null>();
-    let searchVal = localStorage.getItem('name');
+    const searchVal = localStorage.getItem('name');
 
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -23,17 +23,17 @@ const Home = () => {
     const limit = 8;
 
     const getTotalPage = async() => {
-        let response = await packageService.getAllPackageByPage(limit, currentPage);
+        const response = await packageService.getAllPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
             setTotal(response.data.total);
         }
     };
 
     const getAllPackage = async () => {
-        let response = await packageService.getAllPackageByPage(limit, currentPage);
+        const response = await packageService.getAllPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
-            let totalPages = Math.floor(response.data.total / limit) + 1;
+            const totalPages = Math.floor(response.data.total / limit) + 1;
             setTotalPage(totalPages);
         }
     }
@@ -43,10 +43,10 @@ const Home = () => {
     }
 
     const getPackageByName = async(packageName: string) => {
-        let response = await packageService.getPackageByName(limit, currentPage, packageName);
+        const response = await packageService.getPackageByName(limit, currentPage, packageName);
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
-            let totalPages = Math.floor(response.data.total / limit) + 1;
+            const totalPages = Math.floor(response.data.total / limit) + 1;
             setTotalPage(totalPages);
         }
     };
