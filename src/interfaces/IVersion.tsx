@@ -23,5 +23,6 @@ type IGetVersion = IVersion &{
     createdAt: string,
     updatedAt: string,
     deploymentUrl: string,
+    entryUrl: string
     __v: number
 }

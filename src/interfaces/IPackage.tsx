@@ -34,7 +34,7 @@ type IGetPackage = IPackage & {
     versions: IGetVersion[],
     downloads: number,
     userLike: boolean,
-    category: string
+    category: string,
 }
 
 type IListPackage = (Omit<IPackage, 'createdBy'> & {

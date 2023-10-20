@@ -93,7 +93,9 @@ const Header = () => {
                 </Link>
                 <div className="flex items-center mx-4 h-full">
                     {pageList && pageList.length > 0 && pageList.map((page: IPage, index: number) => (
-                        <Link className={`hidden text-[16px] custom-link h-full md:flex items-center mx-2 px-2 cursor-pointer page-item ${indexActive === index ? ' border-b-2 border-b-black font-bold' : ''}`} to={page.path}>{page.name}</Link>
+                        page.name === 'My package' ? 
+                        <Link className={`${!user ? 'hidden' : 'block'} flex text-[16px] custom-link h-full items-center mx-2 px-2 cursor-pointer page-item ${indexActive === index ? ' border-b-2 border-b-black font-bold' : ''}`} to={page.path}>{page.name}</Link>
+                        : <Link className={`hidden text-[16px] custom-link h-full md:flex items-center mx-2 px-2 cursor-pointer page-item ${indexActive === index ? ' border-b-2 border-b-black font-bold' : ''}`} to={page.path}>{page.name}</Link>
                     ))}
                 </div>
                 <div className="grow"></div>
@@ -107,9 +109,9 @@ const Header = () => {
             <div className={`${showPageList === false ? "hidden" : ""} md:hidden`}>
                 {pageList && pageList.length > 0 && pageList.map((page: IPage) => (
                     page.name === "My package" ? 
-                    <Link className={`${!user ? 'hidden' : ''} w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
+                    <Link className={`${!user ? 'hidden' : 'block'} w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
                     : <Link className={`w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
-                    ))}
+                ))}
             </div>
         </div>
     )

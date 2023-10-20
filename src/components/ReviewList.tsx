@@ -1,7 +1,7 @@
 import ReviewItem from "./ReviewItem";
 
 interface IProps {
-    reviewsFilter: IUpdateReview[],
+    reviewsFilter: IUpdateReview[] | undefined,
     user: IUser,
     onUpdateReview: (review: IUpdateReview) => void
     onDeleteReview: (reviewId: string) => void

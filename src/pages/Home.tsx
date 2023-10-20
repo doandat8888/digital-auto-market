@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PackageList from '../components/PackageList';
 import LoadingDialog from '../components/LoadingDialog';
 import packageService from '../services/packageService';
 import NoPackage from '../components/NoPackage';
 import { Pagination } from '@mui/material';
+import _ from 'lodash';
 
 const Home = () => {
 
@@ -11,25 +12,29 @@ const Home = () => {
     const [packageListByPage, setPackageListByPage] = useState<IGetPackage[]>([]);
     const [searchValue, setSearchValue] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
+    const [total, setTotal] = useState(0);
     //User info
     const [user, setUser] = useState<IUser | null>();
+    let searchVal = localStorage.getItem('name');
 
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
     const limit = 8;
 
-    const getAllPackageByPage = async() => {
+    const getTotalPage = async() => {
         let response = await packageService.getAllPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
-            setPackageListByPage(response.data.data);
+            setTotal(response.data.total);
         }
     };
 
     const getAllPackage = async () => {
-        let response = await packageService.getAllPackage();
+        let response = await packageService.getAllPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
+            let totalPages = Math.floor(response.data.total / limit) + 1;
+            setTotalPage(totalPages);
         }
     }
 
@@ -37,50 +42,52 @@ const Home = () => {
         setCurrentPage(value);
     }
 
-    const filterPackageList = searchValue && packageList.length > 0 ? 
-    packageList.filter(item => item.name.toLowerCase().includes(searchValue.toLowerCase()) || item.authors[0]?.toLowerCase().includes(searchValue.toLowerCase())) : packageListByPage;
+    const getPackageByName = async(packageName: string) => {
+        let response = await packageService.getPackageByName(limit, currentPage, packageName);
+        if(response && response.data && response.data.data.length > 0) {
+            setPackageList(response.data.data);
+            let totalPages = Math.floor(response.data.total / limit) + 1;
+            setTotalPage(totalPages);
+        }
+    };
+
+    const deb = _.debounce((e) => {
+        getPackageByName(e.target.value);
+        localStorage.setItem('name', e.target.value);
+        }, 1000
+    );
+
+    const onSearchHandler = (e: any) => {
+        deb(e);
+    }
 
     useEffect(() => {
-        getAllPackage();
-    }, [limit])
-
-    useEffect(() => {
-        if(packageList) {
-            getAllPackageByPage();
+        const searchVal = localStorage.getItem('name');
+        if(searchVal) {
+            getPackageByName(searchVal);
+        }else {
+            getTotalPage();
+            getAllPackage();
         }
     }, [currentPage]);
 
-
     useEffect(() => {
-        if(packageList) {
-            let totalPages = 0;
-            if(filterPackageList.length === packageListByPage.length) {
-                if(searchValue) {
-                    totalPages = Math.floor(filterPackageList.length / limit) + 1;
-                    
-                }else {
-                    totalPages = Math.floor(packageList.length / limit) + 1;
-                }
-            }else {
-                if(searchValue) {
-                    totalPages = Math.floor(filterPackageList.length / limit) + 1;
-                }else {
-                    totalPages = Math.floor(packageList.length / limit) + 1;
-                }
-            }
-            setTotalPage(totalPages);
+        console.log(currentPage);
+        if(searchVal) {
+            getPackageByName(searchVal);
         }
-    }, [packageList, searchValue, packageListByPage]);
+    }, [currentPage])
 
     useEffect(() => {
         if(packageList.length > 0) {
             setIsLoading(false);
         }
-    }, [packageList])
+    }, [packageList]);
 
     const onCloseModal= () => {
         setIsLoading(false);
     }
+
 
     return (
         <div>
@@ -88,14 +95,13 @@ const Home = () => {
                 <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
                 <div className="body px-6 py-4">
                     <div className="search flex justify-end mb-6">
-                        <input className='text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={(e) => setSearchValue(e.target.value)}/>
+                        <input className='text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
                     </div>
-                    <PackageList showMode={false} packages={filterPackageList}/>
+                    <PackageList showMode={false} packages={packageList}/>
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${packageList.length < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
+                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
             </div> : <NoPackage content="There is no packages in the system"/>}
         </div>
-        
     )
 }
 

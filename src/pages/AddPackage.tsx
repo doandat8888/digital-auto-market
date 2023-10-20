@@ -10,6 +10,7 @@ import TextInput from '../components/TextInput';
 import TextArea from '../components/TextArea';
 import CategorySelect from '../components/CategorySelect';
 import _const from '../const';
+import { FaRegImages } from 'react-icons/fa';
 
 const AddPackage = () => {
 
@@ -17,7 +18,7 @@ const AddPackage = () => {
     //const packages = useSelector((state: RootState) => state.packages.value);
     //Package info
     const [packageName, setPackageName] = useState("");
-    const [category, setCategory] = useState<string>("");
+    const [category, setCategory] = useState<string>(_const.categoryFake[0].name);
     const [packageShortDesc, setPackageShortDesc] = useState("");
     const [packageDescription, setPackageDescription] = useState("");
     const [imageDetailList, setimageDetailList] = useState<string[]>([]);
@@ -109,7 +110,7 @@ const AddPackage = () => {
     }
     
     useEffect(() => {
-        if(packageName && packageDescription && imageCover && imageDetailList && zipFile && mode && category && entryPoint) {
+        if(packageName && packageDescription && imageCover && imageDetailList.length > 0 && zipFile && mode && category && entryPoint) {
             setShowBtnSave(true);
         }else {
             setShowBtnSave(false);
@@ -119,7 +120,7 @@ const AddPackage = () => {
 
     const getUserInfo = async () => {
         if (token !== "") {
-            /* console.log("Token header: ", token); */
+            console.log("Token header: ", token);
             try {
                 const response = await userService.getUser();
                 if (response && response.status === 200) {
@@ -158,7 +159,7 @@ const AddPackage = () => {
                     const zipFileUrl = response.data.url;
                     setZipFile(response.data.url);
                     setDeploymentUrl(response.data.deploymentUrl);
-                    const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/", "");
+                    const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/data/store-be/", "");
                     setFileZipName(zipFileName);
                 }
             } catch (error: any) {
@@ -350,7 +351,7 @@ const AddPackage = () => {
                                     </div>
                                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                         <div className="text-center">
-                                            <PhotoIcon className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
+                                            <FaRegImages className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
                                             <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                                                 <label
                                                     htmlFor="detail-imgs-upload"

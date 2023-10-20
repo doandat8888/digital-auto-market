@@ -10,6 +10,7 @@ import TextInput from '../components/TextInput';
 import TextArea from '../components/TextArea';
 import CategorySelectUpdate from '../components/CategorySelectUpdate';
 import _const from '../const';
+import { FaRegImages } from 'react-icons/fa';
 
 const UpdatePackage = () => {
 
@@ -92,6 +93,7 @@ const UpdatePackage = () => {
             setimageCover(packageUpdate.thumbnail);
             setimageDetailList(packageUpdate.images);
             setCategory(packageUpdate.category);
+            setEntryPoint(packageUpdate.entryPoint);
             // setZipFile(packageUpdate.version.downloadUrl);
             // setDeploymentUrl(packageUpdate.version.deploymentUrl);
             setMode(packageUpdate.visibility);
@@ -114,7 +116,7 @@ const UpdatePackage = () => {
     }
 
     useEffect(() => {
-        if (packageName && packageDescription && imageCover && imageDetailList && mode && category && entryPoint) {
+        if (packageName && packageDescription && imageCover && imageDetailList.length > 0 && mode && entryPoint) {
             setShowBtnSave(true);
         } else {
             setShowBtnSave(false);
@@ -124,7 +126,7 @@ const UpdatePackage = () => {
 
     const getUserInfo = async () => {
         if (token !== "") {
-            /* console.log("Token header: ", token); */
+            console.log("Token header: ", token);
             try {
                 const response = await userService.getUser();
                 if (response && response.status === 200) {
@@ -159,7 +161,7 @@ const UpdatePackage = () => {
                 const zipFileUrl = response.data.url;
                 setZipFile(response.data.url);
                 setDeploymentUrl(response.data.deploymentUrl);
-                const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/", "");
+                const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/data/store-be/", "");
                 setFileZipName(zipFileName);
             }
         }
@@ -330,7 +332,7 @@ const UpdatePackage = () => {
                                         </div>
                                         <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                             <div className="text-center">
-                                                <PhotoIcon className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
+                                                <FaRegImages className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
                                                 <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                                                     <label
                                                         htmlFor="detail-imgs-upload"
@@ -409,7 +411,8 @@ const UpdatePackage = () => {
                         <div className="mt-6 flex items-center justify-end gap-x-6">
                             <button
                                 type="submit"
-                                className={`${showBtnSave === true ? '' : 'hidden'} rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                                disabled={showBtnSave === true ? false : true}
+                                className={`rounded-md bg-blue-600 disabled:opacity-50 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                                 onClick={onSaveInfoPackage}
                             >
                                 Save

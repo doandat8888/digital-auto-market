@@ -19,11 +19,19 @@ const addNewPackage = (packageAdd: IAddPackage) => {
 }
 
 const getAllPackage = () => {
-    return axios.get(`/package`);
+    return axios.get(`/package?limit=100`);
 }
 
 const getAllPackageByPage = (limit: number, page: number) => {
     return axios.get(`/package?limit=${limit}&page=${page}`);
+}
+
+const getPackageTypeByPage = (category: string, limit: number, page: number) => {
+    return axios.get(`/package?category=${category}&limit=${limit}&page=${page}`);
+}
+
+const getPackageByCategory = (category: string) => {
+    return axios.get(`/package?category=${category}`);
 }
 
 
@@ -59,8 +67,16 @@ const removePackage = (packageId: string) => {
     return axios.delete(`/package/${packageId}`);
 }
 
-const getPackageOfCurrentUser = () => {
-    return axios.get(`/package/current`);
+const getPackageOfCurrentUser = (limit: number, currentPage: number) => {
+    return axios.get(`/package/current?limit=${limit}&page=${currentPage}`);
+}
+
+const getPackageByName = (limit: number, currentPage: number, packageName: string) => {
+    return axios.get(`/package?name=${packageName}&limit=${limit}&page=${currentPage}`)
+}
+
+const getMyPackageByName = (packageName: string) => {
+    return axios.get(`/package/current?name=${packageName}`)
 }
 
 export default {
@@ -73,5 +89,9 @@ export default {
     updateDownLoad,
     toggleLikePackage,
     getPackageOfCurrentUser,
-    getMyPackageByPage
+    getMyPackageByPage,
+    getPackageTypeByPage,
+    getPackageByCategory,
+    getPackageByName,
+    getMyPackageByName
 }

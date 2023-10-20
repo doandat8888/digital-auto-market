@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router';
+import { Routes, Route, useLocation } from 'react-router';
 import Home from '../pages/Home.tsx';
 import MyPackage from '../pages/MyPackage.tsx';
 import DetailPackage from '../pages/DetailPackage.tsx';
@@ -7,9 +7,17 @@ import Login from '../pages/Login.tsx';
 import Register from '../pages/Register.tsx';
 import ManageVersion from '../pages/ManageVersion.tsx';
 import UpdatePackage from '../pages/UpdatePackage.tsx';
+import PackageType from '../pages/PackageType.tsx';
+import { useEffect } from 'react';
 
 
 const RoutesApp = () => {
+
+    const location = useLocation();
+    useEffect(() => {
+        localStorage.removeItem('name');
+    }, [location.pathname]);
+
     return (
         <Routes>
             <Route path="/" element={<Home />} />
@@ -20,6 +28,7 @@ const RoutesApp = () => {
             <Route path='/register' element={<Register />} />
             <Route path='/manageversion/:packageId' element={<ManageVersion />}/>
             <Route path='/updatepackage/:packageId' element={<UpdatePackage />}/>
+            <Route path='/packagetype/:type' element={<PackageType />} />
         </Routes>
     )
 }

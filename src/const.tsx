@@ -12,12 +12,12 @@ const pageList: IPage[] = [
     {
         id: 3,
         name: 'Widget',
-        path: '/package?type=widget'
+        path: '/packagetype/widget'
     },
     {
         id: 4,
         name: 'Vehicle app',
-        path: '/package?type=vehicleapp'
+        path: '/packagetype/vehicalapp'
     }
 ];
 

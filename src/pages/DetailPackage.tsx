@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router";
-import { BiLike }  from 'react-icons/bi';
+import { BiDownload, BiLike }  from 'react-icons/bi';
 import { BsDownload } from 'react-icons/bs';
 import 'swiper/css';
 import Slideshow from "../components/ImageSlider";
@@ -39,6 +39,8 @@ const DetailPackage = () => {
     const [user, setUser] = useState<IUser | null>();
 
     //Review
+    const [isLoadingReview, setIsLoadingReview] = useState(true);
+    const [hasReviews, setHasReviews] = useState(0);
     const [reviews, setReviews] = useState<IUpdateReview[]>();
     const [reviewUpdate, setReviewUpdate] = useState<IUpdateReview>();
     const [reviewDeleteId, setReviewDeleteId] = useState<string>("");
@@ -91,7 +93,7 @@ const DetailPackage = () => {
 
     useEffect(() => {
         getPackageInfo();
-    }, [user, id])
+    }, [user, id]);
 
     const getUserInfo = async () => {
         try {
@@ -140,14 +142,31 @@ const DetailPackage = () => {
 
     useEffect(() => {
         getReviewByPackageId();
-    }, [packageDetail])
+    }, [packageDetail, reviews])
 
     const getReviewByPackageId = async() => {
         if(packageDetail) {
-            const response = await reviewService.getReviewByPackageId(packageDetail._id);
-            if(response && response.data && response.data.data.length > 0) {
-                setReviews(response.data.data);
+            try {
+                const response = await reviewService.getReviewByPackageId(packageDetail._id);
+                if(response && response.data) {
+                    if(response.data.data.length > 0) {
+                        setIsLoadingReview(false);
+                        setHasReviews(1);
+                        setReviews(response.data.data);
+                    }else if(response.data.data.length === 0) {
+                        setIsLoadingReview(false);
+                        setHasReviews(-1);
+                    }else {
+                        setIsLoadingReview(true);
+                        setHasReviews(0);
+                    }
+                }else {
+                    setIsLoadingReview(false);
+                }
+            } catch (error: any) {
+                console.log(error.data.response.msg);
             }
+            
         }
     }
 
@@ -225,13 +244,13 @@ const DetailPackage = () => {
                     <div className="w-full h-full flex items-center justify-center">
                         <div className="sm:w-[60%] lg:w-[80%] xl:w-[60%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
                             <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
-                                <div className="sm:w-[20%] w-[30%] aspect-square flex">
-                                    <img src={packageDetail?.thumbnail} alt="" className="w-[100%] sm:h-[100%] h-[70%] aspect-square rounded-lg object-cover"/>
+                                <div className="sm:w-[20%] flex aspect-square w-[30%]">
+                                    <img src={packageDetail.thumbnail ? packageDetail.thumbnail : 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png'} alt="" className="min-w-[20px] h-[50%] sm:h-[100%] rounded-lg object-cover"/>
                                 </div>
                                 <div className="sm:w-[80%] w-[70%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
                                     <div className="items-center sm:flex">
                                         <div className="flex justify-between">
-                                            <p className="lg:text-xl truncate sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
+                                            <p className="lg:text-xl truncate w-[200px] sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
                                             {canEdit &&
                                                 <div onClick={() => updatePackage(packageDetail)} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black border border-gray-500
                                                     rounded-lg"><AiOutlineEdit /><p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Update</p> 
@@ -247,18 +266,22 @@ const DetailPackage = () => {
                                         
                                         
                                     </div>
+                                    <div className="grow"></div>
                                     <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
                                         <p className="text-[12px] sm:text-[14px] opacity-75">{packageDetail?.authors[0]}</p>
                                         <Link to={`/manageversion/${packageDetail?._id}`} className="mx-2 text-[12px] sm:text-[14px] opacity-80 truncate">Version histories</Link>
                                     </div>
-                                   
-                                   
+                                    <div className="grow"></div>
                                     <div className="flex mt-2">
                                         <div onClick={() => onToggleLike(isLike === true ? "unlike" : "like")} className="py-1.5 px-2 round flex items-center cursor-pointer hover:opacity-60 bg-blue-500 text-white 
                                             rounded-lg"><BiLike /><p className="text-[12px] sm:text-[12px] ml-1">{isLike === false ? "Like" : "Unlike"}</p> 
                                         </div>
                                     </div>
                                     <div className="grow"></div>
+                                    <div className="flex mt-2">
+                                        <div className="flex items-center mx-1 opacity-70"><BiLike /><p className="text-[14px] ml-[2px] ">{packageDetail?.likes.length}</p></div>
+                                        <div className="flex items-center mx-1 opacity-70"><BiDownload /><p className="text-[14px] ml-[2px] ">{packageDetail?.downloads}</p></div>
+                                    </div>
                                     <div className="sm:flex justify-between">
                                         <div className="w-full sm:block mr-8">
                                             {packageDetail?.version.downloadUrl &&
@@ -273,7 +296,7 @@ const DetailPackage = () => {
                                             {packageDetail?.version.downloadUrl &&
                                                 <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
                                                     px-6 py-2 rounded-lg items-center justify-center">
-                                                    <a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={currentVersion?.deploymentUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
+                                                    <a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={currentVersion?.entryUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
                                                     </a>
                                                 </button>
                                             }
@@ -295,12 +318,17 @@ const DetailPackage = () => {
                                     <button onClick={onClickBtnCommentRating} className="text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 items-center cursor-pointer rounded border-2 border-black text-black"><AiOutlineComment /><p className="sm:block sm:ml-2 hidden ">Comment & rating</p></button>
                                 </div>
                                 <div className="w-full rounded-lg py-4">
-                                    {reviews && user ? <ReviewList onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} user={user} reviewsFilter={reviews}/> : 
+                                    {isLoadingReview ? "Loading..." : ''}
+                                    {hasReviews === 1 && user ? <ReviewList onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} user={user} reviewsFilter={reviews}/> : 
+                                        hasReviews === -1 && user ?
                                         <div className="no-comment text-center">
                                             <img className="mx-auto w-[30%]" src="https://th.bing.com/th/id/R.d398a2e0d6d36ace87869a3f786c6979?rik=K8zpST5cjAejww&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_322817.png&ehk=oW9Pr%2fAMVWdSPoyXmhAG8%2bvVqTYgD8Yt%2bneO2UjKTk4%3d&risl=&pid=ImgRaw&r=0" alt="no-comment" />
                                             <p className="mt-2 sm:text-[16px] text-[12px]">There is no comment here. Be the first one to comment on this package</p>
+                                        
                                         </div>
+                                        : hasReviews === 0 && user && ''
                                     }
+                                    
                                     
                                 </div>
                             </div>
