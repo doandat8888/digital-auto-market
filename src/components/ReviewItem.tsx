@@ -9,7 +9,7 @@ interface IProps {
     rating: number,
     comment: string,
     createdBy: string,
-    user: IUser,
+    // user: IUser,
     onUpdateReview: () => void,
     onDeleteReview: () => void,
     createdAt: string
@@ -17,7 +17,7 @@ interface IProps {
 
 const ReviewItem = (props: IProps) => {
 
-    const { rating, comment, createdBy, user, onUpdateReview, onDeleteReview, createdAt } = props;
+    const { rating, comment, createdBy, onUpdateReview, onDeleteReview, createdAt } = props;
     const [currentUser, setCurrentUser] = useState<IUser>();
     const [canEdit, setCanEdit] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
@@ -25,9 +25,14 @@ const ReviewItem = (props: IProps) => {
 
     useEffect(() => {
         getUserById(createdBy);
-        if(user._id === createdBy) {
-            setCanEdit(true);
+        if(currentUser) {
+            if(currentUser._id === createdBy) {
+                setCanEdit(true);
+            }
+        }else {
+            setCanEdit(false);
         }
+
     }, [createdBy]);
 
 

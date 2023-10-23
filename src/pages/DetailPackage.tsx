@@ -319,8 +319,8 @@ const DetailPackage = () => {
                                 </div>
                                 <div className="w-full rounded-lg py-4">
                                     {isLoadingReview ? "Loading..." : ''}
-                                    {hasReviews === 1 && user ? <ReviewList onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} user={user} reviewsFilter={reviews}/> : 
-                                        hasReviews === -1 && user ?
+                                    {hasReviews === 1 ? <ReviewList onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} reviewsFilter={reviews}/> : 
+                                        hasReviews === -1 ?
                                         <div className="no-comment text-center">
                                             <img className="mx-auto w-[30%]" src="https://th.bing.com/th/id/R.d398a2e0d6d36ace87869a3f786c6979?rik=K8zpST5cjAejww&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_322817.png&ehk=oW9Pr%2fAMVWdSPoyXmhAG8%2bvVqTYgD8Yt%2bneO2UjKTk4%3d&risl=&pid=ImgRaw&r=0" alt="no-comment" />
                                             <p className="mt-2 sm:text-[16px] text-[12px]">There is no comment here. Be the first one to comment on this package</p>
