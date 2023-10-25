@@ -265,7 +265,7 @@ const DetailPackage = () => {
 
     return (
         <div>
-            <button onClick={() => onRemovePackage(packageDetail?._id ? packageDetail._id : "")}>Remove this package</button>
+            {/* <button onClick={() => onRemovePackage(packageDetail?._id ? packageDetail._id : "")}>Remove this package</button> */}
             <LoadingModal open={isLoading} closeModal={onCloseModal}/>
             {packageDetail &&  
             <div className={`${isLoading === true ? 'hidden' : ''}`}>
