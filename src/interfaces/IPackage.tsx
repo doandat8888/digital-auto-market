@@ -7,7 +7,7 @@ type IPackage = {
     fullDesc: string,
     license: string,
     visibility: string,
-    authors: string[], 
+    authors: IAuthor[], 
     entryPoint: string
 }
 

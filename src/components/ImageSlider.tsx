@@ -65,7 +65,7 @@ const Slideshow = (props: IProps) => {
                 aria-describedby="modal-modal-description"
                 className="flex items-center justify-center"
             >
-                <img src={imgFull} alt="imgFull" className="sm:w-[60%] sm:h-[50%] w-[90%] h-[60%] object-cover"/>
+                <img src={imgFull} alt="imgFull" className="sm:w-[60%] sm:h-[50%] w-[90%] h-[60%] object-contain"/>
                 
             </Modal>
       </div>

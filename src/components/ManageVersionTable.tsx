@@ -2,6 +2,7 @@ import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import { BiDownload } from "react-icons/bi";
 import NoPackage from "./NoPackage";
 import handleDate from "../utils/handleDate";
+import { CiShare1 } from "react-icons/ci";
 
 interface IProps {
     versionList: IGetVersion[],
@@ -59,6 +60,7 @@ const ManageVersionTable = (props: IProps) => {
                                         <div className="flex">
                                             <button onClick={() => onUpdateVersion(version)} className="border-none outline-none flex justify-center mr-2 w-[30%] px-2 py-2 text-white items-center cursor-pointer rounded bg-yellow-400"><AiOutlineEdit /><p className="lg:block lg:ml-2 hidden">Update</p></button>
                                             <button onClick={() => onDeleteVersion(version._id)} className="border-none outline-none flex justify-center mx-2 w-[30%] px-2 py-2  text-white items-center cursor-pointer rounded bg-red-600"><AiOutlineDelete /><p className="lg:block lg:ml-2 hidden">Delete</p></button>
+                                            <button className="border-none outline-none flex justify-center mx-2 w-[30%] px-2 py-2  text-white items-center cursor-pointer rounded bg-blue-600"><a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={version.deploymentUrl}> <CiShare1 /><p className="lg:block lg:ml-2 hidden mx-2">Preview</p></a></button>
                                         </div>
                                     </td>
                                 }

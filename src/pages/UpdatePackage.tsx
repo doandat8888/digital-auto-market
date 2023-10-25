@@ -116,12 +116,12 @@ const UpdatePackage = () => {
     }
 
     useEffect(() => {
-        if (packageName && packageDescription && imageCover &&  mode && entryPoint) {
+        if (packageName &&  imageCover &&  mode && entryPoint) {
             setShowBtnSave(true);
         } else {
             setShowBtnSave(false);
         }
-    }, [packageName, packageDescription, imageCover, mode, category, entryPoint]);
+    }, [packageName, imageCover, mode, category, entryPoint]);
 
 
     const getUserInfo = async () => {

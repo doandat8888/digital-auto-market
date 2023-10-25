@@ -17,12 +17,14 @@ import ReviewList from "../components/ReviewList";
 import { removeToken } from "../redux/token/tokenSlice";
 import ModalConfirmDelete from "../components/ModalConfirmDelete";
 import { CiShare1 } from "react-icons/ci";
+import { GoCopy } from "react-icons/go";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DetailPackage = () => {
 
     const [packageDetail, setPackageDetail] = useState<IGetPackage>();
     const { id } = useParams();
-    //const packages = useSelector((state: RootState) => state.packages.value);
     const [isLoading, setIsLoading] = useState(true);
     const [canEdit, setCanEdit] = useState(false);
     const [currentVersion, setCurrentVersion] = useState<IGetVersion>();
@@ -58,7 +60,7 @@ const DetailPackage = () => {
         if(tokenUser !== "") {
             getUserInfo();
         }
-    }, [tokenUser]);
+    }, [tokenUser, id]);
 
     useEffect(() => {
         if(packageDetail) {
@@ -142,7 +144,7 @@ const DetailPackage = () => {
 
     useEffect(() => {
         getReviewByPackageId();
-    }, [packageDetail, reviews])
+    }, [packageDetail])
 
     const getReviewByPackageId = async() => {
         if(packageDetail) {
@@ -208,21 +210,25 @@ const DetailPackage = () => {
         window.location.href = `/package/${packageDetail?._id}`;
     }
 
-    const onToggleLike = async(status: string) => {
-        if(status === "unlike") {
-            try {
-                const response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "unlike");
-            } catch (error: any) {
-                console.log(error.response.data.msg);
+    const handleLike = async(status: string) => {
+        if(user) {
+            if(status === "unlike") {
+                try {
+                    const response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "unlike");
+                } catch (error: any) {
+                    console.log(error.response.data.msg);
+                }
+            }else {
+                try {
+                    const response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "like");
+                } catch (error: any) {
+                    console.log(error.response.data.msg);
+                }
             }
+            setIsLike(!isLike);
         }else {
-            try {
-                const response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "like");
-            } catch (error: any) {
-                console.log(error.response.data.msg);
-            }
+            navigate('/login');
         }
-        setIsLike(!isLike);
     }
 
     const onDownLoadPackage = async() => {
@@ -231,12 +237,35 @@ const DetailPackage = () => {
         } catch (error: any) {
             alert(error.response.data.msg);
         }
-        
+    }
+
+    const onCopyUrl = (link: string | undefined) => {
+        const el = document.createElement("input");
+        if(link) {
+            el.value = link;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand("copy");
+            document.body.removeChild(el);
+            toast.success("Copied to clipboard");
+        }
+    }
+
+    const onRemovePackage = async(packageId: string) => {
+        try {
+            let response = await packageService.removePackage(packageId);
+            if(response && response.status === 200) {
+                alert("Deleted successfully!");
+                navigate('/');
+            }
+        } catch (error: any) {
+            alert(error.response.data.msg);
+        }
     }
 
     return (
         <div>
-            {/* <button onClick={() => onRemovePackage(packageDetail?._id ? packageDetail._id : "")}>Remove this package</button> */}
+            <button onClick={() => onRemovePackage(packageDetail?._id ? packageDetail._id : "")}>Remove this package</button>
             <LoadingModal open={isLoading} closeModal={onCloseModal}/>
             {packageDetail &&  
             <div className={`${isLoading === true ? 'hidden' : ''}`}>
@@ -245,7 +274,7 @@ const DetailPackage = () => {
                         <div className="sm:w-[60%] lg:w-[80%] xl:w-[60%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
                             <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
                                 <div className="sm:w-[20%] flex aspect-square w-[30%]">
-                                    <img src={packageDetail.thumbnail ? packageDetail.thumbnail : 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png'} alt="" className="min-w-[20px] h-[50%] sm:h-[100%] rounded-lg object-cover"/>
+                                    <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt="" className="min-w-[20px] h-[50%] sm:h-[100%] rounded-lg object-fill aspect-square" />
                                 </div>
                                 <div className="sm:w-[80%] w-[70%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
                                     <div className="items-center sm:flex">
@@ -268,12 +297,12 @@ const DetailPackage = () => {
                                     </div>
                                     <div className="grow"></div>
                                     <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
-                                        <p className="text-[12px] sm:text-[14px] opacity-75">{packageDetail?.authors[0]}</p>
+                                        <p className="text-[12px] sm:text-[14px] opacity-75">{packageDetail?.createdBy.fullName}</p>
                                         <Link to={`/manageversion/${packageDetail?._id}`} className="mx-2 text-[12px] sm:text-[14px] opacity-80 truncate">Version histories</Link>
                                     </div>
                                     <div className="grow"></div>
                                     <div className="flex mt-2">
-                                        <div onClick={() => onToggleLike(isLike === true ? "unlike" : "like")} className="py-1.5 px-2 round flex items-center cursor-pointer hover:opacity-60 bg-blue-500 text-white 
+                                        <div onClick={() => handleLike(isLike === true ? "unlike" : "like")} className="py-1.5 px-2 round flex items-center cursor-pointer hover:opacity-60 bg-blue-500 text-white 
                                             rounded-lg"><BiLike /><p className="text-[12px] sm:text-[12px] ml-1">{isLike === false ? "Like" : "Unlike"}</p> 
                                         </div>
                                     </div>
@@ -292,12 +321,20 @@ const DetailPackage = () => {
                                                 </button>
                                             }
                                         </div>
-                                        <div className="w-full sm:block">
+                                        <div className="w-full sm:block mr-8">
                                             {packageDetail?.version.downloadUrl &&
                                                 <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
                                                     px-6 py-2 rounded-lg items-center justify-center">
                                                     <a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={currentVersion?.entryUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
                                                     </a>
+                                                </button>
+                                            }
+                                        </div>
+                                        <div className="w-full sm:block">
+                                            {packageDetail?.version.downloadUrl &&
+                                                <button className="w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
+                                                    px-6 py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(currentVersion?.entryUrl)}>
+                                                    <p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Copy URL</p> <GoCopy />
                                                 </button>
                                             }
                                         </div>
@@ -319,10 +356,10 @@ const DetailPackage = () => {
                                 </div>
                                 <div className="w-full rounded-lg py-4">
                                     {isLoadingReview ? "Loading..." : ''}
-                                    {hasReviews === 1 ? <ReviewList onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} reviewsFilter={reviews}/> : 
+                                    {hasReviews === 1 ? <ReviewList currentUser={user && user} onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} reviewsFilter={reviews}/> : 
                                         hasReviews === -1 ?
                                         <div className="no-comment text-center">
-                                            <img className="mx-auto w-[30%]" src="https://th.bing.com/th/id/R.d398a2e0d6d36ace87869a3f786c6979?rik=K8zpST5cjAejww&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_322817.png&ehk=oW9Pr%2fAMVWdSPoyXmhAG8%2bvVqTYgD8Yt%2bneO2UjKTk4%3d&risl=&pid=ImgRaw&r=0" alt="no-comment" />
+                                            <img className="mx-auto w-[10%]" src="https://th.bing.com/th/id/R.d398a2e0d6d36ace87869a3f786c6979?rik=K8zpST5cjAejww&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_322817.png&ehk=oW9Pr%2fAMVWdSPoyXmhAG8%2bvVqTYgD8Yt%2bneO2UjKTk4%3d&risl=&pid=ImgRaw&r=0" alt="no-comment" />
                                             <p className="mt-2 sm:text-[16px] text-[12px]">There is no comment here. Be the first one to comment on this package</p>
                                         
                                         </div>
@@ -338,6 +375,7 @@ const DetailPackage = () => {
                     </div>
                 </div>
             </div>}
+            <ToastContainer />
             {isLoading === false && !packageDetail && <NotFound/>}
         </div>
     )

@@ -24,9 +24,13 @@ const PackageType = () => {
         const response = await packageService.getPackageByCategory(limit, currentPage, type ? type : '');
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
-            console.log("Data package type: ", response.data.total);
+            let totalPages = 0;
             setTotal(response.data.total);
-            const totalPages = Math.floor(response.data.total / limit) + 1;
+            if(response.data.total % limit === 0) {
+                totalPages = Math.floor(response.data.total / limit);
+            }else {
+                totalPages = Math.floor(response.data.total / limit) + 1;
+            }
             setTotalPage(totalPages);
         }
     }
@@ -39,7 +43,13 @@ const PackageType = () => {
         const response = await packageService.getPackageByCategoryAndName(limit, currentPage, packageName, type ? type : '');
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
-            const totalPages = Math.floor(response.data.total / limit) + 1;
+            let totalPages = 0;
+            setTotal(response.data.total);
+            if(response.data.total % limit === 0) {
+                totalPages = Math.floor(response.data.total / limit);
+            }else {
+                totalPages = Math.floor(response.data.total / limit) + 1;
+            }
             setTotalPage(totalPages);
         }
     }
@@ -54,6 +64,10 @@ const PackageType = () => {
     }, [currentPage, type]);
 
     useEffect(() => {
+        setCurrentPage(1);
+    }, [type]);
+
+    useEffect(() => {
         if(packageList.length > 0) {
             setIsLoading(false);
         }
@@ -61,6 +75,7 @@ const PackageType = () => {
 
     const deb = _.debounce((e) => {
         getPackageByCategoryAndName(e.target.value);
+        setCurrentPage(1);
         localStorage.setItem('name', e.target.value);
         }, 1000
     );

@@ -33,7 +33,12 @@ const Home = () => {
         const response = await packageService.getAllPackageByPage(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
-            const totalPages = Math.floor(response.data.total / limit) + 1;
+            let totalPages = 0;
+            if(response.data.total % limit === 0) {
+                totalPages = Math.floor(response.data.total / limit);
+            }else {
+                totalPages = Math.floor(response.data.total / limit) + 1;
+            }
             setTotalPage(totalPages);
         }
     }
@@ -46,13 +51,19 @@ const Home = () => {
         const response = await packageService.getPackageByName(limit, currentPage, packageName);
         if(response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
-            const totalPages = Math.floor(response.data.total / limit) + 1;
+            let totalPages = 0;
+            if(response.data.total % limit === 0) {
+                totalPages = Math.floor(response.data.total / limit);
+            }else {
+                totalPages = Math.floor(response.data.total / limit) + 1;
+            }
             setTotalPage(totalPages);
         }
     };
 
     const deb = _.debounce((e) => {
         getPackageByName(e.target.value);
+        setCurrentPage(1);
         localStorage.setItem('name', e.target.value);
         }, 1000
     );

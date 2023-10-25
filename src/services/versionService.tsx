@@ -1,7 +1,7 @@
 import axios from "../axiosPackage";
 
-const getVersionByPackageId = (packageId: string) => {
-    return axios.get(`/package/${packageId}/version`);
+const getVersionByPackageId = (packageId: string, limit: number, currentPage: number) => {
+    return axios.get(`/package/${packageId}/version?limit=${limit}&page=${currentPage}`);
 }
 
 const addVersion = (version: IAddVersion) => {

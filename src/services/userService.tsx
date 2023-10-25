@@ -23,9 +23,14 @@ const getUserById = (idUser: string) => {
     return axios.get(`/user/${idUser}`);
 }
 
+const getCurrentUser = () => {
+    return axios.get('/user/current');
+}
+
 export default {
     login,
     getUser,
     register,
-    getUserById
+    getUserById,
+    getCurrentUser
 }

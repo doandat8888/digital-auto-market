@@ -64,8 +64,13 @@ const MyPackage = () => {
         const response = await packageService.getPackageOfCurrentUser(limit, currentPage);
         if(response && response.data && response.data.data.length > 0) {
             const packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
-            setMyPackageList(packages);
-            const totalPages = Math.floor(response.data.total / limit) + 1;
+            setMyPackageList(response.data.data);
+            let totalPages = 0;
+            if(response.data.total % limit === 0) {
+                totalPages = Math.floor(response.data.total / limit);
+            }else {
+                totalPages = Math.floor(response.data.total / limit) + 1;
+            }
             setTotalPage(totalPages);
         }
         setIsLoading(false);
@@ -77,12 +82,19 @@ const MyPackage = () => {
         const response = await packageService.getMyPackageByName(limit, currentPage, packageName);
         if(response && response.data && response.data.data.length > 0) {
             setMyPackageList(response.data.data);
-            
+            let totalPages = 0;
+            if(response.data.total % limit === 0) {
+                totalPages = Math.floor(response.data.total / limit);
+            }else {
+                totalPages = Math.floor(response.data.total / limit) + 1;
+            }
+            setTotalPage(totalPages);
         }
     }
 
     const deb = _.debounce((e) => {
         getMyPackageByName(e.target.value);
+        setCurrentPage(1);
         localStorage.setItem('name', e.target.value);
         }, 1000
     );
@@ -131,7 +143,7 @@ const MyPackage = () => {
                     <div className="search flex justify-end mb-6">
                         <input className='text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
                     </div>
-                    <PackageList showMode={false} packages={myPackageList}/>
+                    <PackageList showMode={true} packages={myPackageList}/>
                 </div>
                 <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
             </div> : <NoPackage content="There is no packages in the system"/>}
