@@ -11,6 +11,7 @@ import TextArea from '../components/TextArea';
 import CategorySelectUpdate from '../components/CategorySelectUpdate';
 import _const from '../const';
 import { FaRegImages } from 'react-icons/fa';
+import { Editor, OnChange } from '@monaco-editor/react';
 
 const UpdatePackage = () => {
 
@@ -24,6 +25,7 @@ const UpdatePackage = () => {
     const [imageDetailList, setimageDetailList] = useState<string[]>([]);
     const [imageCover, setimageCover] = useState<string>("");
     const [entryPoint, setEntryPoint] = useState<string>("");
+    const [dashboardConfig, setDashboardConfig] = useState<string>("");
     //Zip file
     const [zipFile, setZipFile] = useState<string>("");
     const [deploymentUrl, setDeploymentUrl] = useState("");
@@ -94,6 +96,7 @@ const UpdatePackage = () => {
             setimageDetailList(packageUpdate.images);
             setCategory(packageUpdate.category);
             setEntryPoint(packageUpdate.entryPoint);
+            setDashboardConfig(packageUpdate.dashboardConfig);
             // setZipFile(packageUpdate.version.downloadUrl);
             // setDeploymentUrl(packageUpdate.version.deploymentUrl);
             setMode(packageUpdate.visibility);
@@ -116,7 +119,7 @@ const UpdatePackage = () => {
     }
 
     useEffect(() => {
-        if (packageName &&  imageCover &&  mode && entryPoint) {
+        if (packageName && imageCover && mode && entryPoint) {
             setShowBtnSave(true);
         } else {
             setShowBtnSave(false);
@@ -126,7 +129,7 @@ const UpdatePackage = () => {
 
     const getUserInfo = async () => {
         if (token !== "") {
-            console.log("Token header: ", token);
+            // console.log("Token header: ", token);
             try {
                 const response = await userService.getUser();
                 if (response && response.status === 200) {
@@ -202,7 +205,8 @@ const UpdatePackage = () => {
                         downloadUrl: zipFile,
                         deploymentUrl: deploymentUrl,
                         category: category,
-                        entryPoint: entryPoint
+                        entryPoint: entryPoint,
+                        dashboardConfig
                     };
                     try {
                         const response = await packageService.updatePackage(packageObj, packageUpdate._id);
@@ -277,6 +281,10 @@ const UpdatePackage = () => {
         setIsLoading(false);
     }
 
+    const handleEditorChange: OnChange = (value, event) => {
+        setDashboardConfig(value || '');
+    };
+
     return (
         <div>
             {isLoading === true ? <LoadingModal open={isLoading} closeModal={onCloseModal} /> :
@@ -285,10 +293,56 @@ const UpdatePackage = () => {
                         <div className="space-y-12">
                             <div className="border-b border-gray-900/10 pb-12">
                                 <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-4">
-                                    <TextInput title="Package name" value={packageName} placeholderStr="Enter your package name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
-                                    <CategorySelectUpdate listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} categoryName={category}/>
-                                    <TextInput title="Short description" value={packageShortDesc} placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} />
-                                    <TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" />
+                                    <div className="col-span-full sm:flex">
+                                        <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[90%] w-full'><TextInput title="Package name" value={packageName} placeholderStr="Enter your package name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} /></div></div>
+                                        <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[90%] w-full'><TextInput title="Short description" value={packageShortDesc} placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} /></div></div>
+                                    </div>
+                                    <div className="col-span-full sm:flex">
+                                        <div className="sm:w-[50%] w-[100%]"><div className="sm:w-[90%] w-full"><TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" /></div></div>
+                                        <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[90%] w-full'><TextInput title="Entry point" value={entryPoint} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} /></div></div>
+                                    </div>
+                                    <div className="col-span-full flex">
+                                        <div className="w-[50%]"><CategorySelectUpdate listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} categoryName={category} /></div>
+                                        <fieldset className='w-[50%] flex justify-end'>
+                                            <div className="w-[90%]">
+                                                <div className="flex">
+                                                    <legend className="text-sm font-semibold leading-6 text-gray-900">Mode</legend>
+                                                    <p className="required text-red-500 ml-1">*</p>
+                                                </div>
+                                                <div className="mt-3 space-y-3">
+                                                    <div className="flex items-center gap-x-3">
+                                                        <input
+                                                            checked={mode === "public"}
+                                                            id="public"
+                                                            name="public"
+                                                            type="radio"
+                                                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                            onChange={onChangeMode}
+                                                            value={"public"}
+                                                        />
+                                                        <label htmlFor="push-everything" className="block text-sm font-medium leading-6 text-gray-900">
+                                                            Public
+                                                        </label>
+                                                    </div>
+                                                    <div className="flex items-center gap-x-3">
+                                                        <input
+                                                            checked={mode === "private"}
+                                                            id="private"
+                                                            name="private"
+                                                            type="radio"
+                                                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                            onChange={onChangeMode}
+                                                            value={"private"}
+                                                        />
+                                                        <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
+                                                            Only me
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </fieldset>
+                                    </div>
                                     <div className="col-span-full">
                                         <div className="flex">
                                             <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
@@ -361,51 +415,16 @@ const UpdatePackage = () => {
                                         ))}
                                     </div>
                                     {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
-                                    <div className="col-span-full">
-                                        <TextInput title="Entry point" value={entryPoint} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} />
+                                </div>
+                            </div>
+                            <div className="col-span-full">
+                                    <div className="flex mb-2">
+                                        <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">
+                                            Dashboard config
+                                        </label>
                                     </div>
+                                    <Editor height="300px" defaultLanguage="javascript" defaultValue="// some comment" value={dashboardConfig} onChange={handleEditorChange}/>;
                                 </div>
-                            </div>
-                            <div className="border-b border-gray-900/10 pb-12">
-                                <div className="mt-10 space-y-10">
-                                    <fieldset>
-                                        <div className="flex">
-                                            <legend className="text-sm font-semibold leading-6 text-gray-900">Mode</legend>
-                                            <p className="required text-red-500 ml-1">*</p>
-                                        </div>
-                                        <div className="mt-3 space-y-3">
-                                            <div className="flex items-center gap-x-3">
-                                                <input
-                                                    checked={mode === "public"}
-                                                    id="public"
-                                                    name="public"
-                                                    type="radio"
-                                                    className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                    onChange={onChangeMode}
-                                                    value={"public"}
-                                                />
-                                                <label htmlFor="push-everything" className="block text-sm font-medium leading-6 text-gray-900">
-                                                    Public
-                                                </label>
-                                            </div>
-                                            <div className="flex items-center gap-x-3">
-                                                <input
-                                                    checked={mode === "private"}
-                                                    id="private"
-                                                    name="private"
-                                                    type="radio"
-                                                    className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                    onChange={onChangeMode}
-                                                    value={"private"}
-                                                />
-                                                <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
-                                                    Only me
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </fieldset>
-                                </div>
-                            </div>
                         </div>
 
                         <div className="mt-6 flex items-center justify-end gap-x-6">
@@ -421,8 +440,6 @@ const UpdatePackage = () => {
                     </form>
                 </div>
             }
-
-
         </div>
     )
 }

@@ -279,7 +279,7 @@ const DetailPackage = () => {
                                 <div className="sm:w-[80%] w-[70%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
                                     <div className="items-center sm:flex">
                                         <div className="flex justify-between">
-                                            <p className="lg:text-xl truncate w-[200px] sm:text-lg text-[16px] font-bold">{packageDetail?.name}</p>
+                                            <p className="lg:text-xl truncate w-[200px] sm:text-lg text-[16px] font-bold text-black">{packageDetail?.name}</p>
                                             {canEdit &&
                                                 <div onClick={() => updatePackage(packageDetail)} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black border border-gray-500
                                                     rounded-lg"><AiOutlineEdit /><p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Update</p> 
@@ -297,7 +297,7 @@ const DetailPackage = () => {
                                     </div>
                                     <div className="grow"></div>
                                     <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
-                                        <p className="text-[12px] sm:text-[14px] opacity-75">{packageDetail?.createdBy.fullName}</p>
+                                        <p className="text-[12px] sm:text-[14px] opacity-75 text-black">{packageDetail?.createdBy.fullName}</p>
                                         <Link to={`/manageversion/${packageDetail?._id}`} className="mx-2 text-[12px] sm:text-[14px] opacity-80 truncate">Version histories</Link>
                                     </div>
                                     <div className="grow"></div>
@@ -308,8 +308,8 @@ const DetailPackage = () => {
                                     </div>
                                     <div className="grow"></div>
                                     <div className="flex mt-2">
-                                        <div className="flex items-center mx-1 opacity-70"><BiLike /><p className="text-[14px] ml-[2px] ">{packageDetail?.likes.length}</p></div>
-                                        <div className="flex items-center mx-1 opacity-70"><BiDownload /><p className="text-[14px] ml-[2px] ">{packageDetail?.downloads}</p></div>
+                                        <div className="flex items-center mx-1 opacity-70 text-black"><BiLike /><p className="text-[14px] ml-[2px] ">{packageDetail?.likes.length}</p></div>
+                                        <div className="flex items-center mx-1 opacity-70 text-black"><BiDownload /><p className="text-[14px] ml-[2px] ">{packageDetail?.downloads}</p></div>
                                     </div>
                                     <div className="sm:flex justify-between">
                                         <div className="w-full sm:block mr-8">
@@ -325,15 +325,15 @@ const DetailPackage = () => {
                                             {packageDetail?.version.downloadUrl &&
                                                 <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
                                                     px-6 py-2 rounded-lg items-center justify-center">
-                                                    <a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={currentVersion?.entryUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
+                                                    <a target="_blank" rel="noopener noreferrer" className="w-full text-black flex items-center justify-center" href={packageDetail.entryUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
                                                     </a>
                                                 </button>
                                             }
                                         </div>
                                         <div className="w-full sm:block">
                                             {packageDetail?.version.downloadUrl &&
-                                                <button className="w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
-                                                    px-6 py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(currentVersion?.entryUrl)}>
+                                                <button className="text-black w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
+                                                    px-6 py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(packageDetail.entryUrl)}>
                                                     <p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Copy URL</p> <GoCopy />
                                                 </button>
                                             }
@@ -343,13 +343,13 @@ const DetailPackage = () => {
                                 </div>
                             </div>
                             <div className="my-4 flex">
-                                <div className="description">
+                                <div className="description text-black">
                                     <p className="text-xl font-bold">Description</p>
                                     <p>{packageDetail?.fullDesc}</p>
                                 </div>
                             </div>
                             <Slideshow slideImages={packageDetail?.images}/>
-                            <div className="comment-rating my-6">
+                            <div className="comment-rating my-6 text-black">
                                 <div className="flex justify-between">
                                     <div className="text-xl font-semibold">Reviews</div>
                                     <button onClick={onClickBtnCommentRating} className="text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 items-center cursor-pointer rounded border-2 border-black text-black"><AiOutlineComment /><p className="sm:block sm:ml-2 hidden ">Comment & rating</p></button>

@@ -20,10 +20,11 @@ const ModalPublishVersion = (props: IProps) => {
     const {open, handleClose, packageId, refreshData, versionUpdate} = props;
     //Version info
     const [versionName, setVersionName] = useState("");
-    const [versionDesc, setVersionDesc] = useState("");
+    const [versionDesc, setVersionDesc] = useState<string | undefined>("");
 
     //Zip file
     const [zipFile, setZipFile] = useState<string>("");
+    const [file, setFile] = useState<File | undefined>();
     const [deploymentUrl, setDeploymentUrl] = useState("");
     // const [zipBase64, setZipBase64] = useState<string>("");
     const [fileZipName, setFileZipName] = useState<string>("");
@@ -38,7 +39,6 @@ const ModalPublishVersion = (props: IProps) => {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         bgcolor: 'background.paper',
-        border: '2px solid #000',
         boxShadow: 24,
         padding: "0 20px",
         borderRadius: 2,
@@ -51,6 +51,7 @@ const ModalPublishVersion = (props: IProps) => {
         if (file) {
             const formData = new FormData();
             formData.append('file', file);
+            setFile(file);
             const response = await uploadService.uploadFile(formData);
             if(response && response.status === 201) {
                 const zipFileUrl = response.data.url;
@@ -82,18 +83,18 @@ const ModalPublishVersion = (props: IProps) => {
     }
 
     const onSaveInfoVersion = async() => {
-        if(!versionName || !zipFile || !deploymentUrl || !versionDesc || !packageId) {
-            alert("Missing version info. Please try again!");
-        }else {
-            setIsLoading(true);
-            handleClose();
-            if(!versionUpdate) {
+        
+        setIsLoading(true);
+        handleClose();
+        if(!versionUpdate) {
+            if(!versionName || !zipFile || !deploymentUrl || !versionDesc || !packageId) {
+                alert("Missing version info. Please try again!");
+            }else {
                 const versionAdd: IAddVersion = {
+                    packageId: packageId,
                     name: versionName,
-                    downloadUrl: zipFile,
-                    deploymentUrl: deploymentUrl,
                     desc: versionDesc,
-                    packageId: packageId
+                    file: file,
                 }
                 try {
                     const response = await versionService.addVersion(versionAdd);
@@ -103,18 +104,19 @@ const ModalPublishVersion = (props: IProps) => {
                         refreshData();
                         setIsLoading(false);
                     }
-                } catch (error) {
-                    console.log(error);
+                } catch (error: any) {
+                    alert(error.response.data.msg);
+                    setIsLoading(false);
                 }
-                
+            }
+        }else {
+            if(!versionDesc) {
+                alert("Missing version info. Please try again!");
+                setIsLoading(false);
             }else {
                 const versionEdit: IUpdateVersion = {
-                    name: versionName,
-                    downloadUrl: zipFile,
-                    deploymentUrl: deploymentUrl,
+                    _id: versionUpdate._id,
                     desc: versionDesc,
-                    packageId: packageId,
-                    _id: versionUpdate._id
                 }
                 try {
                     const response = await versionService.updateVersion(versionEdit);
@@ -124,8 +126,9 @@ const ModalPublishVersion = (props: IProps) => {
                         refreshData();
                         setIsLoading(false);
                     }
-                } catch (error) {
-                    console.log(error);
+                } catch (error: any) {
+                    alert(error.response.data.msg);
+                    setIsLoading(false);
                 }
             }
         }
@@ -133,10 +136,7 @@ const ModalPublishVersion = (props: IProps) => {
 
     useEffect(() => {
         if(versionUpdate) {
-            setVersionName(versionUpdate.name);
             setVersionDesc(versionUpdate.desc);
-            setDeploymentUrl(versionUpdate.deploymentUrl);
-            setZipFile(versionUpdate.downloadUrl);
         }
     }, [versionUpdate])
 
@@ -146,26 +146,32 @@ const ModalPublishVersion = (props: IProps) => {
     }
 
     useEffect(() => {
-        if(versionName && versionDesc && zipFile) {
-            setDisabled(false);
+        if(!versionUpdate) {
+            if(versionName && versionDesc && zipFile) {
+                setDisabled(false);
+            }else {
+                setDisabled(true);
+            }
         }else {
-            setDisabled(true);
+            if(versionDesc) {
+                setDisabled(false);
+            }
         }
     }, [versionName, versionDesc, zipFile])
 
     return (
-        <div>
+        <div className="h-auto my-auto overflow-scroll">
             <LoadingModal open={isLoading} closeModal={() => setIsLoading(false)}/>
             <Modal
                 open={open}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                
+                className="h-auto my-auto overflow-scroll"
             >
                 <Box sx={style}>
-                    <TextInput title="Version name" value={versionName} placeholderStr="Enter your version name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setVersionName(event.target.value)}/>
-                    <TextArea title="Description" value={versionDesc} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setVersionDesc(event.target.value)} placeHolderStr="Write some sentences about your version"/>
-                    <UploadFile zipFile={zipFile} fileZipName={fileZipName} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile}/>
+                    {!versionUpdate && <TextInput title="Version name" value={versionName} placeholderStr="Enter your version name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setVersionName(event.target.value)}/>}
+                    <TextArea title="Description" value={versionDesc ? versionDesc : ''} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setVersionDesc(event.target.value)} placeHolderStr="Write some sentences about your version"/>
+                    {!versionUpdate && <UploadFile zipFile={zipFile} fileZipName={fileZipName} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile}/> }
                     <div className="w-full flex justify-end">
                         <button
                             type="submit"

@@ -5,7 +5,6 @@ const token = localStorage.getItem("token");
 const instance = axios.create({
     baseURL: import.meta.env.VITE_APP_USER_MGMT_URL,
     headers: {
-        'Content-Type': 'application/json;charset=utf-8',
         'Authorization': `Bearer ${token}`
     },
 });
