@@ -5,7 +5,15 @@ const instance = axios.create({
     baseURL: import.meta.env.VITE_APP_BE_STORE_URL,
     headers: {
         'Content-Type': 'application/json;charset=utf-8',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+    },
+});
+
+export const instancePublishVersion = axios.create({
+    baseURL: import.meta.env.VITE_APP_BE_STORE_URL,
+    headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`,
     },
 });
 

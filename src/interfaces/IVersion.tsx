@@ -8,15 +8,17 @@ type IVersion = {
 }
 
 type IAddVersion = {
-    name: string,
-    downloadUrl: string,
-    deploymentUrl: string,
-    desc: string,
-    packageId: string
+    name?: string | undefined,
+    // downloadUrl: string,
+    // deploymentUrl: string,
+    desc?: string | undefined,
+    packageId: string,
+    file: File | undefined
 }
 
-type IUpdateVersion = IAddVersion & {
-    _id: string
+type IUpdateVersion = {
+    _id: string,
+    desc: string | undefined
 }
 
 type IGetVersion = IVersion &{

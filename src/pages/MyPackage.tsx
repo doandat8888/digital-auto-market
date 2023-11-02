@@ -89,6 +89,9 @@ const MyPackage = () => {
                 totalPages = Math.floor(response.data.total / limit) + 1;
             }
             setTotalPage(totalPages);
+        }else {
+            setMyPackageList([]);
+            setTotalPage(0);
         }
     }
 

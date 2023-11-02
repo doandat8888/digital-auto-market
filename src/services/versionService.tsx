@@ -1,11 +1,11 @@
-import axios from "../axiosPackage";
+import axios, {instancePublishVersion} from "../axiosPackage";
 
 const getVersionByPackageId = (packageId: string, limit: number, currentPage: number) => {
     return axios.get(`/package/${packageId}/version?limit=${limit}&page=${currentPage}`);
 }
 
 const addVersion = (version: IAddVersion) => {
-    return axios.post('/version', {
+    return instancePublishVersion.post('/version', {
         ...version
     })
 }
