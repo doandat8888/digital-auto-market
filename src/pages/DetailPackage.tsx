@@ -71,6 +71,8 @@ const DetailPackage = () => {
     useEffect(() => {
         if(packageDetail && versionParam === "latest") {
             setCurrentVersion(packageDetail.version);
+        }else {
+            findVersionById(versionIdParam ? versionIdParam : '');
         }
     }, [packageDetail]);
 
