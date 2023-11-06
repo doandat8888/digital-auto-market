@@ -37,7 +37,8 @@ type IGetPackage = IPackage & {
     userLike: boolean,
     category: string,
     entryUrl: string,
-    dashboardConfig: string
+    dashboardConfig: string,
+    downloadUrl: string
 }
 
 type IListPackage = (Omit<IPackage, 'createdBy'> & {

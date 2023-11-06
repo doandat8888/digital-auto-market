@@ -340,7 +340,7 @@ const DetailPackage = () => {
                                             {packageDetail?.version.downloadUrl &&
                                                 <button onClick={onDownLoadPackage} className="w-full mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                                     px-6 py-2 rounded-lg items-center justify-center">
-                                                    <a className="w-full flex items-center justify-center" href={currentVersion?.downloadUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
+                                                    <a className="w-full flex items-center justify-center" href={versionParam === 'latest' ? packageDetail.downloadUrl : currentVersion?.downloadUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Download</p> <BsDownload />
                                                     </a>
                                                 </button>
                                             }
