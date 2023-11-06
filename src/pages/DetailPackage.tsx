@@ -349,7 +349,7 @@ const DetailPackage = () => {
                                             {packageDetail?.version.downloadUrl &&
                                                 <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
                                                     px-6 py-2 rounded-lg items-center justify-center">
-                                                    <a target="_blank" rel="noopener noreferrer" className="w-full text-black flex items-center justify-center" href={versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.deploymentUrl + '/' + packageDetail.entryPoint}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
+                                                    <a target="_blank" rel="noopener noreferrer" className="w-full text-black flex items-center justify-center" href={versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.entryUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
                                                     </a>
                                                 </button>
                                             }
@@ -357,7 +357,7 @@ const DetailPackage = () => {
                                         <div className="w-full sm:block">
                                             {packageDetail?.version.downloadUrl &&
                                                 <button className="text-black w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
-                                                    px-6 py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.deploymentUrl + '/' + packageDetail.entryPoint)}>
+                                                    px-6 py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.entryUrl)}>
                                                     <p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Copy URL</p> <GoCopy />
                                                 </button>
                                             }
