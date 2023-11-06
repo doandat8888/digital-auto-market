@@ -43,8 +43,13 @@ const UpdatePackage = () => {
     const [packageUpdate, setPackageUpdate] = useState<IGetPackage | undefined>();
     //Show btn save
     const [showBtnSave, setShowBtnSave] = useState(true);
+    //Loading
+    const [isLoadingCoverImg, setIsLoadingCoverImg] = useState(false);
+    const [isLoadingDetailImgs, setIsLoadingDetailImgs] = useState(false);
+    const [isLoadingZipFile, setIsLoadingZipFile] = useState(false);
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsLoadingDetailImgs(true);
         const files = event.target.files;
         if (files) {
             const imagePromises = Array.from(files).map((file) => {
@@ -62,6 +67,7 @@ const UpdatePackage = () => {
             });
             Promise.all(imagePromises).then((imgUrls) => {
                 setimageDetailList((prevImages) => [...prevImages, ...imgUrls]);
+                setIsLoadingDetailImgs(false);
             });
         }
     };
@@ -142,6 +148,7 @@ const UpdatePackage = () => {
     }
 
     const handleInputImgCoverChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsLoadingCoverImg(true);
         const file = event.target?.files?.[0];
         const formData = new FormData();
         if (file) {
@@ -150,17 +157,20 @@ const UpdatePackage = () => {
             if (response && response.status === 201) {
                 console.log(response.data.url);
                 setimageCover(response.data.url);
+                setIsLoadingCoverImg(false);
             }
         }
     };
 
     const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsLoadingZipFile(true);
         const file = event.target?.files?.[0];
         if (file) {
             const formData = new FormData();
             formData.append('file', file);
             const response = await uploadService.uploadFile(formData);
             if (response && response.status === 201) {
+                setIsLoadingZipFile(false);
                 const zipFileUrl = response.data.url;
                 setZipFile(response.data.url);
                 setDeploymentUrl(response.data.deploymentUrl);
@@ -366,6 +376,7 @@ const UpdatePackage = () => {
                                                 <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 100MB</p>
                                             </div>
                                         </div>
+                                        {isLoadingCoverImg == true ? <p className="text-black">Loading...</p> : ''}
                                         {imageCover && (
                                             <div className="image-container sm:w-1/2 sm:mx-auto w-full relative">
                                                 <img
@@ -401,6 +412,7 @@ const UpdatePackage = () => {
                                             </div>
                                         </div>
                                     </div>
+                                    {isLoadingDetailImgs == true ? <p className="text-black">Loading...</p> : ''}
                                     <div className="images-container sm:grid sm:grid-cols-2 lg:grid-cols-3 col-span-full sm:justify-between">
                                         {imageDetailList && imageDetailList.length > 0 && imageDetailList.map((base64, index) => (
                                             <div className="relative mx-2">
@@ -415,6 +427,7 @@ const UpdatePackage = () => {
                                         ))}
                                     </div>
                                     {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
+                                    {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
                                 </div>
                             </div>
                             <div className="col-span-full">

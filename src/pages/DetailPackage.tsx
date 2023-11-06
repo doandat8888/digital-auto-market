@@ -20,6 +20,7 @@ import { CiShare1 } from "react-icons/ci";
 import { GoCopy } from "react-icons/go";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Editor } from "@monaco-editor/react";
 
 const DetailPackage = () => {
 
@@ -50,7 +51,12 @@ const DetailPackage = () => {
     //Modal confirm delete
     const [openModalConfirmDelete, setOpenModalConfirmDelete] = useState(false);
 
+    let url = new URL(window.location.href);
+    let params = new URLSearchParams(url.search);
+    const versionParam = params.get("version");
+    const versionIdParam = params.get("versionId");
     //Get user info
+
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
         setTokenUser(localToken);
@@ -63,10 +69,10 @@ const DetailPackage = () => {
     }, [tokenUser, id]);
 
     useEffect(() => {
-        if(packageDetail) {
+        if(packageDetail && versionParam === "latest") {
             setCurrentVersion(packageDetail.version);
         }
-    }, [packageDetail])
+    }, [packageDetail]);
 
     const getPackageInfo = async() => {
         if(id) {
@@ -95,7 +101,9 @@ const DetailPackage = () => {
 
     useEffect(() => {
         getPackageInfo();
+        findVersionById(versionIdParam ? versionIdParam : '');
     }, [user, id]);
+
 
     const getUserInfo = async () => {
         try {
@@ -131,8 +139,21 @@ const DetailPackage = () => {
     
     const handleChangeVersion = (versionId: string) => {
         setIsLoading(true);
-        findVersionById(versionId);
+        changeVersion(versionId);
         setIsLoading(false);
+    }
+
+    const changeVersion = (versionId: string) => {
+        if(packageDetail && packageDetail.versions) {
+            const version: IGetVersion | undefined = packageDetail.versions.find((version) => version._id === versionId);
+            let params = new URLSearchParams(url.search);
+            if(version) {
+                params.set("version", version.name);
+                params.set("versionId", version._id);
+            } 
+            url.search = params.toString();
+            window.location.href = url.href
+        }
     }
 
     const findVersionById = (versionId: string) => {
@@ -234,6 +255,7 @@ const DetailPackage = () => {
     const onDownLoadPackage = async() => {
         try {
             const response = await packageService.updateDownLoad(packageDetail ? packageDetail._id : '');
+            console.log("Current version: ", currentVersion);
         } catch (error: any) {
             alert(error.response.data.msg);
         }
@@ -287,9 +309,9 @@ const DetailPackage = () => {
                                             }
                                         </div>
                                         <div className="grow"></div>
-                                        <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)} className="block sm:ml-2 sm:text-sm text-[10px] border px-2 py-1 border-gray-500 rounded">
+                                        <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)} className="block sm:ml-2 sm:text-sm text-[10px] border px-2 py-1 border-gray-500 rounded bg-white text-black">
                                             {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
-                                                <option value={version._id}>{version.name}</option>
+                                                <option selected={version.name === versionParam} value={version._id}>{version.name}</option>
                                             ))}
                                         </select>
                                         
@@ -298,7 +320,7 @@ const DetailPackage = () => {
                                     <div className="grow"></div>
                                     <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
                                         <p className="text-[12px] sm:text-[14px] opacity-75 text-black">{packageDetail?.createdBy.fullName}</p>
-                                        <Link to={`/manageversion/${packageDetail?._id}`} className="mx-2 text-[12px] sm:text-[14px] opacity-80 truncate">Version histories</Link>
+                                        <Link to={`/manageversion/${packageDetail?._id}`} className="mx-2 text-[12px] sm:text-[14px] opacity-80 truncate text-black">Version histories</Link>
                                     </div>
                                     <div className="grow"></div>
                                     <div className="flex mt-2">
@@ -325,7 +347,7 @@ const DetailPackage = () => {
                                             {packageDetail?.version.downloadUrl &&
                                                 <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
                                                     px-6 py-2 rounded-lg items-center justify-center">
-                                                    <a target="_blank" rel="noopener noreferrer" className="w-full text-black flex items-center justify-center" href={packageDetail.entryUrl}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
+                                                    <a target="_blank" rel="noopener noreferrer" className="w-full text-black flex items-center justify-center" href={versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.deploymentUrl + '/' + packageDetail.entryPoint}><p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Preview</p> <CiShare1 />
                                                     </a>
                                                 </button>
                                             }
@@ -349,13 +371,19 @@ const DetailPackage = () => {
                                 </div>
                             </div>
                             <Slideshow slideImages={packageDetail?.images}/>
+                            <div className="col-span-full my-4">
+                                <div className="flex mb-2">
+                                    <p className="text-xl font-bold text-black">Dashboard config</p>
+                                </div>
+                                <Editor options={{readOnly: true}} height="300px" defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig}/>;
+                            </div>
                             <div className="comment-rating my-6 text-black">
                                 <div className="flex justify-between">
                                     <div className="text-xl font-semibold">Reviews</div>
                                     <button onClick={onClickBtnCommentRating} className="text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 items-center cursor-pointer rounded border-2 border-black text-black"><AiOutlineComment /><p className="sm:block sm:ml-2 hidden ">Comment & rating</p></button>
                                 </div>
                                 <div className="w-full rounded-lg py-4">
-                                    {isLoadingReview ? "Loading..." : ''}
+                                    {isLoadingReview ? <p className="text-black">Loading...</p> : ''}
                                     {hasReviews === 1 ? <ReviewList currentUser={user && user} onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} reviewsFilter={reviews}/> : 
                                         hasReviews === -1 ?
                                         <div className="no-comment text-center">

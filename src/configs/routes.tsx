@@ -23,6 +23,7 @@ const RoutesApp = () => {
             <Route path="/" element={<Home />} />
             <Route path="/mypackage" element={<MyPackage />} />
             <Route path="/package/:id" element={<DetailPackage />} />
+            <Route path="/package/:id/:version" element={<DetailPackage />} />
             <Route path='/addpackage' element={<AddPackage />}/>
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />

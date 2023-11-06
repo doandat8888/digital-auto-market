@@ -9,6 +9,7 @@ import packageService from "../services/packageService";
 import NoPackage from "../components/NoPackage";
 import _ from "lodash";
 import { Pagination } from "@mui/material";
+import NotFound from "../components/404NotFound";
 
 const MyPackage = () => {
 
@@ -142,14 +143,14 @@ const MyPackage = () => {
         <div>
             {myPackageList ? <div className={`${isLoading === true ? 'hidden' : ''}`}>
                 <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
-                <div className="body px-6 py-4">
+                {myPackageList.length > 0 ? <div className="body px-6 py-4">
                     <div className="search flex justify-end mb-6">
-                        <input className='text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
+                        <input className='bg-white text-black text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
                     </div>
                     <PackageList showMode={true} packages={myPackageList}/>
-                </div>
+                </div> : <NoPackage content="There is no packages in the system"/>}
                 <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
-            </div> : <NoPackage content="There is no packages in the system"/>}
+            </div> : <NotFound />}
         </div>
     )
 }

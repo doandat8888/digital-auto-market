@@ -11,7 +11,7 @@ const PackageItem = (props: IProps) => {
     const { packageItem, showMode } = props; 
     
     return (
-        <Link className="custom-link flex p-4 w-[96%] my-2 cursor-pointer bg-white rounded shadow-sm hover:opacity-75" to={`/package/${packageItem._id}`}>
+        <Link className="custom-link flex p-4 w-[96%] my-2 cursor-pointer bg-white rounded shadow-sm hover:opacity-75" to={`/package/${packageItem._id}?version=latest`}>
             <div className="left sm:w-[30%] lg:w-[40%] w-[40%] xl:w-[30%] min-w-[100px]">
                 <img className="w-[100%] aspect-square rounded object-fill" src={packageItem.thumbnail != 'abc' ? packageItem.thumbnail : "https://media.istockphoto.com/vectors/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-vector-id1128826884?k=6&m=1128826884&s=170667a&w=0&h=F6kUwTcsLXUojmGFxN2wApEKgjx63zcIshCSOmnfEFs="} alt="" />
             </div>

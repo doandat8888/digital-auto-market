@@ -25,6 +25,7 @@ const AddPackage = () => {
     const [packageDescription, setPackageDescription] = useState("");
     const [imageDetailList, setimageDetailList] = useState<string[]>([]);
     const [imageCover, setimageCover] = useState<string>("");
+    const [imageCoverFile, setImageCoverFile] = useState<File | null>();
     const [entryPoint, setEntryPoint] = useState<string>("");
     const [dashboardConfigStr, setDashboardConfigStr] = useState<string>("");
     //Zip file
@@ -45,8 +46,13 @@ const AddPackage = () => {
     const [packageUpdate, setPackageUpdate] = useState<IGetPackage | undefined>();
     //Show btn save
     const [showBtnSave, setShowBtnSave] = useState(false);
+    //Loading
+    const [isLoadingCoverImg, setIsLoadingCoverImg] = useState(false);
+    const [isLoadingDetailImgs, setIsLoadingDetailImgs] = useState(false);
+    const [isLoadingZipFile, setIsLoadingZipFile] = useState(false);
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsLoadingDetailImgs(true);
         const files = event.target.files;
         if (files) {
             const imagePromises = Array.from(files).map((file) => {
@@ -64,6 +70,7 @@ const AddPackage = () => {
             });
             Promise.all(imagePromises).then((imgUrls) => {
                 setimageDetailList((prevImages) => [...prevImages, ...imgUrls]);
+                setIsLoadingDetailImgs(false);
             });
         }
     };
@@ -137,6 +144,8 @@ const AddPackage = () => {
     }
 
     const handleInputImgCoverChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("Hello");
+        setIsLoadingCoverImg(true);
         const file = event.target?.files?.[0];
         const formData = new FormData();
         if (file) {
@@ -145,6 +154,7 @@ const AddPackage = () => {
                 const response = await uploadService.uploadFile(formData);
                 if (response && response.status === 201) {
                     setimageCover(response.data.url);
+                    setIsLoadingCoverImg(false);
                 }
             } catch (error: any) {
                 alert(error.response.data.msg);
@@ -153,6 +163,7 @@ const AddPackage = () => {
     };
 
     const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsLoadingZipFile(true);
         const file = event.target?.files?.[0];
         setZipFilePublishVersion(file);
         if (file) {
@@ -166,6 +177,7 @@ const AddPackage = () => {
                     setDeploymentUrl(response.data.deploymentUrl);
                     const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/data/store-be/", "");
                     setFileZipName(zipFileName);
+                    setIsLoadingZipFile(false);
                 }
             } catch (error: any) {
                 alert(error.response.data.msg);
@@ -253,6 +265,7 @@ const AddPackage = () => {
             reader.readAsDataURL(file);
         }
     };
+
 
     const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
         event.preventDefault();
@@ -382,13 +395,14 @@ const AddPackage = () => {
                                                     className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                                 >
                                                     <span>Upload image</span>
-                                                    <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only" />
+                                                    <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only" value=""/>
                                                 </label>
                                                 {/* <p className="pl-1">or drag and drop</p> */}
                                             </div>
                                             <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 100MB</p>
                                         </div>
                                     </div>
+                                    {isLoadingCoverImg == true ? <p className="text-black">Loading...</p> : ''}
                                     {imageCover && (
                                         <div className="image-container sm:w-1/2 sm:mx-auto w-full relative">
                                             <img
@@ -416,7 +430,7 @@ const AddPackage = () => {
                                                     className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                                 >
                                                     <span>Upload images</span>
-                                                    <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file" className="sr-only" onDrag={handleDrag} />
+                                                    <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file" className="sr-only" onDrag={handleDrag} value=""/>
                                                 </label>
                                                 {/* <p className="pl-1">or drag and drop</p> */}
                                             </div>
@@ -424,6 +438,7 @@ const AddPackage = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {isLoadingDetailImgs == true ? <p className="text-black">Loading...</p> : ''}
                                 <div className="images-container sm:grid sm:grid-cols-2 lg:grid-cols-3 col-span-full sm:justify-between">
                                     {imageDetailList && imageDetailList.length > 0 && imageDetailList.map((base64, index) => (
                                         <div className="relative mx-2">
@@ -437,7 +452,9 @@ const AddPackage = () => {
                                         </div>
                                     ))}
                                 </div>
+                                
                                 {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
+                                {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
                                 <div className="col-span-full">
                                     <div className="flex mb-2">
                                         <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">

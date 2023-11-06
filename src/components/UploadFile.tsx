@@ -13,7 +13,7 @@ const UploadFile = (props: IProps) => {
     let {zipFile, fileZipName, handleFileInputChange, onDeleteZipFile} = props;
 
     return (
-        <div className="col-span-full">
+        <div className="col-span-full text-black">
             <div className="col-span-full">
                     <div className="flex">
                         <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
@@ -30,7 +30,7 @@ const UploadFile = (props: IProps) => {
                                     className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                 >
                                     <span>Upload zip file</span>
-                                    <input accept=".zip" required id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileInputChange}/>
+                                    <input value={""} accept=".zip" required id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileInputChange}/>
                                 </label>
                             </div>
                             <p className="text-xs leading-5 text-gray-600">File up to 100MB</p>

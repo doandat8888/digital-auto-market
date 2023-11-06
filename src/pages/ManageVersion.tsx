@@ -150,7 +150,7 @@ const ManageVersion = () => {
     }, [user, packageDetail]);
 
     return (
-        <div className={`${isLoading === true ? 'hidden' : '' } w-[100%] mx-auto`}>
+        <div className={`${isLoading === true ? 'hidden' : '' } w-[100%] mx-auto text-black`}>
             <div className="sm:w-[80%] w-[100%] mx-auto">
                 <LoadingModal open={isLoading} closeModal={onCloseModal}/>
                 <div className="title my-10 text-center font-bold text-2xl">RELEASE VERSIONS</div>

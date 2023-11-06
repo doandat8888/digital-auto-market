@@ -32,6 +32,7 @@ const ModalPublishVersion = (props: IProps) => {
     const [disabled, setDisabled] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingZipFile, setIsLoadingZipFile] = useState(false);
     
     const style = {
         position: 'absolute' as 'absolute',
@@ -47,6 +48,7 @@ const ModalPublishVersion = (props: IProps) => {
     };
 
     const handleFileInputChange = async(event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsLoadingZipFile(true);
         const file = event.target?.files?.[0];
         if (file) {
             const formData = new FormData();
@@ -59,6 +61,7 @@ const ModalPublishVersion = (props: IProps) => {
                 setDeploymentUrl(response.data.deploymentUrl);
                 const zipFileName = zipFileUrl.replace(import.meta.env.VITE_APP_DATA_STORAGE_URL, "");
                 setFileZipName(zipFileName);
+                setIsLoadingZipFile(false);
             }
         }
     };
@@ -172,6 +175,7 @@ const ModalPublishVersion = (props: IProps) => {
                     {!versionUpdate && <TextInput title="Version name" value={versionName} placeholderStr="Enter your version name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setVersionName(event.target.value)}/>}
                     <TextArea title="Description" value={versionDesc ? versionDesc : ''} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setVersionDesc(event.target.value)} placeHolderStr="Write some sentences about your version"/>
                     {!versionUpdate && <UploadFile zipFile={zipFile} fileZipName={fileZipName} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile}/> }
+                    {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
                     <div className="w-full flex justify-end">
                         <button
                             type="submit"
