@@ -12,6 +12,8 @@ import CategorySelectUpdate from '../components/CategorySelectUpdate';
 import _const from '../const';
 import { FaRegImages } from 'react-icons/fa';
 import { Editor, OnChange } from '@monaco-editor/react';
+import ContentEditableInput from '../components/ContentEditableInput';
+import { ContentEditableEvent } from 'react-contenteditable';
 
 const UpdatePackage = () => {
 
@@ -295,6 +297,10 @@ const UpdatePackage = () => {
         setDashboardConfig(value || '');
     };
 
+    const handleContentEditable = (event: ContentEditableEvent) => {
+        setPackageDescription(event.target.value);
+    };
+
     return (
         <div>
             {isLoading === true ? <LoadingModal open={isLoading} closeModal={onCloseModal} /> :
@@ -308,7 +314,12 @@ const UpdatePackage = () => {
                                         <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[90%] w-full'><TextInput title="Short description" value={packageShortDesc} placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} /></div></div>
                                     </div>
                                     <div className="col-span-full sm:flex">
-                                        <div className="sm:w-[50%] w-[100%]"><div className="sm:w-[90%] w-full"><TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" /></div></div>
+                                        {/* <div className="sm:w-[50%] w-[100%]"><div className="sm:w-[90%] w-full"><TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" /></div></div> */}
+                                        <div className="sm:w-[50%] w-[100%]">
+                                            <div className="sm:w-[90%] w-full">
+                                                <ContentEditableInput title='Description' value={packageDescription} placeholderStr='Write some sentences about your package' handleFileTextChange={handleContentEditable}/>
+                                            </div>
+                                        </div>
                                         <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[90%] w-full'><TextInput title="Entry point" value={entryPoint} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} /></div></div>
                                     </div>
                                     <div className="col-span-full flex">
