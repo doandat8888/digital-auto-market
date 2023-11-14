@@ -18,7 +18,7 @@ const settings = {
   edgeFriction: 0.15,
   responsive: [
     {
-      breakpoint: 1024,
+      breakpoint: 800,
       settings: {
         slidesToShow: 3,
         slidesToScroll: 3,
@@ -54,8 +54,8 @@ const Slideshow = (props: IProps) => {
     return (
       <div>
             <Slider {...settings}>
-            {slideImages && slideImages.length > 0 && slideImages.map((slideImage, index)=> (
-                  <img className="px-2 rounded-[18px] object-cover h-[240px] cursor-pointer" onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
+              {slideImages && slideImages.length > 0 && slideImages.map((slideImage, index)=> (
+                  <img className="px-2 rounded-[18px] w-[50%] md:h-[80vh] lg:h-[80vh] xl:h-[60vh] object-contain cursor-pointer" onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
               ))} 
             </Slider>
             <Modal

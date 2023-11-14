@@ -336,34 +336,34 @@ const AddPackage = () => {
                         <div className="border-b border-gray-900/10 pb-12">
                             <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-4">
                                 <div className="col-span-full sm:flex">
-                                    <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[90%] w-full'><TextInput title="Package name" value={packageName} placeholderStr="Enter your package name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} /></div></div>
-                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[90%] w-full'><TextInput title="Short description" value={packageShortDesc} placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} /></div></div>
+                                    <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[95%] w-full'><TextInput title="Package name" value={packageName} placeholderStr="Enter your package name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} /></div></div>
+                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Short description" value={packageShortDesc} placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} /></div></div>
                                 </div>
                                 <div className="col-span-full sm:flex">
                                     {/* <div className="sm:w-[50%] w-[100%]"><div className="sm:w-[90%] w-full"><TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" /></div></div> */}
                                     <div className="sm:w-[50%] w-[100%]">
-                                        <div className="sm:w-[90%] w-full">
+                                        <div className="sm:w-[95%] w-full">
                                             <ContentEditableInput title='Description' value={packageDescription} placeholderStr='Write some sentences about your package' handleFileTextChange={handleContentEditable}/>
                                         </div>
                                     </div>
-                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[90%] w-full'><TextInput title="Entry point" value={entryPoint} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} /></div></div>
+                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Entry point" value={entryPoint} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} /></div></div>
                                 </div>
                                 <div className="col-span-full flex">
                                     <div className="w-[50%]"><CategorySelect listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} /></div>
                                     <fieldset className='w-[50%] flex justify-end'>
-                                        <div className="w-[90%]">
-                                            <div className="flex w-[90%]">
+                                        <div className="w-[95%]">
+                                            <div className="flex w-[95%]">
                                                 <legend className="text-sm font-semibold leading-6 text-gray-900">Mode</legend>
                                                 <p className="required text-red-500 ml-1">*</p>
                                             </div>
-                                            <div className="mt-3 space-y-3 w-[90%]">
-                                                <div className="flex items-center gap-x-3">
+                                            <div className="space-y-3 w-[95%] flex items-center">
+                                                <div className="flex items-center mr-4">
                                                     <input
                                                         checked={mode === "public"}
                                                         id="public"
                                                         name="public"
                                                         type="radio"
-                                                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                        className="h-4 w-4 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                                                         onChange={onChangeMode}
                                                         value={"public"}
                                                     />
@@ -371,13 +371,13 @@ const AddPackage = () => {
                                                         Public
                                                     </label>
                                                 </div>
-                                                <div className="flex items-center gap-x-3">
+                                                <div className="flex items-center mode-private">
                                                     <input
                                                         checked={mode === "private"}
                                                         id="private"
                                                         name="private"
                                                         type="radio"
-                                                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                        className="mr-1 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                                                         onChange={onChangeMode}
                                                         value={"private"}
                                                     />
@@ -391,7 +391,7 @@ const AddPackage = () => {
                                     </fieldset>
                                 </div>
                                 <div className="col-span-full">
-                                    <div className="flex">
+                                    <div className="flex mt-4">
                                         <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
                                             Cover photo
                                         </label>
@@ -410,18 +410,18 @@ const AddPackage = () => {
                                                 </label>
                                                 {/* <p className="pl-1">or drag and drop</p> */}
                                             </div>
-                                            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 100MB</p>
+                                            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 2MB</p>
                                         </div>
                                     </div>
                                     {isLoadingCoverImg == true ? <p className="text-black">Loading...</p> : ''}
                                     {imageCover && (
-                                        <div className="image-container sm:w-1/2 sm:mx-auto w-full relative">
+                                        <div className="image-container sm:w-1/2 sm:mx-auto w-full relative my-4">
                                             <img
                                                 src={imageCover}
                                                 alt="Uploaded"
                                                 className="w-full object-cover"
                                             />
-                                            <button className="absolute top-2 right-2 rounded-full bg-slate-400 text-white px-4 py-2 z-40" onClick={(event) => onDeleteCoverImage(event, imageCover)}>x</button>
+                                            <button className="absolute top-2 right-2 rounded-full bg-white text-white px-3 py-1 z-40" onClick={(event) => onDeleteCoverImage(event, imageCover)}><p className='text-[16px] font-bold text-red-500'>x</p></button>
                                         </div>
                                     )}
                                 </div>
@@ -450,7 +450,7 @@ const AddPackage = () => {
                                     </div>
                                 </div>
                                 {isLoadingDetailImgs == true ? <p className="text-black">Loading...</p> : ''}
-                                <div className="images-container sm:grid sm:grid-cols-2 lg:grid-cols-3 col-span-full sm:justify-between">
+                                <div className="my-4 images-container sm:grid sm:grid-cols-2 lg:grid-cols-3 col-span-full sm:justify-between">
                                     {imageDetailList && imageDetailList.length > 0 && imageDetailList.map((base64, index) => (
                                         <div className="relative mx-2">
                                             <img
@@ -459,7 +459,7 @@ const AddPackage = () => {
                                                 src={base64}
                                                 alt={`Uploaded ${index}`}
                                             />
-                                            <button className="absolute top-6 right-2 rounded-full bg-slate-400 text-white px-4 py-2 z-40" onClick={(event) => onDeleteDetailImage(event, index)}><p className='opacity-80'></p>x</button>
+                                            <button className="absolute top-6 right-2 rounded-full bg-white text-white px-3 py-1 z-40" onClick={(event) => onDeleteDetailImage(event, index)}><p className='text-[16px] font-bold text-red-500'>x</p></button>
                                         </div>
                                     ))}
                                 </div>

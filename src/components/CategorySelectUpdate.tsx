@@ -16,7 +16,7 @@ const CategorySelectUpdate = (props: IProps) => {
                 </label>
                 <p className="required text-red-500 ml-1">*</p>
             </div>
-            <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeCategory(event.target.value)} className="bg-white text-black block px-1 mt-1 sm:text-sm sm:text-[10px] text-[14px] border py-1 border-gray-500 rounded">
+            <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeCategory(event.target.value)} className="bg-white w-[50%] text-black block px-1 mt-1 sm:text-sm sm:text-[10px] text-[14px] border py-1 border-gray-500 rounded">
                 {listCategory && listCategory.length > 0 && listCategory.map((category) => (
                     <option selected={categoryName === category.name} value={category.name}>{category.textShow}</option>
                 ))}

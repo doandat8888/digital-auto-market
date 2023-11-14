@@ -77,9 +77,14 @@ const Login = () => {
                                     <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target?.value)} value={password} type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required />
                                 </div>
                                 <button disabled={showBtnSave === true ? false : true} onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onLogin(event, email, password)} type="submit" className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}>Sign in</button>
-                                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                    Don’t have an account yet? <Link to={'/register'} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Register</Link>
-                                </p>
+                                <div className="flex justify-between">
+                                    <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                                        Don’t have an account yet? <Link to={'/register'} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Register</Link>
+                                    </p>
+                                    <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                                        <Link to={'/forgot-password'} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Forgot password</Link>
+                                    </p>
+                                </div>
                             </form>
                         </div>
                     </div>

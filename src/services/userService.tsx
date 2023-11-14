@@ -27,10 +27,24 @@ const getCurrentUser = () => {
     return axios.get('/user/current');
 }
 
+const resetPassword = (email: string) => {
+    return axios.post('/user/forget-password', {
+        email
+    })
+}
+
+const changeProfile = (userId: string, fullName: string) => {
+    return axios.put(`/user/${userId}`, {
+        fullName
+    })
+}
+
 export default {
     login,
     getUser,
     register,
     getUserById,
-    getCurrentUser
+    getCurrentUser,
+    resetPassword,
+    changeProfile
 }

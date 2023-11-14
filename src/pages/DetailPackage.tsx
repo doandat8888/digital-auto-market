@@ -295,10 +295,10 @@ const DetailPackage = () => {
             <div className={`${isLoading === true ? 'hidden' : ''}`}>
                 <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                     <div className="w-full h-full flex items-center justify-center">
-                        <div className="sm:w-[60%] lg:w-[80%] xl:w-[60%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
+                        <div className="sm:w-[80%] lg:w-[80%] xl:w-[70%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
                             <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
                                 <div className="sm:w-[20%] flex aspect-square w-[30%]">
-                                    <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt="" className="min-w-[20px] h-[50%] sm:h-[100%] rounded-lg object-fill aspect-square" />
+                                    <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt="" className="min-w-[20px] h-[50%] sm:h-[100%] rounded-lg object-contain aspect-square" />
                                 </div>
                                 <div className="sm:w-[80%] w-[70%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
                                     <div className="items-center sm:flex">
@@ -311,18 +311,16 @@ const DetailPackage = () => {
                                             }
                                         </div>
                                         <div className="grow"></div>
+                                        <Link to={`/manageversion/${packageDetail?._id}`} className=" text-[12px] sm:text-[14px] opacity-80 truncate text-black">Version histories</Link>
+                                    </div>
+                                    <div className="grow"></div>
+                                    <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
+                                        <p className="text-[12px] sm:text-[14px] opacity-75 text-black">{packageDetail?.createdBy.fullName}</p>
                                         <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)} className="block sm:ml-2 sm:text-sm text-[10px] border px-2 py-1 border-gray-500 rounded bg-white text-black">
                                             {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
                                                 <option selected={version.name === versionParam} value={version._id}>{version.name}</option>
                                             ))}
                                         </select>
-                                        
-                                        
-                                    </div>
-                                    <div className="grow"></div>
-                                    <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
-                                        <p className="text-[12px] sm:text-[14px] opacity-75 text-black">{packageDetail?.createdBy.fullName}</p>
-                                        <Link to={`/manageversion/${packageDetail?._id}`} className="mx-2 text-[12px] sm:text-[14px] opacity-80 truncate text-black">Version histories</Link>
                                     </div>
                                     <div className="grow"></div>
                                     <div className="flex mt-2">
@@ -335,7 +333,7 @@ const DetailPackage = () => {
                                         <div className="flex items-center mx-1 opacity-70 text-black"><BiLike /><p className="text-[14px] ml-[2px] ">{packageDetail?.likes.length}</p></div>
                                         <div className="flex items-center mx-1 opacity-70 text-black"><BiDownload /><p className="text-[14px] ml-[2px] ">{packageDetail?.downloads}</p></div>
                                     </div>
-                                    <div className="sm:flex justify-between">
+                                    <div className="sm:flex">
                                         <div className="w-full sm:block mr-8">
                                             {packageDetail?.version.downloadUrl &&
                                                 <button onClick={onDownLoadPackage} className="w-full mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
@@ -357,8 +355,8 @@ const DetailPackage = () => {
                                         <div className="w-full sm:block">
                                             {packageDetail?.version.downloadUrl &&
                                                 <button className="text-black w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black-500 border border-black
-                                                    px-6 py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.entryUrl)}>
-                                                    <p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2">Copy URL</p> <GoCopy />
+                                                py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.entryUrl)}>
+                                                    <p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2 truncate">Copy URL</p> <GoCopy />
                                                 </button>
                                             }
                                         </div>
@@ -382,14 +380,14 @@ const DetailPackage = () => {
                             <div className="comment-rating my-6 text-black">
                                 <div className="flex justify-between">
                                     <div className="text-xl font-semibold">Reviews</div>
-                                    <button onClick={onClickBtnCommentRating} className="text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 items-center cursor-pointer rounded border-2 border-black text-black"><AiOutlineComment /><p className="sm:block sm:ml-2 hidden ">Comment & rating</p></button>
+                                    <button onClick={onClickBtnCommentRating} className="text-sm outline-none hover:opacity-80 flex justify-center w-[30%] px-2 py-2 items-center cursor-pointer rounded border-2 border-black text-black text-[18px]"><div className="text-[18px]"><AiOutlineComment /></div><p className="sm:block sm:ml-2 hidden text-[14px]">Comment & rating</p></button>
                                 </div>
                                 <div className="w-full rounded-lg py-4">
                                     {isLoadingReview ? <p className="text-black">Loading...</p> : ''}
                                     {hasReviews === 1 ? <ReviewList currentUser={user && user} onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} reviewsFilter={reviews}/> : 
                                         hasReviews === -1 ?
                                         <div className="no-comment text-center">
-                                            <img className="mx-auto w-[10%]" src="https://th.bing.com/th/id/R.d398a2e0d6d36ace87869a3f786c6979?rik=K8zpST5cjAejww&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_322817.png&ehk=oW9Pr%2fAMVWdSPoyXmhAG8%2bvVqTYgD8Yt%2bneO2UjKTk4%3d&risl=&pid=ImgRaw&r=0" alt="no-comment" />
+                                            <img className="mx-auto w-[10%] opacity-30" src="https://th.bing.com/th/id/R.d398a2e0d6d36ace87869a3f786c6979?rik=K8zpST5cjAejww&riu=http%3a%2f%2fcdn.onlinewebfonts.com%2fsvg%2fimg_322817.png&ehk=oW9Pr%2fAMVWdSPoyXmhAG8%2bvVqTYgD8Yt%2bneO2UjKTk4%3d&risl=&pid=ImgRaw&r=0" alt="no-comment" />
                                             <p className="mt-2 sm:text-[16px] text-[12px]">There is no comment here. Be the first one to comment on this package</p>
                                         
                                         </div>

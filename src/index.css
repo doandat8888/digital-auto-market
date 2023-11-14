@@ -108,9 +108,16 @@ body {
     font-size: 3rem !important;
 }
 
-.disabled {
-
-  
+.autofill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+}
+.mode-private {
+  margin-top: 0px !important;
+}
+.slider-image {
+  display: flex !important;
+  align-items: center !important;
 }
 
 
