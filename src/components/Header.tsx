@@ -109,8 +109,8 @@ const Header = () => {
             <div className={`${showPageList === false ? "hidden" : ""} md:hidden`}>
                 {pageList && pageList.length > 0 && pageList.map((page: IPage) => (
                     page.name === "My package" ? 
-                    <Link className={`${!user ? 'hidden' : 'block'} w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
-                    : <Link className={`w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
+                    <Link onClick={() => setShowPageList(false)} className={`${!user ? 'hidden' : 'block'} w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
+                    : <Link onClick={() => setShowPageList(false)} className={`w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
                 ))}
             </div>
         </div>

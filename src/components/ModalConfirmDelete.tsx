@@ -3,7 +3,7 @@ import { Box, Modal } from "@mui/material";
 interface IProps {
     open: boolean,
     handleClose: () => void,
-    remove: () => void
+    remove: () => void,
 }
 
 const ModalConfirmDelete = (props: IProps) => {

@@ -11,7 +11,7 @@ interface IProps {
     packageId: string,
     versionId: string,
     createdBy: any,
-    refreshData: () => void,
+    refreshData: (versionId: string) => void,
     reviewUpdate: IUpdateReview | undefined,
     isLoading: boolean,
     onCloseModalLoading: () => void,
@@ -65,7 +65,7 @@ const ModalCommentRating = (props: IProps) => {
                     const response = await reviewService.addReview(review);
                     if(response && response.status === 201) {
                         alert("Sucessfully!");
-                        refreshData();
+                        refreshData(versionId);
                         onCloseModal();
                         emptyData();
                     }
@@ -83,7 +83,7 @@ const ModalCommentRating = (props: IProps) => {
                 try {
                     const response = await reviewService.updateReview(reviewUpdate._id, review);
                     if(response && response.status === 200) {
-                        refreshData();
+                        refreshData(versionId);
                         onCloseModal();
                         emptyData();
                     }
@@ -131,7 +131,7 @@ const ModalCommentRating = (props: IProps) => {
                 <Box sx={style}>
                     <TextArea title="Comment" value={comment} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setComment(event.target.value)} placeHolderStr="Write some sentences about this package"/>
                     <div className="col-span-full">
-                        <div className="flex">
+                        <div className="flex select-none">
                             <label htmlFor="about" className="block text-sm font-bold leading-6 text-gray-900">
                                 Rating
                             </label>
@@ -145,7 +145,7 @@ const ModalCommentRating = (props: IProps) => {
                         <button
                             disabled={disabled}
                             type="submit"
-                            className={` disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                            className={` disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 select-none`}
                             onClick={onSaveInfo}
                            
                         >
@@ -153,7 +153,7 @@ const ModalCommentRating = (props: IProps) => {
                         </button>
                         <button
                             type="submit"
-                            className="bg-gray-400 rounded-md px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            className="bg-gray-400 rounded-md px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 select-none"
                             onClick={onCloseModalCommentRating}
                         >
                             Cancel

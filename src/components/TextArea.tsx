@@ -10,7 +10,7 @@ const TextArea = (props: IProps) => {
     const {title, placeHolderStr, value, handleTextAreaChange} = props;
 
     return (
-        <div className="col-span-full my-4">
+        <div className="col-span-full my-4 select-none">
             <div className="flex">
                 <label htmlFor="about" className="block text-sm font-bold leading-6 text-gray-900">
                     {title}
