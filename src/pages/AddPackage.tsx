@@ -7,14 +7,14 @@ import packageService from "../services/packageService";
 import uploadService from "../services/uploadService";
 import UploadFile from "../components/UploadFile";
 import TextInput from '../components/TextInput';
-import TextArea from '../components/TextArea';
 import CategorySelect from '../components/CategorySelect';
 import _const from '../const';
 import { FaRegImages } from 'react-icons/fa';
 import versionService from '../services/versionService';
 import Editor, { OnChange } from '@monaco-editor/react';
-import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
+import { ContentEditableEvent } from 'react-contenteditable';
 import ContentEditableInput from '../components/ContentEditableInput';
+import { ToastContainer, toast } from 'react-toastify';
 
 const AddPackage = () => {
 
@@ -62,11 +62,12 @@ const AddPackage = () => {
                     if (file) {
                         const formData = new FormData();
                         formData.append('file', file);
-                        const response = await uploadService.uploadFile(formData);
-                        if (response && response.status === 201) {
-                            const imgUrl = response.data.url;
-                            resolve(imgUrl);
-                        }
+                        await uploadService.uploadFile(formData).then(({status, data}) => {
+                            if (status === 201) {
+                                const imgUrl = data.url;
+                                resolve(imgUrl);
+                            }
+                        })
                     }
                 });
             });
@@ -81,10 +82,11 @@ const AddPackage = () => {
 
     const getPackageById = async () => {
         if (packageId) {
-            const response = await packageService.getPackageById(packageId);
-            if (response && response.data) {
-                setPackageUpdate(response.data);
-            }
+            await packageService.getPackageById(packageId).then(({data}) => {
+                if (data) {
+                    setPackageUpdate(data);
+                }
+            })
         }
     }
 
@@ -135,10 +137,11 @@ const AddPackage = () => {
         if (token !== "") {
             // console.log("Token header: ", token);
             try {
-                const response = await userService.getUser();
-                if (response && response.status === 200) {
-                    setUser(response.data);
-                }
+                await userService.getUser().then(({status, data}) => {
+                    if (status === 200) {
+                        setUser(data);
+                    }
+                })
             } catch (error) {
                 console.log(error);
             }
@@ -146,18 +149,18 @@ const AddPackage = () => {
     }
 
     const handleInputImgCoverChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("Hello");
         setIsLoadingCoverImg(true);
         const file = event.target?.files?.[0];
         const formData = new FormData();
         if (file) {
             formData.append('file', file);
             try {
-                const response = await uploadService.uploadFile(formData);
-                if (response && response.status === 201) {
-                    setimageCover(response.data.url);
-                    setIsLoadingCoverImg(false);
-                }
+                await uploadService.uploadFile(formData).then(({data, status}) => {
+                    if (status === 201) {
+                        setimageCover(data.url);
+                        setIsLoadingCoverImg(false);
+                    }
+                })
             } catch (error: any) {
                 alert(error.response.data.msg);
             }
@@ -172,15 +175,16 @@ const AddPackage = () => {
             const formData = new FormData();
             formData.append('file', file);
             try {
-                const response = await uploadService.uploadFile(formData);
-                if (response && response.status === 201) {
-                    const zipFileUrl = response.data.url;
-                    setZipFile(response.data.url);
-                    setDeploymentUrl(response.data.deploymentUrl);
-                    const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/data/store-be/", "");
-                    setFileZipName(zipFileName);
-                    setIsLoadingZipFile(false);
-                }
+                await uploadService.uploadFile(formData).then(({status, data}) => {
+                    if (status === 201) {
+                        const zipFileUrl = data.url;
+                        setZipFile(data.url);
+                        setDeploymentUrl(data.deploymentUrl);
+                        const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/data/store-be/", "");
+                        setFileZipName(zipFileName);
+                        setIsLoadingZipFile(false);
+                    }
+                })
             } catch (error: any) {
                 alert(error.response.data.msg);
             }
@@ -192,9 +196,9 @@ const AddPackage = () => {
         setMode(event.target?.value);
     }
 
-    const navigateToDetail = (packageId: string) => {
-        navigate(`/package/${packageId}`);
-    }
+    // const navigateToDetail = (packageId: string) => {
+    //     navigate(`/package/${packageId}`);
+    // }
 
     const onSaveInfoPackage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
@@ -222,7 +226,8 @@ const AddPackage = () => {
                     // downloadUrl: zipFile,
                     // deploymentUrl: deploymentUrl,
                     category: category,
-                    entryPoint: entryPoint
+                    entryPoint: entryPoint,
+                    status: 'wait-for-approve'
                 };
                 try {
                     //console.log("File: ", zipFilePublishVersion);
@@ -235,7 +240,7 @@ const AddPackage = () => {
                         }
                         const responsePublishVersion = await versionService.addVersion(versionPublish);
                         if(responsePublishVersion && responsePublishVersion.status === 201) {
-                            navigateToDetail(id);
+                            toast.success("Please wait for approve");
                         }
                     }
                 } catch (error: any) {
@@ -272,12 +277,13 @@ const AddPackage = () => {
     const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
         event.preventDefault();
         const imgName = imgLink.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
+        setimageCover("");
         try {
-            const response = await uploadService.deleteFile(imgName);
-            if (response && response.status === 200) {
-                alert("Delete cover img successfully");
-                setimageCover("");
-            }
+            await uploadService.deleteFile(imgName).then(({status}) => {
+                if (status === 200) {
+                    alert("Delete cover img successfully");
+                }
+            })
         } catch (error: any) {
             alert(error.response.data.msg);
         }
@@ -287,29 +293,31 @@ const AddPackage = () => {
         event.preventDefault();
         const fileDeleteName = fileZipName.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
         try {
-            const response = await uploadService.deleteFile(fileDeleteName);
-            if (response && response.status === 200) {
-                setZipFile("");
-                setFileZipName("");
-                setDeploymentUrl("");
-            }
+            await uploadService.deleteFile(fileDeleteName).then(({status}) => {
+                if (status === 200) {
+                    setZipFile("");
+                    setFileZipName("");
+                    setDeploymentUrl("");
+                }
+            })
         } catch (error: any) {
             alert(error.response.data.msg);
         }
-
     }
 
     const onDeleteDetailImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         event.preventDefault();
         const detailsImg = [...imageDetailList];
+        detailsImg.splice(index, 1);
+        setimageDetailList(detailsImg);
         const imgDelete = detailsImg[index];
         const imgDeleteName = imgDelete.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
         try {
-            const response = await uploadService.deleteFile(imgDeleteName);
-            if (response && response.status === 200) {
-                detailsImg.splice(index, 1);
-                setimageDetailList(detailsImg);
-            }
+            await uploadService.deleteFile(imgDeleteName).then(({status}) => {
+                if (status === 200) {
+                    toast.success("Delete successfully!");
+                }
+            })
         } catch (error: any) {
             alert(error.response.data.msg);
         }
@@ -478,17 +486,27 @@ const AddPackage = () => {
                         </div>
                     </div>
                     <div className="mt-6 flex items-center justify-end gap-x-6">
-                        <button
-                            disabled={showBtnSave === true ? false : true}
-                            type="submit"
-                            className={`disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
-                            onClick={onSaveInfoPackage}
-                        >
-                            Save
-                        </button>
+                        <div className="flex justify-between">
+                            <button
+                                className={`disabled:opacity-50 rounded-md bg-gray-400 px-3 mr-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600`}
+                                onClick={() => navigate('/')}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                disabled={showBtnSave === true ? false : true}
+                                type="submit"
+                                className={`disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                                onClick={onSaveInfoPackage}
+                            >
+                                Save
+                            </button>
+                        </div>
+                        
                     </div>
                 </form>
             </div>
+            <ToastContainer />
         </div>
     )
 }

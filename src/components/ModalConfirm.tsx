@@ -3,12 +3,13 @@ import { Box, Modal } from "@mui/material";
 interface IProps {
     open: boolean,
     handleClose: () => void,
-    remove: () => void,
+    action: () => void,
+    content: string
 }
 
-const ModalConfirmDelete = (props: IProps) => {
+const ModalConfirm = (props: IProps) => {
 
-    const {open, handleClose, remove} = props;
+    const {open, handleClose, action, content} = props;
 
     const style = {
         position: 'absolute' as 'absolute',
@@ -34,11 +35,11 @@ const ModalConfirmDelete = (props: IProps) => {
             >
                 <Box sx={style}>
                     <div className="w-full h-full flex flex-col text-black">
-                        <p>Do you want to delete?</p>
+                        <p>{content}</p>
                         <div className="grow"></div>
                         <div className="flex justify-end">
                             <button
-                                onClick={remove}
+                                onClick={action}
                                 type="submit"
                                 className="mx-2 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
@@ -59,4 +60,4 @@ const ModalConfirmDelete = (props: IProps) => {
     )
 }
 
-export default ModalConfirmDelete;
+export default ModalConfirm;

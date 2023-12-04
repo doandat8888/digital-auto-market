@@ -1,4 +1,4 @@
-import { BrowserRouter, useLocation} from 'react-router-dom';
+import { BrowserRouter} from 'react-router-dom';
 import RoutesApp from './configs/routes';
 import './App.css';
 import { Provider } from 'react-redux';

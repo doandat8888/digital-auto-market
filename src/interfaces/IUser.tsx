@@ -6,4 +6,5 @@ interface IUser {
     org: string,
     descriptor: string,
     images: string[],
+    role: string
 }

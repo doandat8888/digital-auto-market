@@ -55,7 +55,7 @@ const Slideshow = (props: IProps) => {
       <div>
             <Slider {...settings}>
               {slideImages && slideImages.length > 0 && slideImages.map((slideImage, index)=> (
-                  <img className="px-2 rounded-[18px] w-[50%] md:h-[80vh] lg:h-[80vh] xl:h-[60vh] object-contain cursor-pointer" onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
+                  <img className="px-2 rounded-[18px] w-[50%] md:h-[400px] sm:h-[450px] lg:h-[500px] xl:h-[700px] object-contain cursor-pointer" onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
               ))} 
             </Slider>
             <Modal
@@ -65,7 +65,7 @@ const Slideshow = (props: IProps) => {
                 aria-describedby="modal-modal-description"
                 className="flex items-center justify-center"
             >
-                <img src={imgFull} alt="imgFull" className="sm:w-[60%] sm:h-[50%] w-[90%] h-[60%] object-contain"/>
+                <img src={imgFull} alt="imgFull" className="sm:w-[40%] sm:h-[80%] w-[90%] h-[80%] object-fit-contain"/>
                 
             </Modal>
       </div>

@@ -71,6 +71,10 @@ const getPackageByCategoryAndName = (limit: number, currentPage: number, package
     return axios.get(`/package?category=${category}&limit=${limit}&page=${currentPage}&name=${packageName}`);
 }
 
+const changeStatus = (packageId: string, status: string) => {
+    return axios.put(`/package/${packageId}/${status === "approved" ? 'reject' : 'approve'}`);
+}
+
 export default {
     addNewPackage,
     getAllPackage,
@@ -87,4 +91,5 @@ export default {
     getPackageByCategoryAndName,
     getPackageByName,
     getMyPackageByName,
+    changeStatus
 }

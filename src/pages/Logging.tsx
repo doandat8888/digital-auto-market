@@ -16,10 +16,11 @@ const Logging = (props: IProps) => {
 
     const getAllLogging = async() => {
         try {
-            const response = await loggingService.getAllLoggingService();
-            if(response && response.data) {
-                setLoogingList(response.data.data);
-            }
+            await loggingService.getAllLoggingService().then(({data}) => {
+                if(data) {
+                    setLoogingList(data.data);
+                }
+            })
         } catch (error) {
             
         }

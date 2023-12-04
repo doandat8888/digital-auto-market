@@ -9,7 +9,9 @@ import packageService from "../services/packageService";
 import NoPackage from "../components/NoPackage";
 import _ from "lodash";
 import { Pagination } from "@mui/material";
-import NotFound from "../components/404NotFound";
+import calcTotalPages from "../utils/calcTotalPages";
+
+const limit = window.screen.height > 900 ? 12 : 8;
 
 const MyPackage = () => {
 
@@ -27,7 +29,6 @@ const MyPackage = () => {
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
-    const limit = 8;
 
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
@@ -54,46 +55,34 @@ const MyPackage = () => {
     }, [token, myPackageList]);
 
     const getTotalPage = async() => {
-        const response = await packageService.getMyPackageByPage(limit, currentPage);
-        if(response && response.data && response.data.data.length > 0) {
-            setTotal(response.data.total);
-            console.log("Total my package: ", response.data.total);
-        }
+        await packageService.getMyPackageByPage(limit, currentPage).then(({data}) => {
+            if(data && data.data.length > 0) {
+                setTotal(data.total);
+            }
+        })
     };
 
     const getMyPackageList = async() => {
-        const response = await packageService.getPackageOfCurrentUser(limit, currentPage);
-        if(response && response.data && response.data.data.length > 0) {
-            const packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
-            setMyPackageList(response.data.data);
-            let totalPages = 0;
-            if(response.data.total % limit === 0) {
-                totalPages = Math.floor(response.data.total / limit);
-            }else {
-                totalPages = Math.floor(response.data.total / limit) + 1;
+        await packageService.getPackageOfCurrentUser(limit, currentPage).then(({data}) => {
+            if(data && data.data.length > 0) {
+                //const packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
+                setMyPackageList(data.data);
+                setTotalPage(calcTotalPages(data.total, limit));
             }
-            setTotalPage(totalPages);
-        }
-        setIsLoading(false);
+            setIsLoading(false);
+        })
     };
-    
-    console.log("My packge list: ", myPackageList);
 
     const getMyPackageByName = async(packageName: string) => {
-        const response = await packageService.getMyPackageByName(limit, currentPage, packageName);
-        if(response && response.data && response.data.data.length > 0) {
-            setMyPackageList(response.data.data);
-            let totalPages = 0;
-            if(response.data.total % limit === 0) {
-                totalPages = Math.floor(response.data.total / limit);
+        await packageService.getMyPackageByName(limit, currentPage, packageName).then(({data}) => {
+            if(data.data.length > 0) {
+                setMyPackageList(data.data);
+                setTotalPage(calcTotalPages(data.total, limit));
             }else {
-                totalPages = Math.floor(response.data.total / limit) + 1;
+                setMyPackageList([]);
+                setTotalPage(0);
             }
-            setTotalPage(totalPages);
-        }else {
-            setMyPackageList([]);
-            setTotalPage(0);
-        }
+        })
     }
 
     const deb = _.debounce((e) => {
@@ -109,7 +98,6 @@ const MyPackage = () => {
 
     useEffect(() => {
         const searchVal = localStorage.getItem('name');
-        console.log(searchVal);
         if(searchVal) {
             getMyPackageByName(searchVal);
         }else {
@@ -121,10 +109,11 @@ const MyPackage = () => {
     const getUserInfo = async () => {
         if (token !== "") {
             try {
-                const response = await userService.getUser();
-                if (response && response.status === 200) {
-                    setUser(response.data);
-                }
+                await userService.getUser().then(({status, data}) => {
+                    if (status === 200) {
+                        setUser(data);
+                    }
+                })
             } catch (error) {
                 console.log(error);
             }
@@ -147,10 +136,10 @@ const MyPackage = () => {
                     <div className="search flex justify-end mb-6 text-black border-gray">
                         <input className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
                     </div>
-                    {myPackageList.length > 0 ?  <PackageList showMode={false} packages={myPackageList}/> : localStorage.getItem('name') ? '' : <NoPackage content="There is no packages in the system"/>}
+                    {myPackageList.length > 0 ?  <PackageList showMode={false} packages={myPackageList}/> : localStorage.getItem('name') ? '' : <NoPackage content="You don't have any packages"/>}
                     
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
+                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
             </div> : <NoPackage content="There is no packages in the system"/>}
         </div>
     )

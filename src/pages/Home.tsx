@@ -6,6 +6,9 @@ import NoPackage from '../components/NoPackage';
 import { Pagination } from '@mui/material';
 import _ from 'lodash';
 import NotFound from '../components/404NotFound';
+import calcTotalPages from '../utils/calcTotalPages';
+
+const limit = window.screen.height > 900 ? 12 : 8;
 
 const Home = () => {
 
@@ -21,27 +24,22 @@ const Home = () => {
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
-    const limit = 8;
 
     const getTotalPage = async() => {
-        const response = await packageService.getAllPackageByPage(limit, currentPage);
-        if(response && response.data && response.data.data.length > 0) {
-            setTotal(response.data.total);
-        }
+        await packageService.getAllPackageByPage(limit, currentPage).then(({data}) => {
+            if(data && data.data.length > 0) {
+                setTotal(data.total);
+            }
+        })
     };
 
     const getAllPackage = async () => {
-        const response = await packageService.getAllPackageByPage(limit, currentPage);
-        if(response && response.data && response.data.data.length > 0) {
-            setPackageList(response.data.data);
-            let totalPages = 0;
-            if(response.data.total % limit === 0) {
-                totalPages = Math.floor(response.data.total / limit);
-            }else {
-                totalPages = Math.floor(response.data.total / limit) + 1;
+        await packageService.getAllPackageByPage(limit, currentPage).then(({data}) => {
+            if(data && data.data.length > 0) {
+                setPackageList(data.data);
+                setTotalPage(calcTotalPages(data.total, limit));
             }
-            setTotalPage(totalPages);
-        }
+        })
     }
 
     const onChangePage = (event: any , value: any) => {
@@ -49,20 +47,15 @@ const Home = () => {
     }
 
     const getPackageByName = async(packageName: string) => {
-        const response = await packageService.getPackageByName(limit, currentPage, packageName);
-        if(response && response.data && response.data.data.length > 0) {
-            setPackageList(response.data.data);
-            let totalPages = 0;
-            if(response.data.total % limit === 0) {
-                totalPages = Math.floor(response.data.total / limit);
+        await packageService.getPackageByName(limit, currentPage, packageName).then(({data}) => {
+            if(data && data.data.length > 0) {
+                setPackageList(data.data);
+                setTotalPage(calcTotalPages(data.total, limit));
             }else {
-                totalPages = Math.floor(response.data.total / limit) + 1;
+                setPackageList([]);
+                setTotalPage(0);
             }
-            setTotalPage(totalPages);
-        }else {
-            setPackageList([]);
-            setTotalPage(0);
-        }
+        })
     };
 
     const deb = _.debounce((e) => {
@@ -87,7 +80,6 @@ const Home = () => {
     }, [currentPage]);
 
     useEffect(() => {
-        console.log(currentPage);
         if(searchVal) {
             getPackageByName(searchVal);
         }
@@ -115,7 +107,7 @@ const Home = () => {
                     {packageList.length > 0 ? <PackageList showMode={false} packages={packageList}/> : <NotFound />}
                     
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
+                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
             </div> : <NoPackage content="There is no packages in the system"/>}
         </div>
     )

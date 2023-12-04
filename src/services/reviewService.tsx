@@ -14,6 +14,10 @@ const getReviewByPackageId = (packageId: string) => {
     return axios.get(`/review?packageId=${packageId}`)
 }
 
+const getReviewByPackageIdPaginate = (packageId: string, limit: number, currentPage: number) => {
+    return axios.get(`/review?packageId=${packageId}&limit=${limit}&page=${currentPage}`)
+}
+
 const updateReview = (reviewId: string, review: IReview) => {
     return axios.put(`/review/${reviewId}`, {
         ...review
@@ -29,5 +33,6 @@ export default {
     getAllReview,
     getReviewByPackageId,
     updateReview,
-    deleteReview
+    deleteReview,
+    getReviewByPackageIdPaginate
 }

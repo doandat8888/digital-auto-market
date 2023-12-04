@@ -51,14 +51,15 @@ const Header = () => {
 
     const getUserInfo = async () => {
         try {
-            const response = await userService.getUser();
-            if (response && response.status === 200) {
-                setUser(response.data);
-                if(user) {
-                    setIsLoading(false);
+            await userService.getUser().then(({data, status}) => {
+                if (status === 200) {
+                    setUser(data);
+                    if(user) {
+                        setIsLoading(false);
+                    }
                 }
-                
-            }
+            })
+            
         } catch (error) {
             console.log(error);
         }

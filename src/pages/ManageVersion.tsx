@@ -7,11 +7,11 @@ import LoadingModal from "../components/LoadingDialog";
 import userService from "../services/userService";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import ModalPublishVersion from "../components/ModalPublishVersion";
-import ModalConfirmDelete from "../components/ModalConfirmDelete";
+import ModalConfirm from "../components/ModalConfirm";
 import { Pagination } from "@mui/material";
+import calcTotalPages from "../utils/calcTotalPages";
 
 const ManageVersion = () => {
-
     const [versionList, setVersionList] = useState<IGetVersion[]>([]);
     const [versionDeleteId, setVersionDeleteId] = useState<string>("");
     const [canEdit, setCanEdit] = useState(false);
@@ -47,10 +47,11 @@ const ManageVersion = () => {
 
     const getUserInfo = async () => {
         try {
-            const response = await userService.getUser();
-            if (response && response.status === 200) {
-                setUser(response.data);
-            }
+            await userService.getUser().then(({status, data}) => {
+                if (status === 200) {
+                    setUser(data);
+                }
+            })
         } catch (error) {
             console.log(error);
         }
@@ -66,27 +67,21 @@ const ManageVersion = () => {
 
     const getVersionList = async() => {
         if(packageId) {
-            const response = await versionService.getVersionByPackageId(packageId, limit, currentPage);
-            if(response && response.status === 200) {
-                setVersionList(response.data.data);
-                let totalPages = 0;
-                if(response.data.total % limit === 0) {
-                    totalPages = Math.floor(response.data.total / limit);
-                }else {
-                    totalPages = Math.floor(response.data.total / limit) + 1;
+            await versionService.getVersionByPackageId(packageId, limit, currentPage).then(({status, data}) => {
+                if(status === 200) {
+                    setVersionList(data.data);
+                    setTotalPage(calcTotalPages(data.total, limit));
+                    setTotal(data.total);
                 }
-                setTotalPage(totalPages);
-                setTotal(response.data.total);
-            }
+            })
         }
     }
 
     const getPackageInfo = async() => {
         if(packageId) {
-            const response = await packageService.getPackageById(packageId);
-            if(response) {
-                setPackageDetail(response.data);
-            }
+            await packageService.getPackageById(packageId).then(({data}) => {
+                setPackageDetail(data);
+            })
         }
     }
 
@@ -104,11 +99,12 @@ const ManageVersion = () => {
     const removeVersion = async() => {
         if(versionDeleteId) {
             try {
-                const response = await versionService.deleteVersion(versionDeleteId);
-                if(response && response.status === 200) {
-                    alert("Delete version successfully!");
-                    getVersionList();
-                }
+                await versionService.deleteVersion(versionDeleteId).then(({status}) => {
+                    if(status === 200) {
+                        alert("Delete version successfully!");
+                        getVersionList();
+                    }
+                })
             } catch (error: any) {
                 alert(error.response.data.msg);
                 setopenModalConfirmDelete(false);
@@ -158,8 +154,7 @@ const ManageVersion = () => {
                     {canEdit && <button onClick={() => setOpenModalPublish(true)} className=" my-4 border-none outline-none flex justify-center mr-2 px-4 py-2 text-white items-center cursor-pointer rounded bg-green-400"><AiOutlineCloudUpload /><p className="lg:block text-[12px] lg:ml-2 ml-2">Publish new version</p></button>}
                     <ManageVersionTable onDeleteVersion={onDeleteVersion} canEdit={canEdit} versionList={versionList} onUpdateVersion={onUpdateVersion}/>
                     <div className="h-[90vh]"> <ModalPublishVersion versionUpdate={versionUpdate} refreshData={getVersionList} open={openModalPublish} handleClose={handleCloseModal} packageId={packageId ? packageId : ''}/></div>
-                   
-                    <ModalConfirmDelete remove={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)}/>
+                    <ModalConfirm content="Do you want to delete?" action={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)}/>
                 </div>
             </div>
             

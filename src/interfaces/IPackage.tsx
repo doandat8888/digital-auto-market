@@ -19,7 +19,8 @@ type IAddPackage = IPackage &  {
     // downloadUrl: string | undefined,
     // deploymentUrl: string | undefined,
     category: string | undefined,
-    dashboardConfig: string | undefined
+    dashboardConfig: string | undefined,
+    status: string
 }
 
 type IGetPackage = IPackage & {
@@ -38,7 +39,8 @@ type IGetPackage = IPackage & {
     category: string,
     entryUrl: string,
     dashboardConfig: string,
-    downloadUrl: string
+    downloadUrl: string,
+    state: string
 }
 
 type IListPackage = (Omit<IPackage, 'createdBy'> & {

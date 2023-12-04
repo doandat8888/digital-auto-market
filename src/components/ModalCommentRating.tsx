@@ -62,13 +62,13 @@ const ModalCommentRating = (props: IProps) => {
                     createdBy: createdBy
                 }
                 try {
-                    const response = await reviewService.addReview(review);
-                    if(response && response.status === 201) {
-                        alert("Sucessfully!");
-                        refreshData(versionId);
-                        onCloseModal();
-                        emptyData();
-                    }
+                    await reviewService.addReview(review).then(({status}) => {
+                        if(status === 201) {
+                            refreshData(versionId);
+                            onCloseModal();
+                            emptyData();
+                        }
+                    })
                 } catch (error: any) {
                     alert(error.response.data.msg);
                 }
@@ -81,12 +81,13 @@ const ModalCommentRating = (props: IProps) => {
                     createdBy: createdBy
                 }
                 try {
-                    const response = await reviewService.updateReview(reviewUpdate._id, review);
-                    if(response && response.status === 200) {
-                        refreshData(versionId);
-                        onCloseModal();
-                        emptyData();
-                    }
+                    await reviewService.updateReview(reviewUpdate._id, review).then(({status}) => {
+                        if(status === 200) {
+                            refreshData(versionId);
+                            onCloseModal();
+                            emptyData();
+                        }
+                    })
                 } catch (error: any) {
                     alert(error.response.data.msg);
                 }
@@ -147,7 +148,6 @@ const ModalCommentRating = (props: IProps) => {
                             type="submit"
                             className={` disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 select-none`}
                             onClick={onSaveInfo}
-                           
                         >
                             Save
                         </button>

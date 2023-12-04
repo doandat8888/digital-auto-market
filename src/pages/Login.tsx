@@ -6,41 +6,38 @@ import { addToken } from "../redux/token/tokenSlice";
 import LoadingDialog from "../components/LoadingDialog";
 
 const Login = () => {
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState("");
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [showBtnSave, setShowBtnSave] = useState(false);
 
     useEffect(() => {
-        if(email && password) {
-            setShowBtnSave(true);
-        }else {
-            setShowBtnSave(false);
-        }
+        setShowBtnSave(!!(email && password));
     }, [email, password]);
     
     const onLogin = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, email: string, password: string) => {
         event.preventDefault();
         setIsLoading(true);
+
         if(email && password) {
             try {
-                const response = await userService.login(email, password);
-                if(response && response.status === 200) {
-                    if(response.data.token) {
-                        dispatch(addToken(response.data.token));
-                        setIsLoading(false);
-                        window.location.href = import.meta.env.VITE_APP_URL;
-                    }else {
-                        alert("Token not found");
+                await userService.login(email, password).then(({status, data}) => {
+                    if(status === 200) {
+                        if(data.token) {
+                            dispatch(addToken(data.token));
+                            setIsLoading(false);
+                            window.location.href = import.meta.env.VITE_APP_URL;
+                        }else {
+                            alert("Token not found");
+                        }
                     }
-                }
+                })
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 alert(error.response.data.msg);
                 setIsLoading(false);
             }
-            
         }else {
             alert("Missing email or password value"); 
             setIsLoading(false);
@@ -52,10 +49,10 @@ const Login = () => {
     }
 
     return (
-        <div className="login-page bg-white ">
+        <div className="login-page bg-white text-black">
             <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
             <section className="">
-                <div className="bg-white text-black flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+                <div className="bg-white text-black flex flex-col items-center mt-10 px-6 py-8 mx-auto md:h-screen lg:py-0">
                     <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0">
                         <div className="bg-white p-6 space-y-4 md:space-y-6 sm:p-8">
                             <h1 className="text-xl font-bold leading-tight tracking-tight text-black md:text-2xl text-center">
@@ -67,7 +64,11 @@ const Login = () => {
                                         <label className="block mb-2 text-sm font-medium text-gray-900">Email</label>
                                         <p className="text-red-500 ml-1">*</p>
                                     </div>
-                                    <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target?.value)} value={email} type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="name@company.com" required/>
+                                    <input
+                                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target?.value)}
+                                        value={email}
+                                        type="email"
+                                        name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="name@company.com" required/>
                                 </div>
                                 <div>
                                     <div className="flex">

@@ -8,6 +8,8 @@ import { useParams } from "react-router";
 import _ from "lodash";
 import NotFound from "../components/404NotFound";
 
+const limit = window.screen.height > 900 ? 12 : 8;
+
 const PackageType = () => {
 
     const [packageList, setPackageList] = useState<IGetPackage[]>([]);
@@ -18,7 +20,6 @@ const PackageType = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
     const [searchValue, setSearchValue] = useState<string>("");
-    const limit = 8;
     //params
     const { type } = useParams();
     const [packageType, setPackageType] = useState("");
@@ -37,6 +38,7 @@ const PackageType = () => {
             setTotalPage(totalPages);
         } else {
             setPackageList([]);
+            setTotalPage(0);
         }
     }
 
@@ -72,7 +74,6 @@ const PackageType = () => {
     }, [currentPage, type]);
 
     useEffect(() => {
-        console.log("Type: ", type)
         setCurrentPage(1);
         getAllPackage();
     }, [type]);
@@ -111,9 +112,9 @@ const PackageType = () => {
                     <div className="search flex justify-end mb-6 text-black border-gray">
                         <input value={searchValue} className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
                     </div>
-                    {packageList.length > 0 ? <PackageList showMode={false} packages={packageList}/> : searchValue ? <NotFound /> : <NoPackage content="There is no packages in the system"/>}
+                    {packageList.length > 0 ? <PackageList showMode={false} packages={packageList}/> : searchValue ? <NotFound /> : <NoPackage content={`There is no ${type} in the system`}/>}
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
+                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
             </div> : <NoPackage content="There is no packages in the system"/>}
         </div>
     )

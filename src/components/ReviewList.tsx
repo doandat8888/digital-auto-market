@@ -11,7 +11,6 @@ interface IProps {
 const ReviewList = (props: IProps) => {
 
     const {reviewsFilter, onUpdateReview, onDeleteReview, currentUser} = props;
-    console.log("review filter: ", reviewsFilter);
 
     return (
         <div>

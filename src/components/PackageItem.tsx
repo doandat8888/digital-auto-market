@@ -11,13 +11,13 @@ const PackageItem = (props: IProps) => {
     const { packageItem, showMode } = props; 
     
     return (
-        <Link className="custom-link flex p-4 w-[96%] my-2 cursor-pointer bg-white rounded shadow-sm hover:opacity-75" to={`/package/${packageItem?._id}?version=latest`}>
+        <Link className="custom-link flex p-4 w-[96%] my-2 cursor-pointer bg-white rounded shadow-sm hover:opacity-75" to={`/package/${packageItem._id}?version=latest`}>
             <div className="left sm:w-[20%] lg:w-[40%] w-[40%] xl:w-[30%] min-w-[100px]">
                 <img className="w-[100%] aspect-square rounded object-contain" src={packageItem.thumbnail != 'abc' ? packageItem.thumbnail : "https://media.istockphoto.com/vectors/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-vector-id1128826884?k=6&m=1128826884&s=170667a&w=0&h=F6kUwTcsLXUojmGFxN2wApEKgjx63zcIshCSOmnfEFs="} alt="" />
             </div>
             <div className="right mx-4 w-[60%] sm:w-[70%] lg:w-[60%] xl:w-[70%] flex flex-col justify-between">
                 <div className="flex font-520 font-semibold">
-                    <p className='w-[100%] sm:text-[14px] text-[14px] lg:text[14px] xl:text-[18px] truncate'><div className='w-[70%] truncate'>{packageItem.name}</div></p>
+                    <p className='w-[100%] sm:text-[13px] text-[12px] lg:text[13px] xl:text-[16px] truncate'><div className='w-[80%] truncate'>{packageItem.name}</div></p>
                 </div>
                 <div className='text-[12px] opacity-80'><p className='w-[80%] truncate'>{packageItem?.shortDesc}</p></div>
                 <div className="autofill">

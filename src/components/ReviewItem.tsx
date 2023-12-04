@@ -25,9 +25,6 @@ const ReviewItem = (props: IProps) => {
     const ref = useRef<HTMLDivElement | null>(null);
     const [showMenu, setShowMenu] = useState(false);
 
-    console.log("Current user id: ", currentUser?._id);
-    console.log("Created by: ", createdBy);
-
     useEffect(() => {
         if(currentUser) {
             if(currentUser._id === createdBy._id) {

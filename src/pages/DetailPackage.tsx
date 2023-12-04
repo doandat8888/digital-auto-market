@@ -15,12 +15,13 @@ import ModalCommentRating from "../components/ModalCommentRating";
 import reviewService from "../services/reviewService";
 import ReviewList from "../components/ReviewList";
 import { removeToken } from "../redux/token/tokenSlice";
-import ModalConfirmDelete from "../components/ModalConfirmDelete";
+import ModalConfirm from "../components/ModalConfirm";
 import { CiShare1 } from "react-icons/ci";
 import { GoCopy } from "react-icons/go";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Editor } from "@monaco-editor/react";
+import { Pagination } from "@mui/material";
 
 const DetailPackage = () => {
 
@@ -47,6 +48,10 @@ const DetailPackage = () => {
     const [reviews, setReviews] = useState<IUpdateReview[]>();
     const [reviewUpdate, setReviewUpdate] = useState<IUpdateReview>();
     const [reviewDeleteId, setReviewDeleteId] = useState<string>("");
+    const [totalReview, setTotalReview] = useState(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [totalPage, setTotalPage] = useState<number>(0);
+    const limit = 2;
 
     //Modal confirm delete
     const [openModalConfirmDeleteReview, setOpenModalConfirmDeleteReview] = useState(false);
@@ -81,16 +86,17 @@ const DetailPackage = () => {
     const getPackageInfo = async() => {
         if(id) {
             try {
-                const response = await packageService.getPackageById(id);
-                if(response && response.data) {
-                    setPackageDetail(response.data);
-                    if(response.data.userLike === true) {
-                        setIsLike(true);
-                    }else {
-                        setIsLike(false);
+                await packageService.getPackageById(id).then(({data}) => {
+                    if(data) {
+                        setPackageDetail(data);
+                        if(data.userLike === true) {
+                            setIsLike(true);
+                        }else {
+                            setIsLike(false);
+                        }
+                        setIsLoading(false);
                     }
-                    setIsLoading(false);
-                }
+                })
             } catch (error) {
                 setIsLoading(false);
             }
@@ -111,10 +117,11 @@ const DetailPackage = () => {
 
     const getUserInfo = async () => {
         try {
-            const response = await userService.getUser();
-            if (response && response.status === 200) {
-                setUser(response.data);
-            }
+            await userService.getUser().then(({status, data}) => {
+                if (status === 200) {
+                    setUser(data);
+                }
+            });
         } catch (error: any) {
             if(error.response.status === 403) {
                 dispatch(removeToken());
@@ -174,28 +181,60 @@ const DetailPackage = () => {
     const getReviewByPackageId = async() => {
         if(packageDetail) {
             try {
-                const response = await reviewService.getReviewByPackageId(packageDetail._id);
-                if(response && response.data) {
-                    if(response.data.data.length > 0) {
-                        setIsLoadingReview(false);
-                        setHasReviews(1);
-                        setReviews(response.data.data);
-                    }else if(response.data.data.length === 0) {
-                        setIsLoadingReview(false);
-                        setHasReviews(-1);
+                await reviewService.getReviewByPackageIdPaginate(packageDetail._id, limit, currentPage).then(({data}) => {
+                    if(data) {
+                        if(data.data.length > 0) {
+                            setIsLoadingReview(false);
+                            setHasReviews(1);
+                            setReviews(data.data);
+                            
+                        }else if(data.data.length === 0) {
+                            setIsLoadingReview(false);
+                            setHasReviews(-1);
+                        }else {
+                            setIsLoadingReview(true);
+                            setHasReviews(0);
+                        }
                     }else {
-                        setIsLoadingReview(true);
-                        setHasReviews(0);
+                        setIsLoadingReview(false);
                     }
-                }else {
-                    setIsLoadingReview(false);
-                }
+                })
+                
             } catch (error: any) {
                 console.log(error.data.response.msg);
             }
             
         }
     }
+
+    const getTotalReview = async() => {
+        if(packageDetail) {
+            await reviewService.getReviewByPackageId(packageDetail._id).then(({data}) => {
+                if(data && data.data.length > 0) {
+                    setTotalReview(data.data.length);
+                    let totalPagesReview = 0;
+                    if(data.data.length % limit === 0) {
+                        totalPagesReview = Math.floor(data.data.length / limit);
+                    }else {
+                        totalPagesReview = Math.floor(data.data.length / limit) + 1;
+                    }
+                    setTotalPage(totalPagesReview);
+                }
+            })
+        }
+    };
+
+    useEffect(() => {
+        getReviewByPackageId();
+    }, [currentPage])
+
+    const onChangePage = (event: any , value: any) => {
+        setCurrentPage(value);
+    }
+
+    useEffect(() => {
+        getTotalReview();
+    }, [reviews]);
 
     const onUpdateReview = (review: IUpdateReview) => {
         setOpenModalCommentRating(true);
@@ -210,12 +249,13 @@ const DetailPackage = () => {
     const deleteReview = async () => {
         if(reviewDeleteId) {
             try {
-                const response = await reviewService.deleteReview(reviewDeleteId);
-                if(response && response.status === 200) {
-                    alert("Delete successfully!");
-                    onRefreshData();
-                    setReviewDeleteId("");
-                }
+                await reviewService.deleteReview(reviewDeleteId).then(({status}) => {
+                    if(status === 200) {
+                        alert("Delete successfully!");
+                        onRefreshData();
+                        setReviewDeleteId("");
+                    }
+                })
             } catch (error) {
                 console.log(error);
             }
@@ -239,13 +279,13 @@ const DetailPackage = () => {
         if(user) {
             if(status === "unlike") {
                 try {
-                    const response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "unlike");
+                    await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "unlike");
                 } catch (error: any) {
                     console.log(error.response.data.msg);
                 }
             }else {
                 try {
-                    const response = await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "like");
+                    await packageService.toggleLikePackage(packageDetail ? packageDetail._id : '', "like");
                 } catch (error: any) {
                     console.log(error.response.data.msg);
                 }
@@ -258,7 +298,7 @@ const DetailPackage = () => {
 
     const onDownLoadPackage = async() => {
         try {
-            const response = await packageService.updateDownLoad(packageDetail ? packageDetail._id : '');
+            await packageService.updateDownLoad(packageDetail ? packageDetail._id : '');
         } catch (error: any) {
             alert(error.response.data.msg);
         }
@@ -278,15 +318,6 @@ const DetailPackage = () => {
 
     const onRemovePackage = () => {
         setOpenModalConfirmDeletePackage(true);
-        // try {
-        //     let response = await packageService.removePackage(packageId);
-        //     if(response && response.status === 200) {
-        //         alert("Deleted successfully!");
-        //         navigate('/');
-        //     }
-        // } catch (error: any) {
-        //     alert(error.response.data.msg);
-        // }
     }
 
     const removePackage = async() => {
@@ -378,7 +409,7 @@ const DetailPackage = () => {
                                         </div>
                                         <div className="w-full sm:block">
                                             {packageDetail?.version.downloadUrl &&
-                                                <button className="text-black select-none w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black select-none-500 border border-black
+                                                <button className="select-none w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black select-none-500 border border-black
                                                 py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.entryUrl)}>
                                                     <p className="text-[14px] sm:text-[14px] lg:text-[16px] mx-2 truncate">Copy URL</p> <GoCopy />
                                                 </button>
@@ -419,10 +450,10 @@ const DetailPackage = () => {
                                     }
                                 </div>
                             </div>
-                            
+                            <Pagination className={`w-full flex text-black mx-auto justify-center ${totalReview <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
                             <ModalCommentRating openModalLoading={() => setIsLoading(true)} onCloseModalLoading={() => setIsLoading(false)} isLoading={isLoading} reviewUpdate={reviewUpdate} refreshData={onRefreshData} packageId={packageDetail._id} createdBy={packageDetail.createdBy} versionId={currentVersion ? currentVersion._id : ''} open={openModalCommentRating} onCloseModal={onCloseModal}/>
-                            <ModalConfirmDelete remove={removePackage} handleClose={() => setOpenModalConfirmDeletePackage(false)} open={openModalConfirmDeletePackage}/>
-                            <ModalConfirmDelete remove={deleteReview} handleClose={() => setOpenModalConfirmDeleteReview(false)} open={openModalConfirmDeleteReview}/>
+                            <ModalConfirm content="Do you want to delete?" action={removePackage} handleClose={() => setOpenModalConfirmDeletePackage(false)} open={openModalConfirmDeletePackage}/>
+                            <ModalConfirm content="Do you want to delete?" action={deleteReview} handleClose={() => setOpenModalConfirmDeleteReview(false)} open={openModalConfirmDeleteReview}/>
                         </div>
                     </div>
                 </div>

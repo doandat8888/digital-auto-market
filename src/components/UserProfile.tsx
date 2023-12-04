@@ -25,10 +25,11 @@ const UserProfile = () => {
         setIsLoading(true);
         event.preventDefault();
         try {
-            const response = await userService.changeProfile(currentUser ? currentUser?._id : '', fullName);
-            if(response && response.status == 200) {
-                navigate('/');
-            }
+            await userService.changeProfile(currentUser ? currentUser?._id : '', fullName).then(({status}) => {
+                if(status == 200) {
+                    navigate('/');
+                }
+            })
         } catch (error: any) {
             toast.error(error.response.data.msg);
         }
@@ -39,12 +40,13 @@ const UserProfile = () => {
     }
 
     const getCurrentUser = async() => {
-        const response = await userService.getCurrentUser();
-        if(response && response.status == 200) {
-            setFullName(response.data.fullName);
-            setIsLoading(false);
-            setCurrentUser(response.data);
-        }
+        await userService.getCurrentUser().then(({status, data}) => {
+            if(status == 200) {
+                setFullName(data.fullName);
+                setIsLoading(false);
+                setCurrentUser(data);
+            }
+        });
     }
 
     useEffect(() => {

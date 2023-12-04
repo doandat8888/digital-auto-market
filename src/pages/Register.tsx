@@ -29,32 +29,34 @@ const Register = () => {
         setIsLoading(true);
         if(email && password) {
             try {
-                const response = await userService.register(email, password, fullName);
-                if(response && response.status === 201) {
-                    try {
-                        const response = await userService.login(email, password);
-                        if(response && response.status === 200) {
-                            if(response.data.token) {
-                                dispatch(addToken(response.data.token));
-                                setIsLoading(false);
-                                window.location.href = import.meta.env.VITE_APP_URL;
-                            }else {
-                                alert("Token not found");
-                            }
+                await userService.register(email, password, fullName).then(async({status}) => {
+                    if(status === 201) {
+                        try {
+                            await userService.login(email, password).then(({status, data}) => {
+                                if(status === 200) {
+                                    if(data.token) {
+                                        dispatch(addToken(data.token));
+                                        setIsLoading(false);
+                                        window.location.href = import.meta.env.VITE_APP_URL;
+                                    }else {
+                                        alert("Token not found");
+                                    }
+                                }
+                            })
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        } catch (error: any) {
+                            alert(error.response.data.msg);
+                            setIsLoading(false);
                         }
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    } catch (error: any) {
-                        alert(error.response.data.msg);
-                        setIsLoading(false);
                     }
-                }
+                })
+                
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 console.log(error);
                 alert(error.response.data.errors[0].msg);
                 setIsLoading(false);
             }
-            
         }else {
             alert("Missing email or password value"); 
             setIsLoading(false);
@@ -75,58 +77,52 @@ const Register = () => {
     }
 
     return (
-        <div className="login-page text-black h-[90%]">
+        <div className="text-black">
             <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
-            <section className="bg-gray-50 text-black">
-                <div className="bg-white flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                    <div className="w-full bg-white shadow-lg rounded-lg dark:border md:mt-0 sm:max-w-md xl:p-0">
-                        <div className="bg-white p-6 space-y-4 md:space-y-6 sm:p-8">
-                            <h1 className="text-xl text-center font-bold leading-tight tracking-tight md:text-2xl">
-                                Sign up new account
-                            </h1>
-                            <form className="space-y-4 md:space-y-6" action="#">
-                                <div>
-                                    <div className="flex">
-                                        <label className="block mb-2 text-sm font-medium">Email</label>
-                                        <p className="text-red-500 ml-1">*</p>
-                                    </div>
-                                    <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target?.value)} value={email} type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="name@company.com" required/>
-                                </div>
-                                <div>
-                                    <div className="flex">
-                                        <label className="block mb-2 text-sm font-medium text-gray-900">Full name</label>
-                                    </div>
-                                    <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setFullName(event.target?.value)} value={fullName} type="text" name="fullName" id="fullName" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Your full name" required/>
-                                </div>
-                                <div>
-                                    <div className="flex">
-                                        <label className="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                                        <p className="text-red-500 ml-1">*</p>
-                                    </div>
-                                    <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target?.value)} value={password} type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required />
-                                </div>
-                                <div>
-                                    <div className="flex">
-                                        <label className="block mb-2 text-sm font-medium text-gray-900">Confirm password</label>
-                                        <p className="text-red-500 ml-1">*</p>
-                                    </div>
-                                    <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => onRetypePassword(event.target.value)} value={passwordRetype} type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required />
-                                    <p className={`text-red-500 text-[12px] mt-2 ${!passwordMatch && passwordRetype ? '' : 'hidden'}`}>Password does not match</p>
-                                </div>
-                                <div className="flex">
-                                    <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)}/>
-                                    <p className="ml-2 text-sm">I agree to the <a href="#">Terms and Conditions</a></p>
-                                </div>
-                                <button disabled={showBtnSave === true ? false : true} onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onLogin(event, email, password)} type="submit" className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50`}>Sign up</button>
-                                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                    Already had an account? <Link to={'/login'} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign in</Link>
-                                </p>
-                            </form>
+            <div className="mt-10 mx-auto sm:w-[35%] w-[90%] bg-white p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 className="text-xl text-center font-bold leading-tight tracking-tight md:text-2xl">
+                    Sign up new account
+                </h1>
+                <form className="space-y-4 md:space-y-6" action="#">
+                    <div>
+                        <div className="flex">
+                            <label className="block mb-2 text-sm font-medium">Email</label>
+                            <p className="text-red-500 ml-1">*</p>
                         </div>
+                        <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target?.value)} value={email} type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="name@company.com" required/>
                     </div>
-                </div>
-            </section>
-        </div>
+                    <div>
+                        <div className="flex">
+                            <label className="block mb-2 text-sm font-medium text-gray-900">Full name</label>
+                        </div>
+                        <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setFullName(event.target?.value)} value={fullName} type="text" name="fullName" id="fullName" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Your full name" required/>
+                    </div>
+                    <div>
+                        <div className="flex">
+                            <label className="block mb-2 text-sm font-medium text-gray-900">Password</label>
+                            <p className="text-red-500 ml-1">*</p>
+                        </div>
+                        <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target?.value)} value={password} type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required />
+                    </div>
+                    <div>
+                        <div className="flex">
+                            <label className="block mb-2 text-sm font-medium text-gray-900">Confirm password</label>
+                            <p className="text-red-500 ml-1">*</p>
+                        </div>
+                        <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => onRetypePassword(event.target.value)} value={passwordRetype} type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required />
+                        <p className={`text-red-500 text-[12px] mt-2 ${!passwordMatch && passwordRetype ? '' : 'hidden'}`}>Password does not match</p>
+                    </div>
+                    <div className="flex">
+                        <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)}/>
+                        <p className="ml-2 text-sm">I agree to the <a href="#">Terms and Conditions</a></p>
+                    </div>
+                    <button disabled={showBtnSave === true ? false : true} onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onLogin(event, email, password)} type="submit" className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50`}>Sign up</button>
+                    <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                        Already had an account? <Link to={'/login'} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign in</Link>
+                    </p>
+                </form>
+            </div>
+        </div> 
     )
 }
 

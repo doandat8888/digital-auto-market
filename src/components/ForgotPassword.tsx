@@ -22,11 +22,12 @@ const ForgotPassword = () => {
         setIsLoading(true);
         if(email) {
             try {
-                const response = await userService.resetPassword(email);
-                if(response && response.status === 200) {
-                    toast.success("Please check your email");
-                    setIsLoading(false);
-                }
+                await userService.resetPassword(email).then(({status}) => {
+                    if(status === 200) {
+                        toast.success("Please check your email");
+                        setIsLoading(false);
+                    }
+                })
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 toast.error(error.response.data.msg);

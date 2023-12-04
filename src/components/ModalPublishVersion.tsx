@@ -54,27 +54,29 @@ const ModalPublishVersion = (props: IProps) => {
             const formData = new FormData();
             formData.append('file', file);
             setFile(file);
-            const response = await uploadService.uploadFile(formData);
-            if(response && response.status === 201) {
-                const zipFileUrl = response.data.url;
-                setZipFile(response.data.url);
-                setDeploymentUrl(response.data.deploymentUrl);
-                const zipFileName = zipFileUrl.replace(import.meta.env.VITE_APP_DATA_STORAGE_URL, "");
-                setFileZipName(zipFileName);
-                setIsLoadingZipFile(false);
-            }
+            await uploadService.uploadFile(formData).then(({data, status}) => {
+                if(status === 201) {
+                    const zipFileUrl = data.url;
+                    setZipFile(data.url);
+                    setDeploymentUrl(data.deploymentUrl);
+                    const zipFileName = zipFileUrl.replace(import.meta.env.VITE_APP_DATA_STORAGE_URL, "");
+                    setFileZipName(zipFileName);
+                    setIsLoadingZipFile(false);
+                }
+            })
         }
     };
 
     const onDeleteZipFile = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         const fileDeleteName = zipFile.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
-        const response = await uploadService.deleteFile(fileDeleteName);
-        if(response && response.status === 200) {
-            setZipFile("");
-            setFileZipName("");
-            setDeploymentUrl("");
-        }
+        await uploadService.deleteFile(fileDeleteName).then(({status}) => {
+            if(status === 200) {
+                setZipFile("");
+                setFileZipName("");
+                setDeploymentUrl("");
+            }
+        })
     }
 
     const emptyData = () => {
@@ -100,13 +102,14 @@ const ModalPublishVersion = (props: IProps) => {
                     file: file,
                 }
                 try {
-                    const response = await versionService.addVersion(versionAdd);
-                    if(response && response.status === 201) {
-                        alert("Add new version successfully!");
-                        emptyData();
-                        refreshData();
-                        setIsLoading(false);
-                    }
+                    await versionService.addVersion(versionAdd).then(({status}) => {
+                        if(status === 201) {
+                            alert("Add new version successfully!");
+                            emptyData();
+                            refreshData();
+                            setIsLoading(false);
+                        }
+                    })
                 } catch (error: any) {
                     alert(error.response.data.msg);
                     setIsLoading(false);
@@ -122,13 +125,14 @@ const ModalPublishVersion = (props: IProps) => {
                     desc: versionDesc,
                 }
                 try {
-                    const response = await versionService.updateVersion(versionEdit);
-                    if(response && response.status === 200) {
-                        alert("Update version successfully!");
-                        emptyData();
-                        refreshData();
-                        setIsLoading(false);
-                    }
+                    await versionService.updateVersion(versionEdit).then(({status}) => {
+                        if(status === 200) {
+                            alert("Update version successfully!");
+                            emptyData();
+                            refreshData();
+                            setIsLoading(false);
+                        }
+                    })
                 } catch (error: any) {
                     alert(error.response.data.msg);
                     setIsLoading(false);
