@@ -173,11 +173,8 @@ const UpdatePackage = () => {
         await uploadService.uploadFile(formData).then(({status, data}) => {
             if (status === 201) {
                 setIsLoadingZipFile(false);
-                const zipFileUrl = data.url;
                 setZipFile(data.url);
                 setDeploymentUrl(data.deploymentUrl);
-                const zipFileName = zipFileUrl.replace("http://localhost:9006/data/store-be/data/store-be/", "");
-                setFileZipName(zipFileName);
             }
         });
     };

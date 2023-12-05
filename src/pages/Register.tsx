@@ -1,4 +1,4 @@
-import { Link} from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import userService from "../services/userService";
 import { useDispatch } from "react-redux";
@@ -15,6 +15,7 @@ const Register = () => {
     const [passwordMatch, setPasswordMatch] = useState(false);
     const [fullName, setFullName] = useState("");
     const [agree, setAgree] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(email && password && passwordMatch === true && agree == true) {
@@ -37,7 +38,7 @@ const Register = () => {
                                     if(data.token) {
                                         dispatch(addToken(data.token));
                                         setIsLoading(false);
-                                        window.location.href = import.meta.env.VITE_APP_URL;
+                                        navigate('/');
                                     }else {
                                         alert("Token not found");
                                     }

@@ -6,12 +6,15 @@ import { ToastContainer, toast } from "react-toastify";
 import ManageAddPackageTable from "../components/ManageAddPackageTable";
 import ModalConfirm from "../components/ModalConfirm";
 import calcTotalPages from "../utils/calcTotalPages";
+import SearchBar from "../components/SearchBar";
+import _ from "lodash";
 
 const ManageAddPackage = () => {
 
     const [packageList, setPackageList] = useState<IGetPackage[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [total, setTotal] = useState(0);
+    const searchVal = localStorage.getItem('namePackage');
     
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
 
@@ -43,7 +46,6 @@ const ManageAddPackage = () => {
         } catch (error) {
             toast.error("Fail to load packages");
         }
-        
     }
 
     const handleChangeStatus = (packageId: string, state: string) => {
@@ -76,19 +78,59 @@ const ManageAddPackage = () => {
     }, [packageList]);
 
     useEffect(() => {
-        getAllPackage();
-        getTotalPage();
+        const searchVal = localStorage.getItem('namePackage');
+        if(searchVal) {
+            getPackageByName(searchVal);
+        }else {
+            getTotalPage();
+            getAllPackage();
+        }
     }, [currentPage]);
+
+    useEffect(() => {
+        if(searchVal) {
+            getPackageByName(searchVal);
+        }
+    }, [currentPage])
+
+    
+
 
     const onChangePage = (event: any , value: any) => {
         setCurrentPage(value);
     }
+
+    const onSearchHandler = (e: any) => {
+        deb(e);
+    }
+
+    const deb = _.debounce((e) => {
+        getPackageByName(e.target.value);
+        setCurrentPage(1);
+        localStorage.setItem('namePackage', e.target.value);
+        }, 1000
+    );
+
+    const getPackageByName = async(packageName: string) => {
+        await packageService.getPackageByName(limit, currentPage, packageName).then(({data}) => {
+            if(data && data.data.length > 0) {
+                setPackageList(data.data);
+                setTotalPage(calcTotalPages(data.total, limit));
+            }else {
+                setPackageList([]);
+                setTotalPage(0);
+            }
+        })
+    };
 
     return (
         <div className={`${isLoading === true ? 'hidden' : '' } w-[100%] mx-auto text-black select-none`}>
             <div className="sm:w-[90%] w-[100%] mx-auto">
                 <LoadingModal open={isLoading} closeModal={() => setIsLoading(false)}/>
                 <div className="text-black title my-10 text-center font-bold text-2xl">MANAGE PACKAGE STATUS</div>
+                <div className="ml-6 search flex justify-start mb-6 text-black border-gray">
+                    <SearchBar widthLg="40%" widthSm="100%" width="100%" placeHolder='Search package name...' onSearchHandler={onSearchHandler}/>
+                </div>
                 <div className="body mx-6">
                     <ManageAddPackageTable packageList={packageList} handleChangeStatus={handleChangeStatus}/>
                 </div>

@@ -61,7 +61,6 @@ const DetailPackage = () => {
     let params = new URLSearchParams(url.search);
     const versionParam = params.get("version");
     const versionIdParam = params.get("versionId");
-    console.log("Version params: ", versionIdParam);
     //Get user info
 
     useEffect(() => {
@@ -134,7 +133,6 @@ const DetailPackage = () => {
         setOpenModalCommentRating(false);
         setIsLoading(false);
         setReviewUpdate(undefined);
-        console.log("Review update close modal: ", reviewUpdate);
     }
 
     const checkPackage = () => {

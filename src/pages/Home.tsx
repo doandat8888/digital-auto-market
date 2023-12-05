@@ -7,6 +7,7 @@ import { Pagination } from '@mui/material';
 import _ from 'lodash';
 import NotFound from '../components/404NotFound';
 import calcTotalPages from '../utils/calcTotalPages';
+import SearchBar from '../components/SearchBar';
 
 const limit = window.screen.height > 900 ? 12 : 8;
 
@@ -102,10 +103,9 @@ const Home = () => {
                 <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
                 <div className="body px-6 py-4">
                     <div className="search flex justify-end mb-6 text-black border-gray">
-                        <input className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
+                        <SearchBar widthLg='30%' widthSm='100%' width='100%' placeHolder='Search package name, authors,...' onSearchHandler={onSearchHandler}/>
                     </div>
                     {packageList.length > 0 ? <PackageList showMode={false} packages={packageList}/> : <NotFound />}
-                    
                 </div>
                 <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
             </div> : <NoPackage content="There is no packages in the system"/>}
