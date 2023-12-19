@@ -28,7 +28,7 @@ const Home = () => {
 
     const getTotalPage = async() => {
         await packageService.getAllPackageByPage(limit, currentPage).then(({data}) => {
-            if(data && data.data.length > 0) {
+            if(data && data.data && data.data.length > 0) {
                 setTotal(data.total);
             }
         })
@@ -36,7 +36,7 @@ const Home = () => {
 
     const getAllPackage = async () => {
         await packageService.getAllPackageByPage(limit, currentPage).then(({data}) => {
-            if(data && data.data.length > 0) {
+            if(data && data.data && data.data.length > 0) {
                 setPackageList(data.data);
                 setTotalPage(calcTotalPages(data.total, limit));
             }
@@ -49,7 +49,7 @@ const Home = () => {
 
     const getPackageByName = async(packageName: string) => {
         await packageService.getPackageByName(limit, currentPage, packageName).then(({data}) => {
-            if(data && data.data.length > 0) {
+            if(data && data.data && data.data.length > 0) {
                 setPackageList(data.data);
                 setTotalPage(calcTotalPages(data.total, limit));
             }else {
