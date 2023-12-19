@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
@@ -13,7 +13,7 @@ interface IProps {
 
 const UserInfo = (props: IProps) => {
 
-    let {onLogout, onClose, triggerRef, user} = props;
+    const {onLogout, onClose, triggerRef, user} = props;
 
     useEffect(() => {
 

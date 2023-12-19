@@ -21,7 +21,7 @@ const ManageVersion = () => {
     //User info
     const [tokenUser, setTokenUser] = useState<string>("");
     const [user, setUser] = useState<IUser | null>();
-    const limit = 4;
+    const limit = window.screen.height > 900 ? 8 : window.screen.height > 1200 ? 8 : 4;
     const [total, setTotal] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);

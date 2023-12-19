@@ -32,6 +32,7 @@ const DetailPackage = () => {
     const [currentVersion, setCurrentVersion] = useState<IGetVersion>();
     const [openModalCommentRating, setOpenModalCommentRating] = useState<boolean>(false);
     const [isLike, setIsLike] = useState(false);
+    const [downloads, setDownloads] = useState<number>(0);
     //Dispatch
     const dispatch = useDispatch();
 
@@ -57,8 +58,8 @@ const DetailPackage = () => {
     const [openModalConfirmDeleteReview, setOpenModalConfirmDeleteReview] = useState(false);
     const [openModalConfirmDeletePackage, setOpenModalConfirmDeletePackage] = useState(false);
 
-    let url = new URL(window.location.href);
-    let params = new URLSearchParams(url.search);
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
     const versionParam = params.get("version");
     const versionIdParam = params.get("versionId");
     //Get user info
@@ -88,11 +89,7 @@ const DetailPackage = () => {
                 await packageService.getPackageById(id).then(({data}) => {
                     if(data) {
                         setPackageDetail(data);
-                        if(data.userLike === true) {
-                            setIsLike(true);
-                        }else {
-                            setIsLike(false);
-                        }
+                        setIsLike(data.userLike);
                         setIsLoading(false);
                     }
                 })
@@ -105,13 +102,14 @@ const DetailPackage = () => {
     useEffect(() => {
         if(packageDetail) {
             checkPackage();
+            setDownloads(packageDetail.downloads);
         }
     }, [packageDetail])
 
     useEffect(() => {
         getPackageInfo();
         findVersionById(versionIdParam ? versionIdParam : '');
-    }, [user, id, versionIdParam]);
+    }, [user, id, versionIdParam, isLike, downloads]);
 
 
     const getUserInfo = async () => {
@@ -137,7 +135,7 @@ const DetailPackage = () => {
 
     const checkPackage = () => {
         if(user && packageDetail) {
-            const canEdit = packageDetail && packageDetail.createdBy._id === user._id ? true : false;
+            const canEdit = packageDetail && packageDetail.createdBy._id === user._id || user.role === "admin" ? true : false;
             setCanEdit(canEdit);
         }
     }
@@ -155,7 +153,7 @@ const DetailPackage = () => {
     const changeVersion = (versionId: string) => {
         if(packageDetail && packageDetail.versions) {
             const version: IGetVersion | undefined = packageDetail.versions.find((version) => version._id === versionId);
-            let params = new URLSearchParams(url.search);
+            const params = new URLSearchParams(url.search);
             if(version) {
                 params.set("version", version.name);
                 params.set("versionId", version._id);
@@ -289,6 +287,7 @@ const DetailPackage = () => {
                 }
             }
             setIsLike(!isLike);
+            
         }else {
             navigate('/login');
         }
@@ -297,6 +296,7 @@ const DetailPackage = () => {
     const onDownLoadPackage = async() => {
         try {
             await packageService.updateDownLoad(packageDetail ? packageDetail._id : '');
+            setDownloads(packageDetail?.downloads? packageDetail.downloads + 1 : 0);
         } catch (error: any) {
             alert(error.response.data.msg);
         }
@@ -321,7 +321,7 @@ const DetailPackage = () => {
     const removePackage = async() => {
         if(packageDetail) {
             try {
-                let response = await packageService.removePackage(packageDetail?._id);
+                const response = await packageService.removePackage(packageDetail?._id);
                 if(response && response.status === 200) {
                     alert("Deleted successfully!");
                     navigate('/');
@@ -428,7 +428,7 @@ const DetailPackage = () => {
                                 <div className="flex mb-2">
                                     <p className="text-xl font-bold text-black select-none">Dashboard config</p>
                                 </div>
-                                <Editor options={{readOnly: true}} height="300px" defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig}/>;
+                                <Editor options={{readOnly: true}} height="300px" defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig}/>
                             </div>
                             <div className="comment-rating my-6 text-black select-none">
                                 <div className="flex justify-between">

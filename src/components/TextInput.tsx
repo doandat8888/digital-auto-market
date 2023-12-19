@@ -2,14 +2,11 @@ interface IProps {
     title: string,
     value: string,
     handleFileTextChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-    placeholderStr: string
+    placeholderStr: string,
+    disabled?: boolean | undefined
 }
 
-const TextInput = (props: IProps) => {
-
-    const {title, value, handleFileTextChange, placeholderStr} = props;
-    
-
+const TextInput = ({title, value, handleFileTextChange, placeholderStr, disabled}: IProps) => {
     return (
         <div className="sm:col-span-4 my-4">
             <div className="flex">
@@ -28,6 +25,7 @@ const TextInput = (props: IProps) => {
                         placeholder={placeholderStr}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleFileTextChange(event)}
                         value={value}
+                        disabled={disabled}
                     />
                 </div>
             </div>

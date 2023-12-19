@@ -1,5 +1,7 @@
 import { TiTickOutline } from "react-icons/ti";
 import { TiCancel } from "react-icons/ti";
+import { GoPencil } from "react-icons/go";
+import { useNavigate } from "react-router";
 
 interface IProps {
     packageList: IGetPackage[];
@@ -7,6 +9,9 @@ interface IProps {
 }
 
 const ManageAddPackageTable = ({packageList, handleChangeStatus}: IProps) => {
+
+    const navigate = useNavigate();
+
     return (
         <div>
             <table className="items-center mx-auto w-full border-collapse bg-white rounded shadow-lg">
@@ -48,6 +53,7 @@ const ManageAddPackageTable = ({packageList, handleChangeStatus}: IProps) => {
                                         <button onClick={() => handleChangeStatus(packageItem._id, "approved")} className="border-none outline-none flex justify-center ml-2 w-[50%] py-2 text-white items-center cursor-pointer rounded bg-red-500"><TiCancel /><p className="lg:block lg:ml-2 hidden">Reject</p></button>
                                     </div>
                                     }
+                                    <button onClick={() => navigate(`/updatepackage/${packageItem._id}`)} className="border-none outline-none flex justify-center ml-2 w-[50%] py-2 text-white items-center cursor-pointer rounded bg-yellow-500"><GoPencil /><p className="lg:block lg:ml-2 hidden">Edit</p></button>
                                 </div>
                             </td>
                             

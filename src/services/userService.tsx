@@ -33,9 +33,10 @@ const resetPassword = (email: string) => {
     })
 }
 
-const changeProfile = (userId: string, fullName: string) => {
-    return axios.put(`/user/${userId}`, {
-        fullName
+const changeProfile = (fullName: string, imageCover: string) => {
+    return axios.put(`/user/current`, {
+        fullName,
+        avt: imageCover
     })
 }
 

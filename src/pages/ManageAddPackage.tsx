@@ -25,7 +25,7 @@ const ManageAddPackage = () => {
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
-    const limit = window.screen.height > 900 ? 8 : 4;
+    const limit = window.screen.height > 900 ? 8 : window.screen.height > 1200 ? 8 : 4;
 
     const getTotalPage = async() => {
         await packageService.getAllPackageByPage(limit, currentPage).then(({data}) => {
@@ -56,7 +56,7 @@ const ManageAddPackage = () => {
 
     const changeStatus = async() => {
         try {
-            let response = await packageService.changeStatus(currentPackageId, currentStatus);
+            const response = await packageService.changeStatus(currentPackageId, currentStatus);
             if(response && response.status === 200) {
                 setOpenModalConfirm(false);
                 toast.success(response.data.msg);
