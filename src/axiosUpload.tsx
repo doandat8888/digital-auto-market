@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_APP_UPLOAD_URL,
+    baseURL: import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/",
 });
 
 instance.interceptors.response.use(

@@ -17,7 +17,7 @@ const ManageVersionTable = (props: IProps) => {
 
     return (
         <div>
-            {versionList ? 
+            {versionList ?
                 <table className="items-center mx-auto w-full border-collapse bg-white rounded shadow-lg">
                     <thead>
                         <tr>
@@ -58,9 +58,19 @@ const ManageVersionTable = (props: IProps) => {
                                 {canEdit &&
                                     <td className="border-t-0 px-2 sm:px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap sm:p-4 py-2">
                                         <div className="flex">
-                                            <button onClick={() => onUpdateVersion(version)} className="border-none outline-none flex justify-center mr-2 w-[30%] px-2 py-2 text-white items-center cursor-pointer rounded bg-yellow-400"><AiOutlineEdit /><p className="lg:block lg:ml-2 hidden">Update</p></button>
-                                            <button onClick={() => onDeleteVersion(version._id)} className="border-none outline-none flex justify-center mx-2 w-[30%] px-2 py-2  text-white items-center cursor-pointer rounded bg-red-600"><AiOutlineDelete /><p className="lg:block lg:ml-2 hidden">Delete</p></button>
-                                            <button className="border-none outline-none flex justify-center mx-2 w-[30%] px-2 py-2  text-white items-center cursor-pointer rounded bg-blue-600"><a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={version.deploymentUrl}> <CiShare1 /><p className="lg:block lg:ml-2 hidden mx-2">Preview</p></a></button>
+                                            <button onClick={() => onUpdateVersion(version)}
+                                                className="border-none outline-none flex justify-center mr-2 w-[30%] px-2 py-2 text-white items-center cursor-pointer rounded bg-yellow-400">
+                                                <AiOutlineEdit /><p className="lg:block lg:ml-2 hidden">Update</p>
+                                            </button>
+                                            <button onClick={() => onDeleteVersion(version._id)}
+                                                className="border-none outline-none flex justify-center mx-2 w-[30%] px-2 py-2  text-white items-center cursor-pointer rounded bg-red-600">
+                                                <AiOutlineDelete /><p className="lg:block lg:ml-2 hidden">Delete</p>
+                                            </button>
+                                            <button className="border-none outline-none flex justify-center mx-2 w-[30%] px-2 py-2  text-white items-center cursor-pointer rounded bg-blue-600">
+                                                <a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={version.deploymentUrl}> <CiShare1 />
+                                                    <p className="lg:block lg:ml-2 hidden mx-2">Preview</p>
+                                                </a>
+                                            </button>
                                         </div>
                                     </td>
                                 }
@@ -68,9 +78,9 @@ const ManageVersionTable = (props: IProps) => {
                         ))
                         }
                     </tbody>
-                </table> : <NoPackage content="Package not found"/>
+                </table> : <NoPackage content="Package not found" />
             }
-            
+
         </div>
     )
 }

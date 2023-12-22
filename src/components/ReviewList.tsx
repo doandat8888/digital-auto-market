@@ -10,15 +10,16 @@ interface IProps {
 
 const ReviewList = (props: IProps) => {
 
-    const {reviewsFilter, onUpdateReview, onDeleteReview, currentUser} = props;
+    const { reviewsFilter, onUpdateReview, onDeleteReview, currentUser } = props;
 
     return (
         <div>
             {reviewsFilter && reviewsFilter.length > 0 && reviewsFilter.map((review) => (
-                <ReviewItem currentUser={currentUser} onDeleteReview={() => onDeleteReview(review._id)} onUpdateReview={() => onUpdateReview(review)} rating={review.rating} comment={review.content} createdAt={review.createdAt} createdBy={review.createdBy}/>
+                <ReviewItem currentUser={currentUser} onDeleteReview={() => onDeleteReview(review._id)}
+                    onUpdateReview={() => onUpdateReview(review)} rating={review.rating} comment={review.content} createdAt={review.createdAt} createdBy={review.createdBy} />
             ))}
         </div>
-        
+
     )
 }
 

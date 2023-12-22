@@ -1,5 +1,5 @@
 interface IPage {
-    id: Number,
-    name: String,
-    path: String
+    id: number,
+    name: string,
+    path: string
 }

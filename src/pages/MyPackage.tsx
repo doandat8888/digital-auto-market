@@ -16,7 +16,7 @@ const limit = window.screen.height > 900 ? 12 : 8;
 const MyPackage = () => {
 
     const [myPackageList, setMyPackageList] = useState<IPackage[]>([]);
-    
+
     const [user, setUser] = useState<IUser>();
     //Token
     const token = useSelector((state: RootState) => state.token.value);
@@ -36,35 +36,35 @@ const MyPackage = () => {
     }, [])
 
     useEffect(() => {
-        if(tokenUser !== "") {
+        if (tokenUser !== "") {
             getUserInfo();
         }
     }, [tokenUser]);
 
     useEffect(() => {
-        if(user) {
+        if (user) {
             getMyPackageList();
         }
     }, [user]);
 
     useEffect(() => {
-        if(token === "") {
+        if (token === "") {
             navigate('/login');
             setIsLoading(false);
         }
     }, [token, myPackageList]);
 
-    const getTotalPage = async() => {
-        await packageService.getMyPackageByPage(limit, currentPage).then(({data}) => {
-            if(data && data.data.length > 0) {
+    const getTotalPage = async () => {
+        await packageService.getMyPackageByPageAdmin(limit, currentPage, "").then(({ data }) => {
+            if (data && data.data.length > 0) {
                 setTotal(data.total);
             }
         })
     };
 
-    const getMyPackageList = async() => {
-        await packageService.getPackageOfCurrentUser(limit, currentPage).then(({data}) => {
-            if(data && data.data.length > 0) {
+    const getMyPackageList = async () => {
+        await packageService.getPackageOfCurrentUserAdmin(limit, currentPage, "").then(({ data }) => {
+            if (data && data.data.length > 0) {
                 //const packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
                 setMyPackageList(data.data);
                 setTotalPage(calcTotalPages(data.total, limit));
@@ -73,12 +73,12 @@ const MyPackage = () => {
         })
     };
 
-    const getMyPackageByName = async(packageName: string) => {
-        await packageService.getMyPackageByName(limit, currentPage, packageName).then(({data}) => {
-            if(data.data.length > 0) {
+    const getMyPackageByName = async (packageName: string) => {
+        await packageService.getMyPackageByNameAdmin(limit, currentPage, packageName, "").then(({ data }) => {
+            if (data.data.length > 0) {
                 setMyPackageList(data.data);
                 setTotalPage(calcTotalPages(data.total, limit));
-            }else {
+            } else {
                 setMyPackageList([]);
                 setTotalPage(0);
             }
@@ -89,7 +89,7 @@ const MyPackage = () => {
         getMyPackageByName(e.target.value);
         setCurrentPage(1);
         localStorage.setItem('name', e.target.value);
-        }, 1000
+    }, 1000
     );
 
     const onSearchHandler = (e: any) => {
@@ -98,9 +98,9 @@ const MyPackage = () => {
 
     useEffect(() => {
         const searchVal = localStorage.getItem('name');
-        if(searchVal) {
+        if (searchVal) {
             getMyPackageByName(searchVal);
-        }else {
+        } else {
             getTotalPage();
             getMyPackageList();
         }
@@ -109,7 +109,7 @@ const MyPackage = () => {
     const getUserInfo = async () => {
         if (token !== "") {
             try {
-                await userService.getUser().then(({status, data}) => {
+                await userService.getUser().then(({ status, data }) => {
                     if (status === 200) {
                         setUser(data);
                     }
@@ -120,27 +120,29 @@ const MyPackage = () => {
         }
     }
 
-    const onChangePage = (event: any , value: any) => {
+    const onChangePage = (event: any, value: any) => {
         setCurrentPage(value);
     }
 
-    const onCloseModal= () => {
+    const onCloseModal = () => {
         setIsLoading(false);
     }
 
     return (
         <div>
-            {myPackageList ? <div className={`${isLoading === true ? 'hidden' : ''}`}>
-                <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
+            {myPackageList ? <div className={`${isLoading === true ? 'hidden' : ''} pt-[46px]`}>
+                <LoadingDialog open={isLoading} closeModal={onCloseModal} />
                 <div className="body px-6 py-4">
                     <div className="search flex justify-end mb-6 text-black border-gray">
-                        <input className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
+                        <input className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]'
+                            type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler} />
                     </div>
-                    {myPackageList.length > 0 ?  <PackageList showMode={false} packages={myPackageList}/> : localStorage.getItem('name') ? '' : <NoPackage content="You don't have any packages"/>}
-                    
+                    {myPackageList.length > 0 ? <PackageList showMode={false} packages={myPackageList} /> : localStorage.getItem('name') ? '' :
+                        <NoPackage content="You don't have any packages" />}
+
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
-            </div> : <NoPackage content="There is no packages in the system"/>}
+                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
+            </div> : <NoPackage content="There is no packages in the system" />}
         </div>
     )
 }

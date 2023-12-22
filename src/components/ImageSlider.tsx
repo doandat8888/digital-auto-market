@@ -9,37 +9,37 @@ interface IProps {
 }
 
 const settings = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 2,
-  slidesToScroll: 1,
-  swipeToSlide: true,
-  edgeFriction: 0.15,
-  responsive: [
-    {
-      breakpoint: 800,
-      settings: {
-        slidesToShow: 3,
-        slidesToScroll: 3,
-        infinite: true,
-        dots: true
-      }
-    },
-    
-    {
-      breakpoint: 680,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1
-      }
-    }
-  ]
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 2,
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    edgeFriction: 0.15,
+    responsive: [
+        {
+            breakpoint: 800,
+            settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2,
+                infinite: true,
+                dots: true
+            }
+        },
+
+        {
+            breakpoint: 680,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        }
+    ]
 };
 
 const Slideshow = (props: IProps) => {
 
-    const {slideImages} = props;
+    const { slideImages } = props;
     const [open, setOpen] = useState<boolean>(false);
     const [imgFull, setImgFull] = useState("");
 
@@ -52,11 +52,14 @@ const Slideshow = (props: IProps) => {
     }
 
     return (
-      <div>
+        <div>
             <Slider {...settings}>
-              {slideImages && slideImages.length > 0 && slideImages.map((slideImage, index)=> (
-                  <img className="px-2 rounded-[18px] w-[50%] md:h-[400px] sm:h-[450px] lg:h-[500px] xl:h-[700px] object-contain cursor-pointer" onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
-              ))} 
+                {slideImages && slideImages.length > 0 && slideImages.map((slideImage) => (
+                    <div className="flex justify-center items-center mb-4" style={{display: 'flex !important'}}>
+                        <img className="bg-white mx-auto aspect-video px-4 py-4 rounded-[18px] w-[96%] object-contain cursor-pointer"
+                            onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
+                    </div>
+                ))}
             </Slider>
             <Modal
                 open={open}
@@ -65,11 +68,11 @@ const Slideshow = (props: IProps) => {
                 aria-describedby="modal-modal-description"
                 className="flex items-center justify-center"
             >
-                <img src={imgFull} alt="imgFull" className="sm:w-[40%] sm:h-[80%] w-[90%] h-[80%] object-fit-contain"/>
-                
+                <img src={imgFull} alt="imgFull" className="bg-white sm:w-[40%] sm:h-[80%] w-[90%] h-[80%] object-contain" />
+
             </Modal>
-      </div>
-        
+        </div>
+
     )
 }
 

@@ -36,7 +36,7 @@ const ManageVersion = () => {
     //Get user info
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
-        if(localToken !== "") {
+        if (localToken !== "") {
             setIsLoading(true);
             setTokenUser(localToken);
         }
@@ -47,7 +47,7 @@ const ManageVersion = () => {
 
     const getUserInfo = async () => {
         try {
-            await userService.getUser().then(({status, data}) => {
+            await userService.getUser().then(({ status, data }) => {
                 if (status === 200) {
                     setUser(data);
                 }
@@ -58,17 +58,17 @@ const ManageVersion = () => {
     }
 
     const checkPackage = () => {
-        if(user) {
+        if (user) {
             const canEditVersion = packageDetail && packageDetail.createdBy._id === user?._id ? true : false;
             setCanEdit(canEditVersion);
             setIsLoading(false);
         }
     }
 
-    const getVersionList = async() => {
-        if(packageId) {
-            await versionService.getVersionByPackageId(packageId, limit, currentPage).then(({status, data}) => {
-                if(status === 200) {
+    const getVersionList = async () => {
+        if (packageId) {
+            await versionService.getVersionByPackageId(packageId, limit, currentPage).then(({ status, data }) => {
+                if (status === 200) {
                     setVersionList(data.data);
                     setTotalPage(calcTotalPages(data.total, limit));
                     setTotal(data.total);
@@ -77,9 +77,9 @@ const ManageVersion = () => {
         }
     }
 
-    const getPackageInfo = async() => {
-        if(packageId) {
-            await packageService.getPackageById(packageId).then(({data}) => {
+    const getPackageInfo = async () => {
+        if (packageId) {
+            await packageService.getPackageById(packageId).then(({ data }) => {
                 setPackageDetail(data);
             })
         }
@@ -90,17 +90,17 @@ const ManageVersion = () => {
         setOpenModalPublish(true);
     }
 
-    const onDeleteVersion = async(versionId: string) => {
+    const onDeleteVersion = async (versionId: string) => {
         setopenModalConfirmDelete(true);
         setVersionDeleteId(versionId);
-        
+
     }
 
-    const removeVersion = async() => {
-        if(versionDeleteId) {
+    const removeVersion = async () => {
+        if (versionDeleteId) {
             try {
-                await versionService.deleteVersion(versionDeleteId).then(({status}) => {
-                    if(status === 200) {
+                await versionService.deleteVersion(versionDeleteId).then(({ status }) => {
+                    if (status === 200) {
                         alert("Delete version successfully!");
                         getVersionList();
                     }
@@ -134,31 +134,37 @@ const ManageVersion = () => {
     }, [currentPage]);
 
     useEffect(() => {
-        if(tokenUser !== "") {
+        if (tokenUser !== "") {
             getUserInfo();
         }
     }, [tokenUser]);
 
     useEffect(() => {
-        if(user && packageDetail) {
+        if (user && packageDetail) {
             checkPackage();
         }
     }, [user, packageDetail]);
 
     return (
-        <div className={`${isLoading === true ? 'hidden' : '' } w-[100%] mx-auto text-black`}>
+        <div className={`${isLoading === true ? 'hidden' : ''} w-[100%] mx-auto text-black pt-[46px]`}>
             <div className="sm:w-[80%] w-[100%] mx-auto">
-                <LoadingModal open={isLoading} closeModal={onCloseModal}/>
+                <LoadingModal open={isLoading} closeModal={onCloseModal} />
                 <div className="title my-10 text-center font-bold text-2xl">RELEASE VERSIONS</div>
                 <div className="body mx-6">
-                    {canEdit && <button onClick={() => setOpenModalPublish(true)} className=" my-4 border-none outline-none flex justify-center mr-2 px-4 py-2 text-white items-center cursor-pointer rounded bg-green-400"><AiOutlineCloudUpload /><p className="lg:block text-[12px] lg:ml-2 ml-2">Publish new version</p></button>}
-                    <ManageVersionTable onDeleteVersion={onDeleteVersion} canEdit={canEdit} versionList={versionList} onUpdateVersion={onUpdateVersion}/>
-                    <div className="h-[90vh]"> <ModalPublishVersion versionUpdate={versionUpdate} refreshData={getVersionList} open={openModalPublish} handleClose={handleCloseModal} packageId={packageId ? packageId : ''}/></div>
-                    <ModalConfirm content="Do you want to delete?" action={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)}/>
+                    {canEdit &&
+                        <button onClick={() => setOpenModalPublish(true)}
+                            className=" my-4 border-none outline-none flex justify-center mr-2 px-4 py-2 text-white items-center cursor-pointer rounded bg-green-400">
+                            <AiOutlineCloudUpload /><p className="lg:block text-[12px] lg:ml-2 ml-2">Publish new version</p>
+                        </button>}
+                    <ManageVersionTable onDeleteVersion={onDeleteVersion} canEdit={canEdit} versionList={versionList} onUpdateVersion={onUpdateVersion} />
+                    <div className="h-[90vh]"> <ModalPublishVersion versionUpdate={versionUpdate} refreshData={getVersionList}
+                        open={openModalPublish} handleClose={handleCloseModal} packageId={packageId ? packageId : ''} />
+                    </div>
+                    <ModalConfirm content="Do you want to delete?" action={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)} />
                 </div>
             </div>
-            
-            <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
+
+            <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
         </div>
     )
 }

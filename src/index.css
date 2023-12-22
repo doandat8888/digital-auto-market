@@ -106,10 +106,12 @@ body {
 
 .slick-next::before {
     font-size: 3rem !important;
+    color: gray;
 }
 
 .slick-prev::before {
     font-size: 3rem !important;
+    color: gray;
 }
 
 .autofill {
@@ -122,6 +124,35 @@ body {
 .slider-image {
   display: flex !important;
   align-items: center !important;
+}
+
+.custom-select {
+  position: relative;
+  display: block;
+}
+
+/* Style the select itself */
+.custom-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Add some styling to the select */
+  padding: 8px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Style the custom arrow */
+.custom-select::after {
+  content: '\25BC';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 

@@ -62,7 +62,7 @@ const AddPackage = () => {
                     if (file) {
                         const formData = new FormData();
                         formData.append('file', file);
-                        await uploadService.uploadFile(formData).then(({status, data}) => {
+                        await uploadService.uploadFile(formData).then(({ status, data }) => {
                             if (status === 201) {
                                 const imgUrl = data.url;
                                 resolve(imgUrl);
@@ -82,7 +82,7 @@ const AddPackage = () => {
 
     const getPackageById = async () => {
         if (packageId) {
-            await packageService.getPackageById(packageId).then(({data}) => {
+            await packageService.getPackageById(packageId).then(({ data }) => {
                 if (data) {
                     setPackageUpdate(data);
                 }
@@ -137,7 +137,7 @@ const AddPackage = () => {
         if (token !== "") {
             // console.log("Token header: ", token);
             try {
-                await userService.getUser().then(({status, data}) => {
+                await userService.getUser().then(({ status, data }) => {
                     if (status === 200) {
                         setUser(data);
                     }
@@ -155,7 +155,7 @@ const AddPackage = () => {
         if (file) {
             formData.append('file', file);
             try {
-                await uploadService.uploadFile(formData).then(({data, status}) => {
+                await uploadService.uploadFile(formData).then(({ data, status }) => {
                     if (status === 201) {
                         setimageCover(data.url);
                         setIsLoadingCoverImg(false);
@@ -175,7 +175,7 @@ const AddPackage = () => {
             const formData = new FormData();
             formData.append('file', file);
             try {
-                await uploadService.uploadFile(formData).then(({status, data}) => {
+                await uploadService.uploadFile(formData).then(({ status, data }) => {
                     if (status === 201) {
                         const zipFileUrl = data.url;
                         setZipFile(data.url);
@@ -239,7 +239,7 @@ const AddPackage = () => {
                             file: zipFilePublishVersion,
                         }
                         const responsePublishVersion = await versionService.addVersion(versionPublish);
-                        if(responsePublishVersion && responsePublishVersion.status === 201) {
+                        if (responsePublishVersion && responsePublishVersion.status === 201) {
                             toast.success("Please wait for approve");
                         }
                     }
@@ -279,7 +279,7 @@ const AddPackage = () => {
         const imgName = imgLink.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
         setimageCover("");
         try {
-            await uploadService.deleteFile(imgName).then(({status}) => {
+            await uploadService.deleteFile(imgName).then(({ status }) => {
                 if (status === 200) {
                     alert("Delete cover img successfully");
                 }
@@ -293,7 +293,7 @@ const AddPackage = () => {
         event.preventDefault();
         const fileDeleteName = fileZipName.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
         try {
-            await uploadService.deleteFile(fileDeleteName).then(({status}) => {
+            await uploadService.deleteFile(fileDeleteName).then(({ status }) => {
                 if (status === 200) {
                     setZipFile("");
                     setFileZipName("");
@@ -313,7 +313,7 @@ const AddPackage = () => {
         const imgDelete = detailsImg[index];
         const imgDeleteName = imgDelete.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
         try {
-            await uploadService.deleteFile(imgDeleteName).then(({status}) => {
+            await uploadService.deleteFile(imgDeleteName).then(({ status }) => {
                 if (status === 200) {
                     toast.success("Delete successfully!");
                 }
@@ -338,23 +338,36 @@ const AddPackage = () => {
     return (
         <div>
             <LoadingModal open={isLoading} closeModal={onCloseModal} />
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-[46px]">
                 <form className="sm:w-[60%] w-[90%] p-5 bg-white">
                     <div className="space-y-12">
                         <div className="border-b border-gray-900/10 pb-12">
                             <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-4">
                                 <div className="col-span-full sm:flex">
-                                    <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[95%] w-full'><TextInput title="Package name" value={packageName} placeholderStr="Enter your package name" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} /></div></div>
-                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Short description" value={packageShortDesc} placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} /></div></div>
+                                    <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[95%] w-full'>
+                                        <TextInput title="Package name" value={packageName} placeholderStr="Enter your package name"
+                                            handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
+                                    </div>
+                                    </div>
+                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Short description" value={packageShortDesc}
+                                        placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} />
+                                    </div>
+                                    </div>
                                 </div>
                                 <div className="col-span-full sm:flex">
                                     {/* <div className="sm:w-[50%] w-[100%]"><div className="sm:w-[90%] w-full"><TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" /></div></div> */}
                                     <div className="sm:w-[50%] w-[100%]">
                                         <div className="sm:w-[95%] w-full">
-                                            <ContentEditableInput title='Description' value={packageDescription} placeholderStr='Write some sentences about your package' handleFileTextChange={handleContentEditable}/>
+                                            <ContentEditableInput title='Description' value={packageDescription} placeholderStr='Write some sentences about your package'
+                                                handleFileTextChange={handleContentEditable} />
                                         </div>
                                     </div>
-                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Entry point" value={entryPoint} placeholderStr="Enter file name you want to demo" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} /></div></div>
+                                    <div className="sm:w-[50%] w-[100%] flex justify-end">
+                                        <div className='sm:w-[95%] w-full'>
+                                            <TextInput title="Entry point" value={entryPoint} placeholderStr="Enter file name you want to demo"
+                                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="col-span-full flex">
                                     <div className="w-[50%]"><CategorySelect listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} /></div>
@@ -362,7 +375,7 @@ const AddPackage = () => {
                                         <div className="w-[95%]">
                                             <div className="flex w-[95%]">
                                                 <legend className="text-sm font-semibold leading-6 text-gray-900">Mode</legend>
-                                                <p className="required text-red-500 ml-1">*</p>
+                                                <span className="required text-red-500 ml-1">*</span>
                                             </div>
                                             <div className="space-y-3 w-[95%] flex items-center">
                                                 <div className="flex items-center mr-4">
@@ -403,7 +416,7 @@ const AddPackage = () => {
                                         <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
                                             Cover photo
                                         </label>
-                                        <p className="required text-red-500 ml-1">*</p>
+                                        <span className="required text-red-500 ml-1">*</span>
                                     </div>
                                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                         <div className="text-center">
@@ -411,10 +424,11 @@ const AddPackage = () => {
                                             <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600 text-center" onDrop={handleImgCoverDrop} onDragOver={handleDrag}>
                                                 <label
                                                     htmlFor="cover-img-upload"
-                                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 
+                                                    focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                                 >
                                                     <span>Upload image</span>
-                                                    <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only" value=""/>
+                                                    <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only" value="" />
                                                 </label>
                                                 {/* <p className="pl-1">or drag and drop</p> */}
                                             </div>
@@ -429,7 +443,10 @@ const AddPackage = () => {
                                                 alt="Uploaded"
                                                 className="w-full object-cover"
                                             />
-                                            <button className="absolute top-2 right-2 rounded-full bg-white text-white px-3 py-1 z-40" onClick={(event) => onDeleteCoverImage(event, imageCover)}><p className='text-[16px] font-bold text-red-500'>x</p></button>
+                                            <button className="absolute top-2 right-2 rounded-full bg-white text-white px-3 py-1 z-40"
+                                                onClick={(event) => onDeleteCoverImage(event, imageCover)}>
+                                                <p className='text-[16px] font-bold text-red-500'>x</p>
+                                            </button>
                                         </div>
                                     )}
                                 </div>
@@ -438,7 +455,7 @@ const AddPackage = () => {
                                         <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
                                             Detail images
                                         </label>
-                                        <p className="required text-red-500 ml-1">*</p>
+                                        <span className="required text-red-500 ml-1">*</span>
                                     </div>
                                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                                         <div className="text-center">
@@ -446,10 +463,11 @@ const AddPackage = () => {
                                             <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
                                                 <label
                                                     htmlFor="detail-imgs-upload"
-                                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 
+                                                    focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                                 >
                                                     <span>Upload images</span>
-                                                    <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file" className="sr-only" onDrag={handleDrag} value=""/>
+                                                    <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file" className="sr-only" onDrag={handleDrag} value="" />
                                                 </label>
                                                 {/* <p className="pl-1">or drag and drop</p> */}
                                             </div>
@@ -467,11 +485,13 @@ const AddPackage = () => {
                                                 src={base64}
                                                 alt={`Uploaded ${index}`}
                                             />
-                                            <button className="absolute top-6 right-2 rounded-full bg-white text-white px-3 py-1 z-40" onClick={(event) => onDeleteDetailImage(event, index)}><p className='text-[16px] font-bold text-red-500'>x</p></button>
+                                            <button className="absolute top-6 right-2 rounded-full bg-white text-white px-3 py-1 z-40" onClick={(event) => onDeleteDetailImage(event, index)}>
+                                                <p className='text-[16px] font-bold text-red-500'>x</p>
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
-                                
+
                                 {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
                                 {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
                                 <div className="col-span-full">
@@ -480,7 +500,7 @@ const AddPackage = () => {
                                             Dashboard config
                                         </label>
                                     </div>
-                                    <Editor height="300px" defaultLanguage="javascript" defaultValue="// some comment" value={dashboardConfigStr} onChange={handleEditorChange}/>;
+                                    <Editor height="300px" defaultLanguage="javascript" defaultValue="// some comment" value={dashboardConfigStr} onChange={handleEditorChange} />;
                                 </div>
                             </div>
                         </div>
@@ -488,7 +508,8 @@ const AddPackage = () => {
                     <div className="mt-6 flex items-center justify-end gap-x-6">
                         <div className="flex justify-between">
                             <button
-                                className={`disabled:opacity-50 rounded-md bg-gray-400 px-3 mr-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600`}
+                                className={`disabled:opacity-50 rounded-md bg-gray-400 px-3 mr-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 
+                                focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600`}
                                 onClick={() => navigate('/')}
                             >
                                 Cancel
@@ -496,13 +517,14 @@ const AddPackage = () => {
                             <button
                                 disabled={showBtnSave === true ? false : true}
                                 type="submit"
-                                className={`disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                                className={`disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 
+                                focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                                 onClick={onSaveInfoPackage}
                             >
                                 Save
                             </button>
                         </div>
-                        
+
                     </div>
                 </form>
             </div>

@@ -10,7 +10,7 @@ interface IProps {
 
 const UploadFile = (props: IProps) => {
 
-    let {zipFile, fileZipName, handleFileInputChange, onDeleteZipFile} = props;
+    const {zipFile, fileZipName, handleFileInputChange, onDeleteZipFile} = props;
 
     return (
         <div className="col-span-full text-black">
@@ -19,7 +19,7 @@ const UploadFile = (props: IProps) => {
                         <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
                             Source code
                         </label>
-                        <p className="required text-red-500 ml-1">*</p>
+                        <span className="required text-red-500 ml-1">*</span>
                     </div>
                     <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                         <div className="text-center">

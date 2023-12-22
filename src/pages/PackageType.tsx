@@ -22,7 +22,6 @@ const PackageType = () => {
     const [searchValue, setSearchValue] = useState<string>("");
     //params
     const { type } = useParams();
-    const [packageType, setPackageType] = useState("");
 
     const getAllPackage = async () => {
         const response = await packageService.getPackageByCategory(limit, currentPage, type ? type : '');
@@ -30,11 +29,7 @@ const PackageType = () => {
             setPackageList(response.data.data);
             let totalPages = 0;
             setTotal(response.data.total);
-            if (response.data.total % limit === 0) {
-                totalPages = Math.floor(response.data.total / limit);
-            } else {
-                totalPages = Math.floor(response.data.total / limit) + 1;
-            }
+            totalPages = Math.ceil(response.data.total / limit);
             setTotalPage(totalPages);
         } else {
             setPackageList([]);
@@ -52,11 +47,7 @@ const PackageType = () => {
             setPackageList(response.data.data);
             let totalPages = 0;
             setTotal(response.data.total);
-            if (response.data.total % limit === 0) {
-                totalPages = Math.floor(response.data.total / limit);
-            } else {
-                totalPages = Math.floor(response.data.total / limit) + 1;
-            }
+            totalPages = Math.ceil(response.data.total / limit);
             setTotalPage(totalPages);
         } else {
             setPackageList([]);
@@ -106,16 +97,19 @@ const PackageType = () => {
 
     return (
         <div>
-            {packageList ? <div className={`${isLoading === true ? 'hidden' : ''}`}>
-                <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
+            {packageList ? <div className={`${isLoading === true ? 'hidden' : ''} pt-[46px]`}>
+                <LoadingDialog open={isLoading} closeModal={onCloseModal} />
                 <div className="body px-6 py-4">
                     <div className="search flex justify-end mb-6 text-black border-gray">
-                        <input value={searchValue} className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]' type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler}/>
+                        <input value={searchValue} className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]'
+                            type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler} />
                     </div>
-                    {packageList.length > 0 ? <PackageList showMode={false} packages={packageList}/> : searchValue ? <NotFound /> : <NoPackage content={`There is no ${type} in the system`}/>}
+                    {packageList.length > 0 ? <PackageList showMode={false} packages={packageList} /> : searchValue ?
+                        <NotFound /> : <NoPackage content={`There is no ${type} in the system`} />}
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage}/>
-            </div> : <NoPackage content="There is no packages in the system"/>}
+                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center 
+                ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
+            </div> : <NoPackage content="There is no packages in the system" />}
         </div>
     )
 }

@@ -41,19 +41,19 @@ const ModalCommentRating = (props: IProps) => {
 
     const reviewData = [stars, comment];
 
-    const onSaveInfo = async() => {
+    const onSaveInfo = async () => {
         let count = 0;
-        for(let i = 0; i < reviewData.length; i++) {
-            if(reviewData[i] === "") {
+        for (let i = 0; i < reviewData.length; i++) {
+            if (reviewData[i] === "") {
                 count++;
             }
         }
-        if(count > 0) {
+        if (count > 0) {
             alert("Missing review info. Please try again!")
-        }else {
+        } else {
             openModalLoading();
             onCloseModalCommentRating();
-            if(!reviewUpdate) {
+            if (!reviewUpdate) {
                 const review: IReview = {
                     packageId: packageId,
                     versionId: versionId,
@@ -62,8 +62,8 @@ const ModalCommentRating = (props: IProps) => {
                     createdBy: createdBy
                 }
                 try {
-                    await reviewService.addReview(review).then(({status}) => {
-                        if(status === 201) {
+                    await reviewService.addReview(review).then(({ status }) => {
+                        if (status === 201) {
                             refreshData(versionId);
                             onCloseModal();
                             emptyData();
@@ -72,7 +72,7 @@ const ModalCommentRating = (props: IProps) => {
                 } catch (error: any) {
                     alert(error.response.data.msg);
                 }
-            }else {
+            } else {
                 const review: IReview = {
                     packageId: packageId,
                     versionId: versionId,
@@ -81,8 +81,8 @@ const ModalCommentRating = (props: IProps) => {
                     createdBy: createdBy
                 }
                 try {
-                    await reviewService.updateReview(reviewUpdate._id, review).then(({status}) => {
-                        if(status === 200) {
+                    await reviewService.updateReview(reviewUpdate._id, review).then(({ status }) => {
+                        if (status === 200) {
                             refreshData(versionId);
                             onCloseModal();
                             emptyData();
@@ -106,23 +106,23 @@ const ModalCommentRating = (props: IProps) => {
     }
 
     useEffect(() => {
-        if(reviewUpdate) {
+        if (reviewUpdate) {
             setComment(reviewUpdate.content);
             setStars(reviewUpdate.rating);
         }
     }, [reviewUpdate]);
 
     useEffect(() => {
-        if(!comment || stars === 0) {
+        if (!comment || stars === 0) {
             setDisabled(true);
-        }else {
+        } else {
             setDisabled(false);
         }
     }, [comment, stars]);
 
     return (
         <div>
-            <LoadingModal open={isLoading} closeModal={onCloseModalLoading}/>
+            <LoadingModal open={isLoading} closeModal={onCloseModalLoading} />
             <Modal
                 open={open}
                 aria-labelledby="modal-modal-title"
@@ -130,30 +130,33 @@ const ModalCommentRating = (props: IProps) => {
                 className="sm:w-[80%] lg:w-[60%] mx-auto"
             >
                 <Box sx={style}>
-                    <TextArea title="Comment" value={comment} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setComment(event.target.value)} placeHolderStr="Write some sentences about this package"/>
+                    <TextArea title="Comment" value={comment} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setComment(event.target.value)} 
+                    placeHolderStr="Write some sentences about this package" />
                     <div className="col-span-full">
                         <div className="flex select-none">
                             <label htmlFor="about" className="block text-sm font-bold leading-6 text-gray-900">
                                 Rating
                             </label>
-                            <p className="required text-red-500 ml-1">*</p>
+                            <span className="required text-red-500 ml-1">*</span>
                         </div>
                         <div className="mt-2">
-                            <Rating starArr={starArr} stars={stars} onClickStar={(value: number) => setStars(value)}/>
+                            <Rating starArr={starArr} stars={stars} onClickStar={(value: number) => setStars(value)} />
                         </div>
                     </div>
                     <div className="w-full flex justify-end">
                         <button
                             disabled={disabled}
                             type="submit"
-                            className={` disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 select-none`}
+                            className={` disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm 
+                            hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 select-none`}
                             onClick={onSaveInfo}
                         >
                             Save
                         </button>
                         <button
                             type="submit"
-                            className="bg-gray-400 rounded-md px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 select-none"
+                            className="bg-gray-400 rounded-md px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm 
+                            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 select-none"
                             onClick={onCloseModalCommentRating}
                         >
                             Cancel
@@ -162,7 +165,7 @@ const ModalCommentRating = (props: IProps) => {
                 </Box>
             </Modal>
         </div>
-        
+
     )
 }
 

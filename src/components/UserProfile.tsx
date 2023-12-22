@@ -19,19 +19,19 @@ const UserProfile = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(fullName) {
+        if (fullName) {
             setShowBtnSave(true);
-        }else {
+        } else {
             setShowBtnSave(false);
         }
     }, [fullName]);
-    
-    const onUpdateUser = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, fullName: string) => {
+
+    const onUpdateUser = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, fullName: string) => {
         setIsLoading(true);
         event.preventDefault();
         try {
-            await userService.changeProfile(fullName, imageCover).then(({status}) => {
-                if(status == 200) {
+            await userService.changeProfile(fullName, imageCover).then(({ status }) => {
+                if (status == 200) {
                     alert('Change user info successfully');
                     navigate('/');
                 }
@@ -41,13 +41,13 @@ const UserProfile = () => {
         }
     }
 
-    const onCloseModal= () => {
+    const onCloseModal = () => {
         setIsLoading(false);
     }
 
-    const getCurrentUser = async() => {
-        await userService.getCurrentUser().then(({status, data}) => {
-            if(status == 200) {
+    const getCurrentUser = async () => {
+        await userService.getCurrentUser().then(({ status, data }) => {
+            if (status == 200) {
                 setFullName(data.fullName);
                 setIsLoading(false);
                 setCurrentUser(data);
@@ -55,7 +55,7 @@ const UserProfile = () => {
                 setCreatedAt(createdAtStr);
                 setEmail(data.email);
                 setimageCover(data.avt);
-                
+
             }
         });
     }
@@ -66,7 +66,7 @@ const UserProfile = () => {
         if (file) {
             formData.append('file', file);
             try {
-                await uploadService.uploadFile(formData).then(({data, status}) => {
+                await uploadService.uploadFile(formData).then(({ data, status }) => {
                     if (status === 201) {
                         setimageCover(data.url);
                     }
@@ -82,32 +82,45 @@ const UserProfile = () => {
     }, []);
 
     return (
-        <div className="login-page">
-            <LoadingDialog open={isLoading} closeModal={onCloseModal}/>
-            <section className={`${isLoading == true ? 'hidden' : ''} flex justify-center mt-10`}>
-                
-                    <div className="w-full rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 text-black">
-                        <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                            <div className="profile-img flex justify-center text-[80px]">
-                                {imageCover == "" ? <HiOutlineUserCircle /> : <img className='w-[80px] h-[80px] rounded-[50%] object-contain' src={imageCover}/>}
-                            </div>
-                            <label
-                                htmlFor="user-img-upload"
-                                className="flex w-[30%] mx-auto justify-center items-center relative cursor-pointer rounded-md font-semibol focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2"
-                            >
-                                <GoPencil />
-                                <p className='ml-1'>Change</p>
-                                <input required onChange={handleInputImgCoverChange} id="user-img-upload" name="cover-img-upload" type="file" className="sr-only outline-none" value=""/>
-                            </label>
-                            <form className="space-y-4 md:space-y-6" action="#">
-                                <TextInput handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setFullName(event.target?.value)} value={fullName} title="Full name" placeholderStr="Enter your full name" />
-                                <TextInput disabled={true} handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)} value={email} title="Email" placeholderStr="Enter your account's email" />
-                                <TextInput disabled={true} handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)} value={createdAt} title="Created at" placeholderStr="Enter your account create day" />
-                                <button disabled={showBtnSave === true ? false : true} onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onUpdateUser(event, fullName)} type="submit" className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}>Save</button>
-                            </form>
+        <div className="user-profile pt-[46px]">
+            <LoadingDialog open={isLoading} closeModal={onCloseModal} />
+            <section className={`${isLoading == true ? 'hidden' : ''} flex h-[90vh] items-center justify-center mt-10`}>
+
+                <div className="rounded-lg shadow dark:border md:mt-0 sm:max-w-md w-[90%] xl:p-0 text-black">
+                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+                        <div className="profile-img flex justify-center text-[80px]">
+                            {imageCover == "" ? <HiOutlineUserCircle /> : <img className='w-[80px] h-[80px] rounded-[50%] object-contain' src={imageCover} />}
                         </div>
+                        <label
+                            htmlFor="user-img-upload"
+                            className="flex w-[30%] mx-auto justify-center items-center relative cursor-pointer rounded-md font-semibol focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2"
+                        >
+                            <GoPencil />
+                            <p className='ml-1'>Change</p>
+                            <input required onChange={handleInputImgCoverChange} id="user-img-upload" name="cover-img-upload" type="file" className="sr-only outline-none" value="" />
+                        </label>
+                        <form className="space-y-4 md:space-y-6" action="#">
+                            <TextInput handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setFullName(event.target?.value)}
+                                value={fullName} title="Full name" placeholderStr="Enter your full name" />
+                            <TextInput disabled={true} handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)} value={email} title="Email" placeholderStr="Enter your account's email" />
+                            <TextInput disabled={true} handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)}
+                                value={createdAt} title="Created at" placeholderStr="Enter your account create day" />
+                            <button disabled={showBtnSave === true ? false : true} onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onUpdateUser(event, fullName)}
+                                type="submit" className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg 
+                                text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}
+                            >
+                                Save
+                            </button>
+                            <button disabled={showBtnSave === true ? false : true} onClick={() => navigate('/')}
+                                type="submit" className={`w-full text-white bg-gray-400 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg 
+                                text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}
+                            >
+                                Cancel
+                            </button>
+                        </form>
                     </div>
-                
+                </div>
+
             </section>
             <ToastContainer />
         </div>

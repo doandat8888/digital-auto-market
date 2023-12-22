@@ -27,7 +27,7 @@ const Login = () => {
                         if (data.token) {
                             dispatch(addToken(data.token));
                             setIsLoading(false);
-                            window.location.href = import.meta.env.VITE_APP_URL;
+                            window.location.href = import.meta.env.VITE_APP_URL || "https://store.digitalauto.asia/";
                         } else {
                             alert("Token not found");
                         }
@@ -48,7 +48,7 @@ const Login = () => {
     }
 
     return (
-        <div className="login-page text-black">
+        <div className="login-page text-black pt-[46px]">
             <div className="w-full h-[90vh] grid place-items-center">
                 <div className="max-w-[400px] w-[94%] bg-white p-6 rounded shadow-sm">
                     <LoadingDialog open={isLoading} closeModal={onCloseModal} />

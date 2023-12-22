@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import ForgotPassword from '../components/ForgotPassword.tsx';
 import UserProfile from '../components/UserProfile.tsx';
 import ManageAddPackage from '../pages/ManageAddPackage.tsx';
+import PackageAdmin from '../pages/PackageAdmin.tsx';
 
 
 const RoutesApp = () => {
@@ -36,6 +37,7 @@ const RoutesApp = () => {
             <Route path='/updatepackage/:packageId' element={<UpdatePackage />}/>
             <Route path='/packagetype/:type' element={<PackageType />} />
             <Route path='/managepackage' element={<ManageAddPackage />}/>
+            <Route path='/packageadmin' element={<PackageAdmin />}/>
         </Routes>
     )
 }

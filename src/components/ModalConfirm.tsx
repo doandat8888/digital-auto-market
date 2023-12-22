@@ -2,8 +2,8 @@ import { Box, Modal } from "@mui/material";
 
 interface IProps {
     open: boolean,
-    handleClose: () => void,
-    action: () => void,
+    handleClose: (event: React.MouseEvent<HTMLButtonElement>) => void,
+    action: (event: React.MouseEvent<HTMLButtonElement>) => void,
     content: string
 }
 
@@ -12,7 +12,7 @@ const ModalConfirm = (props: IProps) => {
     const {open, handleClose, action, content} = props;
 
     const style = {
-        position: 'absolute' as 'absolute',
+        position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
@@ -39,16 +39,18 @@ const ModalConfirm = (props: IProps) => {
                         <div className="grow"></div>
                         <div className="flex justify-end">
                             <button
-                                onClick={action}
+                                onClick={(event: React.MouseEvent<HTMLButtonElement>) => action(event)}
                                 type="submit"
-                                className="mx-2 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                className="mx-2 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline 
+                                focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
                                 Yes
                             </button>
                             <button
                                 type="submit"
-                                className="bg-gray-400 rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                onClick={handleClose}
+                                className="bg-gray-400 rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline 
+                                focus-visible:outline-2 focus-visible:outline-offset-2"
+                                onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClose(event)}
                             >
                                 Cancel
                             </button>

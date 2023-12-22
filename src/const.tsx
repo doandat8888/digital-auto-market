@@ -34,7 +34,31 @@ const categoryFake: ICategory[] = [
     },
 ]
 
+const statusFake: ICategory[] = [
+    {
+        id: "1",
+        name: "",
+        textShow: "All"
+    },
+    {
+        id: "2",
+        name: "approved",
+        textShow: "Approved"
+    },
+    {
+        id: "3",
+        name: "rejected",
+        textShow: "Rejected"
+    },
+    {
+        id: "4",
+        name: "wait-for-approve",
+        textShow: "Wait for approve"
+    },
+]
+
 export default {
     pageList,
-    categoryFake
+    categoryFake,
+    statusFake
 }
