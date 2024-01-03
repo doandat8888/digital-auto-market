@@ -452,7 +452,7 @@ const DetailPackage = () => {
                                                 {packageDetail?.version?.downloadUrl &&
                                                     <button onClick={onDownLoadPackage} className="w-full mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                                     px-4 py-2 rounded-lg items-center justify-center">
-                                                        <a className="w-full flex items-center justify-center" href={versionParam === 'latest' ? packageDetail.downloadUrl : currentVersion?.downloadUrl}>
+                                                        <a className="w-full flex items-center justify-center" href={!user ? import.meta.env.VITE_APP_URL + 'login' || "https://store-be.digitalauto.asia/login" : versionParam === 'latest' ? packageDetail.downloadUrl : currentVersion?.downloadUrl}>
                                                             <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2 select-none">Download</p> <BsDownload />
                                                         </a>
                                                     </button>
