@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ManageVersionTable from "../components/ManageVersionTable";
 import { useNavigate, useParams } from "react-router";
 import versionService from "../services/versionService";
@@ -30,9 +30,6 @@ const ManageVersion = () => {
     const [openModalPublish, setOpenModalPublish] = useState<boolean>(false);
     const [openModalConfirmDelete, setopenModalConfirmDelete] = useState(false);
 
-    //Navigate
-    const navigate = useNavigate();
-
     //Get user info
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
@@ -57,15 +54,15 @@ const ManageVersion = () => {
         }
     }
 
-    const checkPackage = () => {
+    const checkPackage = useCallback(() => {
         if (user) {
             const canEditVersion = packageDetail && packageDetail.createdBy._id === user?._id ? true : false;
             setCanEdit(canEditVersion);
             setIsLoading(false);
         }
-    }
+    }, [packageDetail, user])
 
-    const getVersionList = async () => {
+    const getVersionList = useCallback(async () => {
         if (packageId) {
             await versionService.getVersionByPackageId(packageId, limit, currentPage).then(({ status, data }) => {
                 if (status === 200) {
@@ -75,15 +72,15 @@ const ManageVersion = () => {
                 }
             })
         }
-    }
+    }, [currentPage, limit, packageId])
 
-    const getPackageInfo = async () => {
+    const getPackageInfo = useCallback(async () => {
         if (packageId) {
             await packageService.getPackageById(packageId).then(({ data }) => {
                 setPackageDetail(data);
             })
         }
-    }
+    }, [packageId])
 
     const onUpdateVersion = (version: IGetVersion) => {
         setVersionUpdate(version);
@@ -93,7 +90,6 @@ const ManageVersion = () => {
     const onDeleteVersion = async (versionId: string) => {
         setopenModalConfirmDelete(true);
         setVersionDeleteId(versionId);
-
     }
 
     const removeVersion = async () => {
@@ -102,6 +98,7 @@ const ManageVersion = () => {
                 await versionService.deleteVersion(versionDeleteId).then(({ status }) => {
                     if (status === 200) {
                         alert("Delete version successfully!");
+                        setopenModalConfirmDelete(false);
                         getVersionList();
                     }
                 })
@@ -112,9 +109,9 @@ const ManageVersion = () => {
         }
     }
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
     const handleCloseModal = () => {
         setOpenModalPublish(false);
@@ -127,11 +124,11 @@ const ManageVersion = () => {
 
     useEffect(() => {
         getPackageInfo();
-    }, [])
+    }, [getPackageInfo])
 
     useEffect(() => {
         getVersionList();
-    }, [currentPage]);
+    }, [currentPage, getVersionList]);
 
     useEffect(() => {
         if (tokenUser !== "") {
@@ -143,7 +140,7 @@ const ManageVersion = () => {
         if (user && packageDetail) {
             checkPackage();
         }
-    }, [user, packageDetail]);
+    }, [user, packageDetail, checkPackage]);
 
     return (
         <div className={`${isLoading === true ? 'hidden' : ''} w-[100%] mx-auto text-black pt-[46px]`}>
@@ -163,7 +160,6 @@ const ManageVersion = () => {
                     <ModalConfirm content="Do you want to delete?" action={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)} />
                 </div>
             </div>
-
             <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
         </div>
     )

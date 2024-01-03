@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import userService from "../services/userService";
 import { useDispatch } from "react-redux";
 import { addToken } from "../redux/token/tokenSlice";
@@ -59,9 +59,9 @@ const Register = () => {
         }
     }
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
     const onRetypePassword = (passwordStr: string) => {
         setPasswordRetype(passwordStr);
@@ -69,9 +69,9 @@ const Register = () => {
     }
 
     return (
-        <div className="text-black pt-[46px]">
-            <div className="w-full h-[90vh] grid place-items-center">
-                <div className="max-w-[400px] w-[94%] p-6 rounded shadow-sm bg-white">
+        <div className="text-black pt-[92px] pb-[46px]">
+            <div className="w-full grid place-items-center">
+                <div className="max-w-[400px] w-[94%] p-6 rounded shadow-sm bg-white text-black">
                     <LoadingDialog open={isLoading} closeModal={onCloseModal} />
                     <h1 className="text-xl text-center font-bold leading-tight tracking-tight md:text-2xl">
                         Sign up new account

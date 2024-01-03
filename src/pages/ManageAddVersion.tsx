@@ -1,20 +1,20 @@
 import { useState, useEffect, useCallback } from "react";
-import packageService from "../services/packageService";
 import LoadingModal from "../components/LoadingDialog";
 import { Pagination } from "@mui/material";
 import { ToastContainer, toast } from "react-toastify";
-import ManageAddPackageTable from "../components/ManageAddPackageTable";
 import ModalConfirm from "../components/ModalConfirm";
 import calcTotalPages from "../utils/calcTotalPages";
 import SearchBar from "../components/SearchBar";
 import _ from "lodash";
+import versionService from "../services/versionService";
+import ManageAddVersionTable from "../components/ManageAddVersionTable";
 
-const ManageAddPackage = () => {
+const ManageAddVersion = () => {
 
-    const [packageList, setPackageList] = useState<IGetPackage[]>([]);
+    const [versionList, setVersionList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [total, setTotal] = useState(0);
-    const searchVal = localStorage.getItem('namePackage');
+    const searchVal = localStorage.getItem('nameVersion');
 
     const [openModalConfirm, setOpenModalConfirm] = useState(false);
 
@@ -28,37 +28,37 @@ const ManageAddPackage = () => {
     const limit = window.screen.height > 900 ? 8 : window.screen.height > 1200 ? 8 : 4;
 
     const getTotalPage = useCallback(async () => {
-        await packageService.getAllPackageByPage(limit, currentPage).then(({ data }) => {
-            if (data && data.data.length > 0) {
+        await versionService.getAllVersion(limit, currentPage).then(({ data }) => {
+            if (data && data.data && data.data.length > 0) {
                 setTotal(data.total);
             }
         })
     }, [currentPage, limit]);
 
-    const getAllPackage = useCallback(async () => {
+    const getAllVersion = useCallback(async () => {
         try {
-            await packageService.getAllPackageByPage(limit, currentPage).then(({ data }) => {
-                if (data && data.data.length > 0) {
-                    setPackageList(data.data);
+            await versionService.getAllVersion(limit, currentPage).then(({ data }) => {
+                if (data && data.data && data.data.length > 0) {
+                    setVersionList(data.data);
                     setTotalPage(calcTotalPages(data.total, limit));
                 }
             })
         } catch (error) {
             toast.error("Fail to load packages");
         }
-    }, [currentPage, limit]) 
+    }, [currentPage, limit])
 
-    const getPackageByName = useCallback(async (packageName: string) => {
-        await packageService.getPackageByName(limit, currentPage, packageName).then(({ data }) => {
-            if (data && data.data.length > 0) {
-                setPackageList(data.data);
+    const getPackageByName = useCallback(async (versionName: string) => {
+        await versionService.getVersionByName(limit, currentPage, versionName).then(({ data }) => {
+            if (data && data.data && data.data.length > 0) {
+                setVersionList(data.data);
                 setTotalPage(calcTotalPages(data.total, limit));
             } else {
-                setPackageList([]);
+                setVersionList([]);
                 setTotalPage(0);
             }
         })
-    }, [currentPage, limit]); 
+    }, [currentPage, limit]);
 
     const handleChangeStatus = (packageId: string, state: string) => {
         setOpenModalConfirm(true);
@@ -68,38 +68,39 @@ const ManageAddPackage = () => {
 
     const changeStatus = async () => {
         try {
-            const response = await packageService.changeStatus(currentPackageId, currentStatus);
+            const response = await versionService.changeStatus(currentPackageId, currentStatus);
             if (response && response.status === 200) {
                 setOpenModalConfirm(false);
                 toast.success(response.data.msg);
-                getAllPackage();
+                getAllVersion();
                 setCurrentPackageId("");
                 setCurrentStatus("");
             }
         } catch (error) {
+            setOpenModalConfirm(false);
             toast.error("Fail to change status");
             setCurrentPackageId("");
             setCurrentStatus("");
         }
     }
-    
+
 
     useEffect(() => {
-        if (packageList.length > 0) {
+        if (versionList.length > 0) {
             setIsLoading(false);
         }
-    }, [packageList]);
+    }, [versionList]);
 
     useEffect(() => {
-        const searchVal = localStorage.getItem('namePackage');
+        const searchVal = localStorage.getItem('nameVersion');
         if (searchVal) {
             getPackageByName(searchVal);
         } else {
             getTotalPage();
-            getAllPackage();
+            getAllVersion();
         }
-    }, [currentPage, getAllPackage, getPackageByName, getTotalPage]);
-    
+    }, [currentPage, getAllVersion, getPackageByName, getTotalPage]);
+
     useEffect(() => {
         if (searchVal) {
             getPackageByName(searchVal);
@@ -116,8 +117,7 @@ const ManageAddPackage = () => {
 
     const deb = _.debounce((e) => {
         getPackageByName(e.target.value);
-        setCurrentPage(1);
-        localStorage.setItem('namePackage', e.target.value);
+        localStorage.setItem('nameVersion', e.target.value);
     }, 1000
     );
 
@@ -126,14 +126,14 @@ const ManageAddPackage = () => {
         <div className={`${isLoading === true ? 'hidden' : ''} w-[100%] mx-auto text-black select-none pt-[46px]`}>
             <div className="sm:w-[90%] w-[100%] mx-auto">
                 <LoadingModal open={isLoading} closeModal={() => setIsLoading(false)} />
-                <div className="text-black title my-10 text-center font-bold text-2xl">MANAGE PACKAGE STATUS</div>
+                <div className="text-black title mt-10 my-5 text-center font-bold text-2xl">MANAGE VERSION STATUS</div>
                 <div className="ml-6 search flex justify-start mb-6 text-black border-gray">
-                    <SearchBar widthLg="40%" widthSm="100%" width="100%" placeHolder='Search package name...' onSearchHandler={onSearchHandler} />
+                    <SearchBar widthLg="40%" widthSm="100%" width="100%" placeHolder='Search version name...' onSearchHandler={onSearchHandler} />
                 </div>
                 <div className="body mx-6">
-                    <ManageAddPackageTable packageList={packageList} handleChangeStatus={handleChangeStatus} />
+                    <ManageAddVersionTable versionList={versionList} handleChangeStatus={handleChangeStatus} />
                 </div>
-                <ModalConfirm content={`Do you want to ${currentStatus === 'approved' ? 'reject' : 'approve'} this package?`} action={changeStatus}
+                <ModalConfirm content={`Do you want to ${currentStatus === 'approved' ? 'reject' : 'approve'} this version?`} action={changeStatus}
                     open={openModalConfirm} handleClose={() => setOpenModalConfirm(false)} />
             </div>
             <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`}
@@ -143,4 +143,4 @@ const ManageAddPackage = () => {
     )
 }
 
-export default ManageAddPackage;
+export default ManageAddVersion;

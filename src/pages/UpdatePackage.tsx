@@ -1,5 +1,5 @@
 import { PhotoIcon } from '@heroicons/react/24/solid';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { useNavigate, useParams } from "react-router";
@@ -57,6 +57,7 @@ const UpdatePackage = () => {
         const files = event.target.files;
         if (files) {
             const imagePromises = Array.from(files).map((file) => {
+                // eslint-disable-next-line no-async-promise-executor
                 return new Promise<string>(async (resolve) => {
                     if (!file) return;
                     const formData = new FormData();
@@ -79,7 +80,7 @@ const UpdatePackage = () => {
     const [user, setUser] = useState<IUser>();
 
 
-    const getPackageById = async () => {
+    const getPackageById = useCallback(async () => {
         if (packageId) {
             await packageService.getPackageById(packageId).then(({ data }) => {
                 if (data) {
@@ -87,16 +88,31 @@ const UpdatePackage = () => {
                 }
             })
         }
-    }
+    }, [packageId]) 
+    
+    const getUserInfo = useCallback(async () => {
+        if (token !== "") {
+            try {
+                await userService.getUser().then(({ status, data }) => {
+                    if (status === 200) {
+                        setUser(data);
+                    }
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [token]) 
 
     useEffect(() => {
         getUserInfo();
-    }, [token]);
+    }, [getUserInfo, token]);
 
     useEffect(() => {
         getPackageById();
-    }, [packageId]);
-
+    }, [getPackageById, packageId]);
+    
+    
 
     useEffect(() => {
         if (packageUpdate) {
@@ -136,19 +152,6 @@ const UpdatePackage = () => {
     }, [packageName, imageCover, mode, category, entryPoint]);
 
 
-    const getUserInfo = async () => {
-        if (token !== "") {
-            try {
-                await userService.getUser().then(({ status, data }) => {
-                    if (status === 200) {
-                        setUser(data);
-                    }
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     const handleInputImgCoverChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsLoadingCoverImg(true);
@@ -223,7 +226,7 @@ const UpdatePackage = () => {
                             if (status === 200) {
                                 toast.success("Update info successfully!");
                                 //Delete img cover and image details
-                                const imageCoverName = imageCover.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
+                                const imageCoverName = imageCover.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
                                 for (let i = 0; i < imageDeleteListName.length; i++) {
                                     await uploadService.deleteFile(imageDeleteListName[i]);
                                 }
@@ -262,7 +265,7 @@ const UpdatePackage = () => {
         }
     };
 
-    const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
+    const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         setimageCover("");
         setIsDeleteImgCover(true);
@@ -270,7 +273,7 @@ const UpdatePackage = () => {
 
     const onDeleteZipFile = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        const fileDeleteName = fileZipName.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
+        const fileDeleteName = fileZipName.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
         await uploadService.deleteFile(fileDeleteName).then(({ status }) => {
             if (status === 200) {
                 setZipFile("");
@@ -284,17 +287,17 @@ const UpdatePackage = () => {
         event.preventDefault();
         const detailsImg = [...imageDetailList];
         const imgDelete = detailsImg[index];
-        const imgDeleteName = imgDelete.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
+        const imgDeleteName = imgDelete.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
         imageDeleteListName.push(imgDeleteName);
         detailsImg.splice(index, 1);
         setimageDetailList(detailsImg);
     }
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
-    const handleEditorChange: OnChange = (value, event) => {
+    const handleEditorChange: OnChange = (value) => {
         setDashboardConfig(value || '');
     };
 
@@ -412,7 +415,7 @@ const UpdatePackage = () => {
                                                     className="w-full object-cover"
                                                 />
                                                 <button className="absolute top-2 right-2 rounded-full bg-white text-white px-3 py-1 z-40"
-                                                    onClick={(event) => onDeleteCoverImage(event, imageCover)}><p className='opacity-80'>
+                                                    onClick={(event) => onDeleteCoverImage(event)}><p className='opacity-80'>
                                                         <p className='text-[16px] font-bold text-red-500'>x</p>
                                                     </p>
                                                 </button>

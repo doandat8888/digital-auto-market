@@ -291,24 +291,33 @@ const DetailPackage = () => {
     }
 
     const onDownLoadPackage = async () => {
-        try {
-            await packageService.updateDownLoad(packageDetail ? packageDetail._id : '');
-            setDownloads(packageDetail?.downloads ? packageDetail.downloads + 1 : 0);
-        } catch (error: any) {
-            alert(error.response.data.msg);
+        if(!user) {
+            navigate('/login');
+        }else {
+            try {
+                await packageService.updateDownLoad(packageDetail ? packageDetail._id : '');
+                setDownloads(packageDetail?.downloads ? packageDetail.downloads + 1 : 0);
+            } catch (error: any) {
+                alert(error.response.data.msg);
+            }
         }
     }
 
     const onCopyUrl = (link: string | undefined) => {
-        const el = document.createElement("input");
-        if (link) {
-            el.value = link;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand("copy");
-            document.body.removeChild(el);
-            toast.success("Copied to clipboard");
+        if(!user) {
+            navigate('/login');
+        }else {
+            const el = document.createElement("input");
+            if (link) {
+                el.value = link;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
+                toast.success("Copied to clipboard");
+            }
         }
+        
     }
 
     const onRemovePackage = () => {
@@ -376,28 +385,28 @@ const DetailPackage = () => {
                                                 <p className="lg:text-xl truncate w-[200px] sm:text-lg text-[16px] font-bold text-black select-none">{packageDetail?.name}</p>
                                                 <div className="flex">
                                                     {canEdit &&
-                                                        <div onClick={() => updatePackage(packageDetail)} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black select-none border border-gray-500
+                                                        <div onClick={() => updatePackage(packageDetail)} className="bg-yellow-300 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
                                                         rounded-lg"><AiOutlineEdit /><p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Update</p>
                                                         </div>
                                                     }
                                                     {canEdit &&
-                                                        <div onClick={() => onRemovePackage()} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black select-none border border-gray-500
+                                                        <div onClick={() => onRemovePackage()} className="bg-red-500 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
                                                         rounded-lg"><AiOutlineDelete /><p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Delete</p>
                                                         </div>
                                                     }
                                                     {user?.role == "admin" && packageDetail.state === 'rejected' ?
-                                                        <div onClick={() => handleChangeStatus()} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black select-none border border-gray-500
+                                                        <div onClick={() => handleChangeStatus()} className="bg-green-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
                                                         rounded-lg"><TiTickOutline /><p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Approve</p>
                                                         </div>
                                                         : user?.role == "admin" && packageDetail.state == 'approved' ?
-                                                            <div onClick={() => handleChangeStatus()} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black select-none border border-gray-500
+                                                            <div onClick={() => handleChangeStatus()} className="bg-red-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
                                                         rounded-lg"><TiCancel /><p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Reject</p>
                                                             </div> : user?.role == "admin" &&
                                                             <div className="flex">
-                                                                <div onClick={() => handleChangeStatus("rejected")} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black select-none border border-gray-500
+                                                                <div onClick={() => handleChangeStatus("rejected")} className="bg-green-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
                                                             rounded-lg"><TiTickOutline /><p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Approve</p>
                                                                 </div>
-                                                                <div onClick={() => handleChangeStatus("approved")} className="ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-black select-none border border-gray-500
+                                                                <div onClick={() => handleChangeStatus("approved")} className="bg-red-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
                                                             rounded-lg"><TiCancel /><p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Reject</p>
                                                                 </div>
                                                             </div>
@@ -420,13 +429,13 @@ const DetailPackage = () => {
                                             </select>
                                         </div>
                                         <div className="grow"></div>
-                                        <div className="flex mt-2">
+                                        <div className={`flex mt-2 ${!user ? 'hidden' : ''}`}>
                                             <div onClick={() => handleLike(isLike === true ? "unlike" : "like")} className="py-1.5 px-2 round flex items-center cursor-pointer hover:opacity-60 bg-blue-500 text-white 
                                             rounded-lg"><BiLike />
                                                 <p className="text-[12px] sm:text-[12px] ml-1 select-none">{isLike === false ? "Like" : "Unlike"}</p>
                                             </div>
                                         </div>
-                                        <div className="grow"></div>
+                                        <div className={`grow ${!user ? 'hidden' : ''}`}></div>
                                         <div className="sm:flex">
 
                                         </div>
@@ -440,7 +449,7 @@ const DetailPackage = () => {
                                         </div>
                                         <div className="lg:flex lg:w-[80%] w-[100%]">
                                             <div className="w-[20%] min-w-[180px] sm:block mr-8">
-                                                {packageDetail?.version.downloadUrl &&
+                                                {packageDetail?.version?.downloadUrl &&
                                                     <button onClick={onDownLoadPackage} className="w-full mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                                     px-4 py-2 rounded-lg items-center justify-center">
                                                         <a className="w-full flex items-center justify-center" href={versionParam === 'latest' ? packageDetail.downloadUrl : currentVersion?.downloadUrl}>
@@ -450,18 +459,18 @@ const DetailPackage = () => {
                                                 }
                                             </div>
                                             <div className="w-[20%] min-w-[180px] sm:block mr-8">
-                                                {packageDetail?.version.downloadUrl &&
+                                                {packageDetail?.version?.downloadUrl &&
                                                     <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black select-none-500 border border-black
                                                     px-6 py-2 rounded-lg items-center justify-center">
                                                         <a target="_blank" rel="noopener noreferrer" className="w-full text-black select-none flex items-center justify-center"
-                                                            href={versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.entryUrl}>
+                                                            href={!user ? import.meta.env.VITE_APP_URL + 'login' || "https://store-be.digitalauto.asia/login": versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.entryUrl}>
                                                             <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2">Preview</p> <CiShare1 />
                                                         </a>
                                                     </button>
                                                 }
                                             </div>
                                             <div className="w-[20%] min-w-[180px] sm:block">
-                                                {packageDetail?.version.downloadUrl &&
+                                                {packageDetail?.version?.downloadUrl &&
                                                     <button className="select-none w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black select-none-500 border border-black
                                                 py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(versionParam === 'latest' ? packageDetail.entryUrl : currentVersion?.entryUrl)}>
                                                         <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2 truncate">Copy URL</p> <GoCopy />

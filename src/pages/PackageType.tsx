@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import packageService from "../services/packageService";
 import LoadingDialog from "../components/LoadingDialog";
 import PackageList from "../components/PackageList";
@@ -23,7 +23,7 @@ const PackageType = () => {
     //params
     const { type } = useParams();
 
-    const getAllPackage = async () => {
+    const getAllPackage = useCallback(async () => {
         const response = await packageService.getPackageByCategory(limit, currentPage, type ? type : '');
         if (response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
@@ -35,13 +35,13 @@ const PackageType = () => {
             setPackageList([]);
             setTotalPage(0);
         }
-    }
+    }, [currentPage, type])
 
     const onChangePage = (event: any, value: any) => {
         setCurrentPage(value);
     }
 
-    const getPackageByCategoryAndName = async (packageName: string) => {
+    const getPackageByCategoryAndName = useCallback(async (packageName: string) => {
         const response = await packageService.getPackageByCategoryAndName(limit, currentPage, packageName, type ? type : '');
         if (response && response.data && response.data.data.length > 0) {
             setPackageList(response.data.data);
@@ -53,7 +53,7 @@ const PackageType = () => {
             setPackageList([]);
             setTotalPage(0);
         }
-    }
+    }, [currentPage, type]) 
 
     useEffect(() => {
         const searchVal = localStorage.getItem('name');
@@ -62,12 +62,12 @@ const PackageType = () => {
         } else {
             getAllPackage();
         }
-    }, [currentPage, type]);
+    }, [currentPage, getAllPackage, getPackageByCategoryAndName, type]);
 
     useEffect(() => {
         setCurrentPage(1);
         getAllPackage();
-    }, [type]);
+    }, [getAllPackage, type]);
 
     useEffect(() => {
         if (packageList) {
@@ -87,9 +87,9 @@ const PackageType = () => {
         setSearchValue(e.target.value);
     }
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
     useEffect(() => {
         setSearchValue("");

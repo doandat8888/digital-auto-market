@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { GoPackage } from "react-icons/go";
+import { GoPackage, GoVersions } from "react-icons/go";
 
 interface IProps {
     onLogout: () => void,
@@ -36,12 +36,15 @@ const UserInfo = (props: IProps) => {
             <Link to={'/user-profile'} className="hover:bg-slate-400 px-2 pt-2 py-1 flex items-center border-black"><AiOutlineUser className="text-xl" />
                 <p className="w-[120px] truncate mx-2 text-sm">User Profile</p>
             </Link>
-            <div onClick={onLogout} className="hover:bg-slate-400 px-2 pt-2 py-1  flex items-center"><RiLogoutBoxLine className="text-xl" />
-                <p className="mx-2 text-sm">Log out</p>
-            </div>
             {user.role === 'admin' && <Link to={'/packageadmin'} className="hover:bg-slate-400 px-2 pt-2 py-1 flex items-center border-black"><GoPackage className="text-xl" />
                 <p className="w-[120px] truncate mx-2 text-sm">Manage package</p>
             </Link>}
+            {user.role === 'admin' && <Link to={'/manageversion'} className="hover:bg-slate-400 px-2 pt-2 py-1 flex items-center border-black"><GoVersions className="text-xl" />
+                <p className="w-[120px] truncate mx-2 text-sm">Manage version</p>
+            </Link>}
+            <div onClick={onLogout} className="hover:bg-slate-400 px-2 pt-2 py-1  flex items-center"><RiLogoutBoxLine className="text-xl" />
+                <p className="mx-2 text-sm">Log out</p>
+            </div>
         </div>
     )
 }

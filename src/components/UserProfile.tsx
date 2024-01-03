@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import userService from "../services/userService";
 import LoadingDialog from "../components/LoadingDialog";
 import TextInput from "./TextInput";
@@ -41,9 +41,9 @@ const UserProfile = () => {
         }
     }
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
     const getCurrentUser = async () => {
         await userService.getCurrentUser().then(({ status, data }) => {
@@ -82,11 +82,11 @@ const UserProfile = () => {
     }, []);
 
     return (
-        <div className="user-profile pt-[46px]">
+        <div className="user-profile py-[46px] ">
             <LoadingDialog open={isLoading} closeModal={onCloseModal} />
-            <section className={`${isLoading == true ? 'hidden' : ''} flex h-[90vh] items-center justify-center mt-10`}>
+            <section className={`${isLoading == true ? 'hidden' : ''} flex items-center justify-center mt-10`}>
 
-                <div className="rounded-lg shadow dark:border md:mt-0 sm:max-w-md w-[90%] xl:p-0 text-black">
+                <div className="max-w-[400px] w-[94%] p-6 rounded shadow-sm bg-white text-black">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <div className="profile-img flex justify-center text-[80px]">
                             {imageCover == "" ? <HiOutlineUserCircle /> : <img className='w-[80px] h-[80px] rounded-[50%] object-contain' src={imageCover} />}

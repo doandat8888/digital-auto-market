@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import userService from "../services/userService";
@@ -29,40 +29,16 @@ const MyPackage = () => {
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
-
-    useEffect(() => {
-        const localToken = localStorage.getItem('token') || "";
-        setTokenUser(localToken);
-    }, [])
-
-    useEffect(() => {
-        if (tokenUser !== "") {
-            getUserInfo();
-        }
-    }, [tokenUser]);
-
-    useEffect(() => {
-        if (user) {
-            getMyPackageList();
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (token === "") {
-            navigate('/login');
-            setIsLoading(false);
-        }
-    }, [token, myPackageList]);
-
-    const getTotalPage = async () => {
+    
+    const getTotalPage = useCallback(async () => {
         await packageService.getMyPackageByPageAdmin(limit, currentPage, "").then(({ data }) => {
             if (data && data.data.length > 0) {
                 setTotal(data.total);
             }
         })
-    };
+    }, [currentPage]);
 
-    const getMyPackageList = async () => {
+    const getMyPackageList = useCallback(async () => {
         await packageService.getPackageOfCurrentUserAdmin(limit, currentPage, "").then(({ data }) => {
             if (data && data.data.length > 0) {
                 //const packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
@@ -71,9 +47,9 @@ const MyPackage = () => {
             }
             setIsLoading(false);
         })
-    };
+    }, [currentPage]);
 
-    const getMyPackageByName = async (packageName: string) => {
+    const getMyPackageByName = useCallback(async (packageName: string) => {
         await packageService.getMyPackageByNameAdmin(limit, currentPage, packageName, "").then(({ data }) => {
             if (data.data.length > 0) {
                 setMyPackageList(data.data);
@@ -83,7 +59,46 @@ const MyPackage = () => {
                 setTotalPage(0);
             }
         })
-    }
+    }, [currentPage]) 
+
+    useEffect(() => {
+        const localToken = localStorage.getItem('token') || "";
+        setTokenUser(localToken);
+    }, []);
+
+    const getUserInfo = useCallback(async () => {
+        if (token !== "") {
+            try {
+                await userService.getUser().then(({ status, data }) => {
+                    if (status === 200) {
+                        setUser(data);
+                    }
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [token]) 
+
+    useEffect(() => {
+        if (tokenUser !== "") {
+            getUserInfo();
+        }
+    }, [getUserInfo, tokenUser]);
+
+    useEffect(() => {
+        if (user) {
+            getMyPackageList();
+        }
+    }, [getMyPackageList, user]);
+
+    useEffect(() => {
+        if (token === "") {
+            navigate('/login');
+            setIsLoading(false);
+        }
+    }, [token, myPackageList, navigate]);
+
 
     const deb = _.debounce((e) => {
         getMyPackageByName(e.target.value);
@@ -104,29 +119,16 @@ const MyPackage = () => {
             getTotalPage();
             getMyPackageList();
         }
-    }, [currentPage]);
+    }, [currentPage, getMyPackageByName, getMyPackageList, getTotalPage]);
 
-    const getUserInfo = async () => {
-        if (token !== "") {
-            try {
-                await userService.getUser().then(({ status, data }) => {
-                    if (status === 200) {
-                        setUser(data);
-                    }
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     const onChangePage = (event: any, value: any) => {
         setCurrentPage(value);
     }
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
     return (
         <div>

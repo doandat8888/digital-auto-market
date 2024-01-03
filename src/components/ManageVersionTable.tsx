@@ -3,6 +3,7 @@ import { BiDownload } from "react-icons/bi";
 import NoPackage from "./NoPackage";
 import handleDate from "../utils/handleDate";
 import { CiShare1 } from "react-icons/ci";
+import { useState } from "react";
 
 interface IProps {
     versionList: IGetVersion[],
@@ -14,13 +15,14 @@ interface IProps {
 const ManageVersionTable = (props: IProps) => {
 
     const { versionList, canEdit, onUpdateVersion, onDeleteVersion } = props;
+    const [ openModalEditVersion, setOpenModalEditVersion ] = useState(false); 
 
     return (
         <div>
             {versionList ?
                 <table className="items-center mx-auto w-full border-collapse bg-white rounded shadow-lg">
                     <thead>
-                        <tr>
+                        <tr onClick={() => setOpenModalEditVersion(true)}>
                             <th className="px-2 sm:px-6 bg-blueGray-50 text-blueGray-500 align-middle border border-solid border-blueGray-100 py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left">
                                 Version
                             </th>

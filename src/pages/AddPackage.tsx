@@ -1,5 +1,5 @@
 import { PhotoIcon } from '@heroicons/react/24/solid';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { useNavigate, useParams } from "react-router";
@@ -27,7 +27,6 @@ const AddPackage = () => {
     const [packageDescription, setPackageDescription] = useState("");
     const [imageDetailList, setimageDetailList] = useState<string[]>([]);
     const [imageCover, setimageCover] = useState<string>("");
-    const [imageCoverFile, setImageCoverFile] = useState<File | null>();
     const [entryPoint, setEntryPoint] = useState<string>("");
     const [dashboardConfigStr, setDashboardConfigStr] = useState<string>("");
     //Zip file
@@ -58,6 +57,7 @@ const AddPackage = () => {
         const files = event.target.files;
         if (files) {
             const imagePromises = Array.from(files).map((file) => {
+                // eslint-disable-next-line no-async-promise-executor
                 return new Promise<string>(async (resolve) => {
                     if (file) {
                         const formData = new FormData();
@@ -80,7 +80,7 @@ const AddPackage = () => {
 
     const [user, setUser] = useState<IUser>();
 
-    const getPackageById = async () => {
+    const getPackageById = useCallback(async() => {
         if (packageId) {
             await packageService.getPackageById(packageId).then(({ data }) => {
                 if (data) {
@@ -88,15 +88,30 @@ const AddPackage = () => {
                 }
             })
         }
-    }
+    }, [packageId]);
+
+    const getUserInfo = useCallback(async() => {
+        if (token !== "") {
+            // console.log("Token header: ", token);
+            try {
+                await userService.getUser().then(({ status, data }) => {
+                    if (status === 200) {
+                        setUser(data);
+                    }
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [token]) 
 
     useEffect(() => {
         getUserInfo();
-    }, [token]);
+    }, [getUserInfo, token]);
 
     useEffect(() => {
         getPackageById();
-    }, [packageId]);
+    }, [getPackageById, packageId]);
 
 
     useEffect(() => {
@@ -108,7 +123,8 @@ const AddPackage = () => {
             setimageDetailList(packageUpdate.images);
             setMode(packageUpdate.visibility);
         }
-    }, [packageUpdate])
+    }, [packageUpdate]);
+
 
     const validateInfoPackage = (): boolean => {
         let count = 0;
@@ -130,23 +146,9 @@ const AddPackage = () => {
         } else {
             setShowBtnSave(false);
         }
-    }, [packageName, packageDescription, imageCover, imageDetailList, zipFile, category, entryPoint]);
+    }, [packageName, packageDescription, imageCover, imageDetailList, zipFile, category, entryPoint, mode]);
 
 
-    const getUserInfo = async () => {
-        if (token !== "") {
-            // console.log("Token header: ", token);
-            try {
-                await userService.getUser().then(({ status, data }) => {
-                    if (status === 200) {
-                        setUser(data);
-                    }
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     const handleInputImgCoverChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsLoadingCoverImg(true);
@@ -276,7 +278,7 @@ const AddPackage = () => {
 
     const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
         event.preventDefault();
-        const imgName = imgLink.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
+        const imgName = imgLink.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
         setimageCover("");
         try {
             await uploadService.deleteFile(imgName).then(({ status }) => {
@@ -291,7 +293,7 @@ const AddPackage = () => {
 
     const onDeleteZipFile = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        const fileDeleteName = fileZipName.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
+        const fileDeleteName = fileZipName.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
         try {
             await uploadService.deleteFile(fileDeleteName).then(({ status }) => {
                 if (status === 200) {
@@ -311,7 +313,7 @@ const AddPackage = () => {
         detailsImg.splice(index, 1);
         setimageDetailList(detailsImg);
         const imgDelete = detailsImg[index];
-        const imgDeleteName = imgDelete.replace(`${import.meta.env.VITE_APP_UPLOAD_URL}data`, "");
+        const imgDeleteName = imgDelete.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
         try {
             await uploadService.deleteFile(imgDeleteName).then(({ status }) => {
                 if (status === 200) {
@@ -323,9 +325,9 @@ const AddPackage = () => {
         }
     }
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
     const handleEditorChange: OnChange = (value, event) => {
         setDashboardConfigStr(value || '');

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import userService from "../services/userService";
 import { useDispatch } from "react-redux";
 import { addToken } from "../redux/token/tokenSlice";
@@ -43,9 +43,9 @@ const Login = () => {
         setIsLoading(false);
     }
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
     return (
         <div className="login-page text-black pt-[46px]">

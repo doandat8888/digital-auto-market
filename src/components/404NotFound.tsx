@@ -1,9 +1,13 @@
-interface IProps {}
+interface IProps {
+    imgSrc?: string,
+    content?: string
+}
 
-const NotFound = (props: IProps) => {
+const NotFound = ({imgSrc, content}: IProps) => {
     return (
-        <div className={`notfound flex items-center`}>
-            <img className="w-[20%] mx-auto my-auto" src="https://juststickers.in/wp-content/uploads/2016/12/404-error-not-found.png" alt="notfound" />
+        <div className={`notfound items-center opacity-50`}>
+            <img className="w-[12%] min-w-[100px] mx-auto mt-12 mb-4" src={imgSrc} alt="notfound" />
+            <p className="text-black text-center">{content}</p>
         </div>
     )
 }

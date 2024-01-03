@@ -5,6 +5,7 @@ import ModalConfirm from './ModalConfirm';
 import { useState } from 'react';
 import packageService from '../services/packageService';
 import { ToastContainer, toast } from 'react-toastify';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 interface IProps {
     packageItem: IGetPackage;
@@ -17,6 +18,7 @@ const PackageItem = (props: IProps) => {
 
     const { packageItem, showMode, userRole, isAdminPage } = props;
     const [openModalConfirm, setOpenModalConfirm] = useState<boolean>(false);
+    const [openModalConfirmDelete, setOpenModalConfirmDelete] = useState<boolean>(false);
     const [currentState, setCurrentState] = useState("");
 
     const changeStatus = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,6 +35,18 @@ const PackageItem = (props: IProps) => {
         }
     }
 
+    const deletePackage = async() => {
+        try {
+            const response = await packageService.removePackage(packageItem._id);
+            if (response && response.status === 200) {
+                alert("Deleted successfully!");
+                window.location.reload();
+            }
+        } catch (error: any) {
+            alert(error.response.data.msg);
+        }
+    }
+
     const handleChangeStatusPackage = (event: React.MouseEvent<HTMLButtonElement>, packageState: string) => {
         event.preventDefault();
         event.stopPropagation();
@@ -40,9 +54,20 @@ const PackageItem = (props: IProps) => {
         setCurrentState(packageState);
     }
 
+    const handleDeletePackage = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setOpenModalConfirmDelete(true);
+    }
+
     const onCloseModalConfirm = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         setOpenModalConfirm(false);
+    }
+
+    const onCloseModalConfirmDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation();
+        setOpenModalConfirmDelete(false);
     }
 
     return (
@@ -52,8 +77,9 @@ const PackageItem = (props: IProps) => {
                     "https://media.istockphoto.com/vectors/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-vector-id1128826884?k=6&m=1128826884&s=170667a&w=0&h=F6kUwTcsLXUojmGFxN2wApEKgjx63zcIshCSOmnfEFs="} alt="" />
             </div>
             <div className="right mx-4 w-[60%] sm:w-[70%] lg:w-[60%] xl:w-[70%] flex flex-col justify-between">
-                <div className="flex font-520 font-semibold">
+                <div className="flex font-520 font-semibold items-center">
                     <p className='w-[100%] sm:text-[13px] text-[12px] lg:text[13px] xl:text-[16px] truncate'><div className='w-[80%] truncate'>{packageItem.name}</div></p>
+
                 </div>
                 <div className='text-[12px] opacity-80'><p className='w-[80%] truncate'>{packageItem?.shortDesc}</p></div>
                 <div className="flex items-center">
@@ -73,31 +99,43 @@ const PackageItem = (props: IProps) => {
                     <div className="flex">
                         {packageItem.state === 'approved' ?
                             <button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleChangeStatusPackage(event, packageItem.state)}
-                                className="border-none outline-none flex justify-center mr-1 px-2 py-1 text-white items-center cursor-pointer rounded bg-red-500"><TiCancel />
+                                className="border-none outline-none flex justify-center mr-1 px-2 py-1 text-white items-center cursor-pointer rounded bg-red-400"><TiCancel />
                                 <p className="lg:block lg:ml-1 text-[10px] ">Reject</p>
                             </button>
-                            : packageItem.state === 'rejected' ? <button
-                                onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleChangeStatusPackage(event, packageItem.state)}
-                                className="border-none outline-none flex justify-center mr-2 px-2 py-1 text-white items-center cursor-pointer rounded bg-green-500"><TiTickOutline />
-                                <p className="lg:block lg:ml-1 text-[10px]">Approve
-                                </p></button>
+                            : packageItem.state === 'rejected' ?
+                                <div className="flex">
+                                    <button
+                                        onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleChangeStatusPackage(event, packageItem.state)}
+                                        className="border-none outline-none flex justify-center mr-2 px-2 py-1 text-white items-center cursor-pointer rounded bg-green-500"><TiTickOutline />
+                                        <p className="lg:block lg:ml-1 text-[10px]">Approve
+                                        </p>
+                                    </button>
+                                    <button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeletePackage(event)}
+                                        className="outline-none border-none flex justify-center mr-1 px-2 py-1 items-center cursor-pointer rounded text-white bg-red-500">
+                                        <AiOutlineDelete /><p className="lg:block lg:ml-1 text-[10px] ">Delete</p>
+                                    </button>
+                                </div>
+
                                 : <div className="flex w-full">
                                     <button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleChangeStatusPackage(event, "rejected")}
                                         className="border-none outline-none flex justify-center px-2 py-1 text-white items-center cursor-pointer rounded bg-green-500"><TiTickOutline />
                                         <p className="lg:block lg:ml-1 text-[10px]">Approve</p>
                                     </button>
                                     <button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleChangeStatusPackage(event, "approved")}
-                                        className="border-none outline-none flex justify-center px-2 ml-2 py-1 text-white items-center cursor-pointer rounded bg-red-500"><TiCancel />
+                                        className="border-none outline-none flex justify-center px-2 ml-2 py-1 text-white items-center cursor-pointer rounded bg-red-400"><TiCancel />
                                         <p className="lg:block lg:ml-1 text-[10px]">Reject</p>
                                     </button>
                                 </div>
                         }
+
                     </div>
                 }
             </div>
-            <ModalConfirm content={`Do you want to ${currentState === 'approved' ? 'reject' : 'approve'} this package?`}
+            <ModalConfirm content={`Do you want to ${currentState === 'approved' ? 'reject' : 'approve'} ${packageItem.name}?`}
                 action={changeStatus} open={openModalConfirm} handleClose={(event: React.MouseEvent<HTMLButtonElement>) => onCloseModalConfirm(event)} />
             <ToastContainer />
+            <ModalConfirm content={`Do you want to delete ${packageItem.name}?`}
+                action={deletePackage} open={openModalConfirmDelete} handleClose={(event: React.MouseEvent<HTMLButtonElement>) => onCloseModalConfirmDelete(event)} />
         </Link>
     )
 }

@@ -10,7 +10,7 @@ const instance = axios.create({
 });
 
 export const instancePublishVersion = axios.create({
-    baseURL: import.meta.env.VITE_APP_BE_STORE_URL,
+    baseURL: import.meta.env.VITE_APP_BE_STORE_URL || 'https://store-be.digitalauto.asia',
     headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,

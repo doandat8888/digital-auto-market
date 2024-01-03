@@ -18,6 +18,7 @@ function App() {
   const handleBeforeUnload = () => {
     localStorage.removeItem('name');
     localStorage.removeItem('namePackage');
+    localStorage.removeItem('nameVersion');
   };
 
   return (

@@ -1,4 +1,4 @@
-import { Fragment, useRef } from 'react'
+import { Fragment, memo, useRef } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { GiSteeringWheel } from "react-icons/gi";
 
@@ -7,12 +7,13 @@ interface IProps {
     closeModal: () => void
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 const LoadingModal = (props: IProps) => {
     const {open, closeModal} = props;
     const onCloseModal = () => {
       closeModal;
     }
-  const cancelButtonRef = useRef(null)
+  const cancelButtonRef = useRef(null);
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -43,4 +44,5 @@ const LoadingModal = (props: IProps) => {
   )
 }
 
-export default LoadingModal;
+// eslint-disable-next-line react-refresh/only-export-components
+export default memo(LoadingModal);

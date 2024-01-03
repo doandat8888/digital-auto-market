@@ -18,6 +18,7 @@ type IAddVersion = {
 
 type IUpdateVersion = {
     _id: string,
+    name: string,
     desc: string | undefined
 }
 
@@ -27,4 +28,5 @@ type IGetVersion = IVersion &{
     deploymentUrl: string,
     entryUrl: string
     __v: number,
+    package: IPackage
 }

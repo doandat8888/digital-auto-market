@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PackageList from '../components/PackageList';
 import LoadingDialog from '../components/LoadingDialog';
 import packageService from '../services/packageService';
@@ -30,28 +30,28 @@ const PackageAdmin = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
 
-    const getTotalPage = async () => {
+    const getTotalPage = useCallback(async () => {
         await packageService.getAllPackageByPageAdmin(limit, currentPage, currentStatus).then(({ data }) => {
             if (data && data.data && data.data.length > 0) {
                 setTotal(data.total);
             }
         })
-    };
+    }, [currentPage, currentStatus]);
 
-    const getAllPackage = async () => {
+    const getAllPackage = useCallback(async () => {
         await packageService.getAllPackageByPageAdmin(limit, currentPage, currentStatus).then(({ data }) => {
             if (data && data.data && data.data.length > 0) {
                 setPackageList(data.data);
                 setTotalPage(calcTotalPages(data.total, limit));
             }
         })
-    }
+    }, [currentPage, currentStatus])
 
     const onChangePage = (event: any, value: any) => {
         setCurrentPage(value);
     }
 
-    const getPackageByName = async (packageName: string) => {
+    const getPackageByName = useCallback(async (packageName: string) => {
         await packageService.getPackageByNameAdmin(limit, currentPage, packageName, currentStatus).then(({ data }) => {
             if (data && data.data && data.data.length > 0) {
                 setPackageList(data.data);
@@ -61,7 +61,7 @@ const PackageAdmin = () => {
                 setTotalPage(0);
             }
         })
-    };
+    }, [currentPage, currentStatus]);
 
     const deb = _.debounce((e) => {
         getPackageByName(e.target.value);
@@ -82,13 +82,13 @@ const PackageAdmin = () => {
             getTotalPage();
             getAllPackage();
         }
-    }, [currentPage, currentStatus]);
+    }, [currentPage, currentStatus, getAllPackage, getPackageByName, getTotalPage]);
 
     useEffect(() => {
         if (searchVal) {
             getPackageByName(searchVal);
         }
-    }, [currentPage, currentStatus])
+    }, [currentPage, currentStatus, getPackageByName, searchVal])
 
     useEffect(() => {
         if (packageList.length > 0) {
@@ -96,9 +96,9 @@ const PackageAdmin = () => {
         }
     }, [packageList]);
 
-    const onCloseModal = () => {
+    const onCloseModal = useCallback(() => {
         setIsLoading(false);
-    }
+    }, []);
 
     useEffect(() => {
         getCurrentUser();
@@ -106,7 +106,7 @@ const PackageAdmin = () => {
 
     useEffect(() => {
         getAllPackage();
-    }, [currentStatus])
+    }, [currentStatus, getAllPackage])
 
 
     const getCurrentUser = async () => {
