@@ -4,6 +4,7 @@ import userService from "../services/userService";
 import { useDispatch } from "react-redux";
 import { addToken } from "../redux/token/tokenSlice";
 import LoadingDialog from "../components/LoadingDialog";
+import isValidEmail from "../utils/validEmail";
 
 const Register = () => {
     const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ const Register = () => {
     const [passwordMatch, setPasswordMatch] = useState(false);
     const [fullName, setFullName] = useState("");
     const [agree, setAgree] = useState(false);
+    const [validEmail, setValidEmail] = useState(false);
 
     useEffect(() => {
         setShowBtnSave(email !== '' && password !== '' && passwordMatch && agree);
@@ -82,8 +84,9 @@ const Register = () => {
                                 <label className="block mb-2 text-sm font-medium">Email</label>
                                 <p className="text-red-500 ml-1">*</p>
                             </div>
-                            <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target?.value)} value={email} type="email" name="email" id="email"
+                            <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setValidEmail(isValidEmail(email)); setEmail(event.target?.value)}} value={email} type="email" name="email" id="email"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="name@company.com" required />
+                            <p className={`text-red-500 text-[12px] mt-2 ${!validEmail && email ? '' : 'hidden'}`}>Invalid email</p>
                         </div>
                         <div>
                             <div className="flex">

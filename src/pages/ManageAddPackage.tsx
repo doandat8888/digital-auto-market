@@ -29,7 +29,7 @@ const ManageAddPackage = () => {
 
     const getTotalPage = useCallback(async () => {
         await packageService.getAllPackageByPage(limit, currentPage).then(({ data }) => {
-            if (data && data.data.length > 0) {
+            if (data && data.data && data.data.length > 0) {
                 setTotal(data.total);
             }
         })
@@ -38,7 +38,7 @@ const ManageAddPackage = () => {
     const getAllPackage = useCallback(async () => {
         try {
             await packageService.getAllPackageByPage(limit, currentPage).then(({ data }) => {
-                if (data && data.data.length > 0) {
+                if (data && data.data && data.data.length > 0) {
                     setPackageList(data.data);
                     setTotalPage(calcTotalPages(data.total, limit));
                 }
@@ -50,7 +50,7 @@ const ManageAddPackage = () => {
 
     const getPackageByName = useCallback(async (packageName: string) => {
         await packageService.getPackageByName(limit, currentPage, packageName).then(({ data }) => {
-            if (data && data.data.length > 0) {
+            if (data && data.data && data.data.length > 0) {
                 setPackageList(data.data);
                 setTotalPage(calcTotalPages(data.total, limit));
             } else {

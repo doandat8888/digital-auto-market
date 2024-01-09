@@ -15,8 +15,6 @@ const limit = window.screen.height > 900 ? 12 : 8;
 const Home = () => {
 
     const [packageList, setPackageList] = useState<IGetPackage[]>([]);
-    // const [packageListByPage, setPackageListByPage] = useState<IGetPackage[]>([]);
-    // const [searchValue, setSearchValue] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [total, setTotal] = useState(0);
     //User info
@@ -85,7 +83,7 @@ const Home = () => {
         if (searchVal) {
             getPackageByName(searchVal);
         }
-    }, [currentPage, getPackageByName, searchVal])
+    }, [currentPage, getPackageByName, searchVal]);
 
     useEffect(() => {
         if (packageList.length > 0) {
@@ -115,14 +113,23 @@ const Home = () => {
                 <LoadingDialog open={isLoading} closeModal={onCloseModal} />
                 <div className="body px-6 py-4">
                     <div className="search flex justify-end mb-6 text-black border-gray">
-                        <SearchBar widthLg='30%' widthSm='100%' width='100%' placeHolder='Search package name, authors,...' onSearchHandler={onSearchHandler} />
+                        <SearchBar
+                            widthLg='30%' widthSm='100%' width='100%'
+                            placeHolder='Search package name, authors,...'
+                            onSearchHandler={onSearchHandler}
+                        />
                     </div>
                     {packageList.length > 0 ? <PackageList userRole={userRole} showMode={false} packages={packageList} />
-                        : <NotFound imgSrc='https://cdn1.iconfinder.com/data/icons/logistic-and-delivery-outline/512/package_delivery_fail_mistake_wrong_problems_logistic_shipping_box_business_cross-512.png'
-                            content={`There's no package with name "${searchVal}" found in our system`} />}
+                        : <NotFound
+                            imgSrc='https://cdn1.iconfinder.com/data/icons/logistic-and-delivery-outline/512/package_delivery_fail_mistake_wrong_problems_logistic_shipping_box_business_cross-512.png'
+                            content={`There's no package with name "${searchVal}" found in our system`}
+                        />
+                    }
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`}
-                    count={totalPage} onChange={onChangePage} />
+                <Pagination
+                    className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`}
+                    count={totalPage} onChange={onChangePage} 
+                />
             </div> : <NoPackage content="There is no packages in the system" />}
         </div>
     )

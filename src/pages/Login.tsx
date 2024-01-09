@@ -4,6 +4,7 @@ import userService from "../services/userService";
 import { useDispatch } from "react-redux";
 import { addToken } from "../redux/token/tokenSlice";
 import LoadingDialog from "../components/LoadingDialog";
+import isValidEmail from "../utils/validEmail";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -11,6 +12,7 @@ const Login = () => {
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [showBtnSave, setShowBtnSave] = useState(false);
+    const [validEmail, setValidEmail] = useState(false);
 
     useEffect(() => {
         setShowBtnSave(!!(email && password));
@@ -27,7 +29,8 @@ const Login = () => {
                         if (data.token) {
                             dispatch(addToken(data.token));
                             setIsLoading(false);
-                            window.location.href = import.meta.env.VITE_APP_URL || "https://store.digitalauto.asia/";
+                            window.location.href = import.meta.env.VITE_APP_URL 
+                            || "https://store.digitalauto.asia/";
                         } else {
                             alert("Token not found");
                         }
@@ -62,14 +65,16 @@ const Login = () => {
                                 <label className="text-red-500 ml-1">*</label>
                             </div>
                             <input
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target?.value)}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setValidEmail(isValidEmail(email)); setEmail(event.target?.value) }}
                                 value={email}
                                 type="email"
                                 name="email" id="email"
                                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg 
                                 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                                 placeholder="name@company.com"
-                                required />
+                                required 
+                            />
+                            <p className={`text-red-500 text-[12px] mt-2 ${!validEmail && email ? '' : 'hidden'}`}>Invalid email</p>
                         </div>
                         <div>
                             <div className="flex">
@@ -108,8 +113,6 @@ const Login = () => {
                 </div>
             </div>
         </div>
-
-
     )
 }
 export default Login;

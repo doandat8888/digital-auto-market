@@ -29,10 +29,10 @@ const MyPackage = () => {
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
-    
+
     const getTotalPage = useCallback(async () => {
         await packageService.getMyPackageByPageAdmin(limit, currentPage, "").then(({ data }) => {
-            if (data && data.data.length > 0) {
+            if (data && data.data && data.data.length > 0) {
                 setTotal(data.total);
             }
         })
@@ -40,7 +40,7 @@ const MyPackage = () => {
 
     const getMyPackageList = useCallback(async () => {
         await packageService.getPackageOfCurrentUserAdmin(limit, currentPage, "").then(({ data }) => {
-            if (data && data.data.length > 0) {
+            if (data && data.data && data.data.length > 0) {
                 //const packages: IGetPackage[] = response.data.data.filter((packageItem: IGetPackage) => packageItem.deleted === false);
                 setMyPackageList(data.data);
                 setTotalPage(calcTotalPages(data.total, limit));
@@ -59,7 +59,7 @@ const MyPackage = () => {
                 setTotalPage(0);
             }
         })
-    }, [currentPage]) 
+    }, [currentPage])
 
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
@@ -78,7 +78,7 @@ const MyPackage = () => {
                 console.log(error);
             }
         }
-    }, [token]) 
+    }, [token])
 
     useEffect(() => {
         if (tokenUser !== "") {
@@ -143,7 +143,11 @@ const MyPackage = () => {
                         <NoPackage content="You don't have any packages" />}
 
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
+                <Pagination 
+                    className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`}
+                    count={totalPage}
+                    onChange={onChangePage} 
+                />
             </div> : <NoPackage content="There is no packages in the system" />}
         </div>
     )

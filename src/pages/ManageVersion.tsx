@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import ManageVersionTable from "../components/ManageVersionTable";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import versionService from "../services/versionService";
 import packageService from "../services/packageService";
 import LoadingModal from "../components/LoadingDialog";

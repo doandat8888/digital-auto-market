@@ -25,7 +25,7 @@ const ManageAddVersion = () => {
     //Pagination
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPage, setTotalPage] = useState<number>(0);
-    const limit = window.screen.height > 900 ? 8 : window.screen.height > 1200 ? 8 : 4;
+    const limit = window.screen.height > 900 ? 6 : window.screen.height > 1200 ? 8 : 4;
 
     const getTotalPage = useCallback(async () => {
         await versionService.getAllVersion(limit, currentPage).then(({ data }) => {

@@ -130,15 +130,9 @@ const UpdatePackage = () => {
     }, [packageUpdate])
 
     const validateInfoPackageUpdate = (): boolean => {
-        let count = 0;
         const packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, mode, user?._id];
         for (let i = 0; i < packageInfoArr.length; i++) {
-            if (packageInfoArr[i] === "") {
-                count++;
-            }
-        }
-        if (count > 0) {
-            return false;
+            if (packageInfoArr[i] === "") return false;
         }
         return true;
     }
@@ -476,7 +470,7 @@ const UpdatePackage = () => {
                                         Dashboard config
                                     </label>
                                 </div>
-                                <Editor height="300px" defaultLanguage="javascript" defaultValue="// some comment" value={dashboardConfig} onChange={handleEditorChange} />;
+                                <Editor height="300px" defaultLanguage="javascript" defaultValue={`{\n   \n}`} value={dashboardConfig} onChange={handleEditorChange} />;
                             </div>
                         </div>
 

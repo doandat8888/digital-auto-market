@@ -93,7 +93,7 @@ const ModalEditVersion = ({ open, onCloseModal, onSaveInfoVersion, version, hand
                                         className="text-sm border-none outline-none flex justify-center mr-2 px-3 py-2 text-white items-center cursor-pointer rounded bg-green-500">
                                         <p className="lg:block hidden">Approve</p>
                                     </button>
-                                    : <div className="flex w-full justify-between">
+                                    : <div className="flex justify-between">
                                         <button onClick={() => handleChangeStatus(version?._id || '', "rejected")}
                                             className="text-sm border-none outline-none flex justify-center px-3 py-2 text-white items-center cursor-pointer rounded bg-green-500">
                                             <p className="lg:block first:hidden">Approve</p>
@@ -110,6 +110,7 @@ const ModalEditVersion = ({ open, onCloseModal, onSaveInfoVersion, version, hand
                         <div className="flex">
                             <div className="sm:w-[50%] w-[100%]">
                                 <TextInput
+                                    disabled={true}
                                     title="Name"
                                     value={versionName}
                                     handleFileTextChange={(e) => setVersionName(e.target.value)}
@@ -118,6 +119,7 @@ const ModalEditVersion = ({ open, onCloseModal, onSaveInfoVersion, version, hand
                             </div>
                             <div className="sm:w-[50%] w-[100%] ml-4">
                                 <TextInput
+                                    disabled={true}
                                     title="Package name"
                                     value={packageName}
                                     handleFileTextChange={(e) => setVersionName(e.target.value)}

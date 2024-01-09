@@ -80,7 +80,7 @@ const AddPackage = () => {
 
     const [user, setUser] = useState<IUser>();
 
-    const getPackageById = useCallback(async() => {
+    const getPackageById = useCallback(async () => {
         if (packageId) {
             await packageService.getPackageById(packageId).then(({ data }) => {
                 if (data) {
@@ -90,7 +90,7 @@ const AddPackage = () => {
         }
     }, [packageId]);
 
-    const getUserInfo = useCallback(async() => {
+    const getUserInfo = useCallback(async () => {
         if (token !== "") {
             // console.log("Token header: ", token);
             try {
@@ -103,7 +103,7 @@ const AddPackage = () => {
                 console.log(error);
             }
         }
-    }, [token]) 
+    }, [token])
 
     useEffect(() => {
         getUserInfo();
@@ -127,28 +127,21 @@ const AddPackage = () => {
 
 
     const validateInfoPackage = (): boolean => {
-        let count = 0;
         const packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, zipFile, mode, user?._id];
         for (let i = 0; i < packageInfoArr.length; i++) {
-            if (packageInfoArr[i] === "") {
-                count++;
-            }
-        }
-        if (count > 0) {
-            return false;
+            if (packageInfoArr[i] === "") return false;
         }
         return true;
     }
 
     useEffect(() => {
-        if (packageName && packageDescription && imageCover && imageDetailList.length > 0 && zipFile && mode && category && entryPoint) {
+        if (packageName && packageDescription && imageCover && 
+            imageDetailList.length > 0 && zipFile && mode && category && entryPoint) {
             setShowBtnSave(true);
         } else {
             setShowBtnSave(false);
         }
     }, [packageName, packageDescription, imageCover, imageDetailList, zipFile, category, entryPoint, mode]);
-
-
 
     const handleInputImgCoverChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsLoadingCoverImg(true);
@@ -243,6 +236,7 @@ const AddPackage = () => {
                         const responsePublishVersion = await versionService.addVersion(versionPublish);
                         if (responsePublishVersion && responsePublishVersion.status === 201) {
                             toast.success("Please wait for approve");
+                            navigate('/');
                         }
                     }
                 } catch (error: any) {
@@ -346,10 +340,11 @@ const AddPackage = () => {
                         <div className="border-b border-gray-900/10 pb-12">
                             <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-4">
                                 <div className="col-span-full sm:flex">
-                                    <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[95%] w-full'>
-                                        <TextInput title="Package name" value={packageName} placeholderStr="Enter your package name"
-                                            handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
-                                    </div>
+                                    <div className="sm:w-[50%] w-[100%]">
+                                        <div className='sm:w-[95%] w-full'>
+                                            <TextInput title="Package name" value={packageName} placeholderStr="Enter your package name"
+                                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
+                                        </div>
                                     </div>
                                     <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Short description" value={packageShortDesc}
                                         placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} />
@@ -502,7 +497,7 @@ const AddPackage = () => {
                                             Dashboard config
                                         </label>
                                     </div>
-                                    <Editor height="300px" defaultLanguage="javascript" defaultValue="// some comment" value={dashboardConfigStr} onChange={handleEditorChange} />;
+                                    <Editor height="300px" defaultLanguage="javascript" defaultValue={`{\n   \n}`} value={dashboardConfigStr} onChange={handleEditorChange} />
                                 </div>
                             </div>
                         </div>

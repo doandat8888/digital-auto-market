@@ -51,15 +51,23 @@ const ManageAddPackageTable = ({ packageList, handleChangeStatus }: IProps) => {
                                 <div className="flex">
                                     {packageItem.state === 'approved' ?
                                         <button onClick={() => handleChangeStatus(packageItem._id, packageItem.state)}
-                                            className="border-none outline-none flex justify-center mr-2 w-[50%] px-2 py-2 text-white items-center cursor-pointer rounded bg-red-500"><TiCancel /><p className="lg:block lg:ml-2 hidden">Reject</p></button>
+                                            className="border-none outline-none flex justify-center mr-2 w-[50%] px-2 py-2 text-white items-center cursor-pointer rounded bg-red-500">
+                                            <TiCancel /><p className="lg:block lg:ml-2 hidden">Reject</p>
+                                        </button>
                                         : packageItem.state === 'rejected' ?
                                             <button onClick={() => handleChangeStatus(packageItem._id, packageItem.state)}
-                                                className="border-none outline-none flex justify-center mr-2 w-[50%] px-2 py-2 text-white items-center cursor-pointer rounded bg-green-500"><TiTickOutline /><p className="lg:block lg:ml-2 hidden">Approve</p></button>
+                                                className="border-none outline-none flex justify-center mr-2 w-[50%] px-2 py-2 text-white items-center cursor-pointer rounded bg-green-500">
+                                                <TiTickOutline /><p className="lg:block lg:ml-2 hidden">Approve</p>
+                                            </button>
                                             : <div className="flex w-full justify-between">
                                                 <button onClick={() => handleChangeStatus(packageItem._id, "rejected")}
-                                                    className="border-none outline-none flex justify-center w-[50%] py-2 text-white items-center cursor-pointer rounded bg-green-500"><TiTickOutline /><p className="lg:block lg:ml-2 hidden">Approve</p></button>
+                                                    className="border-none outline-none flex justify-center w-[50%] py-2 text-white items-center cursor-pointer rounded bg-green-500">
+                                                    <TiTickOutline /><p className="lg:block lg:ml-2 hidden">Approve</p>
+                                                </button>
                                                 <button onClick={() => handleChangeStatus(packageItem._id, "approved")}
-                                                    className="border-none outline-none flex justify-center ml-2 w-[50%] py-2 text-white items-center cursor-pointer rounded bg-red-500"><TiCancel /><p className="lg:block lg:ml-2 hidden">Reject</p></button>
+                                                    className="border-none outline-none flex justify-center ml-2 w-[50%] py-2 text-white items-center cursor-pointer rounded bg-red-500">
+                                                    <TiCancel /><p className="lg:block lg:ml-2 hidden">Reject</p>
+                                                </button>
                                             </div>
                                     }
                                     <button onClick={() => navigate(`/updatepackage/${packageItem._id}`)}
