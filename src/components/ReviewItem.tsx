@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Rating } from "@mui/material";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import ReviewAction from "./ReviewAction";
-import handleDate from "../utils/handleDate";
+import convertDateTime from "../utils/convertDateTime";
 
 interface IProps {
     rating: number,
@@ -34,7 +34,7 @@ const ReviewItem = (props: IProps) => {
             setCanEdit(false);
         }
 
-    }, [createdBy, currentUser?._id]);
+    }, [createdBy, currentUser, currentUser._id]);
 
 
 
@@ -45,7 +45,7 @@ const ReviewItem = (props: IProps) => {
                     <img className="mr-2 w-[30px] h-[30px] object-cover" src={"https://th.bing.com/th/id/OIP.x3vIJdIBRpMHXgckVd9uCQAAAA?pid=ImgDet&rs=1"} alt="" />
                     <div className="">
                         <p className="text-[12px]">{createdBy.fullName}</p>
-                        <div className="text-[10px] opacity-80">{handleDate.convertToDate(createdAt)}</div>
+                        <div className="text-[10px] opacity-80">{convertDateTime(createdAt)}</div>
                     </div>
 
                 </div>

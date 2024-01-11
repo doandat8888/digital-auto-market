@@ -1,9 +1,9 @@
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import { BiDownload } from "react-icons/bi";
 import NoPackage from "./NoPackage";
-import handleDate from "../utils/handleDate";
 import { CiShare1 } from "react-icons/ci";
 import { useState } from "react";
+import convertDateTime from "../utils/convertDateTime";
 
 interface IProps {
     versionList: IGetVersion[],
@@ -49,7 +49,7 @@ const ManageVersionTable = (props: IProps) => {
                                     {version.name}
                                 </td>
                                 <td className="border-t-0 px-2 sm:px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap py-2 sm:p-4 text-left text-blueGray-700 ">
-                                    {handleDate.convertToDate(version.createdAt)}
+                                    {convertDateTime(version.createdAt)}
                                 </td>
                                 <td className="sm:flex h-full items-center hidden border-t-0 px-2 sm:px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap py-2 sm:p-4 text-left text-blueGray-700 ">
                                     <div className="w-[70%] overflow-hidden text-ellipsis">{version.desc}</div>

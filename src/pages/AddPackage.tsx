@@ -13,8 +13,8 @@ import { FaRegImages } from 'react-icons/fa';
 import versionService from '../services/versionService';
 import Editor, { OnChange } from '@monaco-editor/react';
 import { ContentEditableEvent } from 'react-contenteditable';
-import ContentEditableInput from '../components/ContentEditableInput';
 import { ToastContainer, toast } from 'react-toastify';
+import TextArea from '../components/TextArea';
 
 const AddPackage = () => {
 
@@ -355,8 +355,8 @@ const AddPackage = () => {
                                     {/* <div className="sm:w-[50%] w-[100%]"><div className="sm:w-[90%] w-full"><TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" /></div></div> */}
                                     <div className="sm:w-[50%] w-[100%]">
                                         <div className="sm:w-[95%] w-full">
-                                            <ContentEditableInput title='Description' value={packageDescription} placeholderStr='Write some sentences about your package'
-                                                handleFileTextChange={handleContentEditable} />
+                                            <TextArea title='Description' value={packageDescription} placeHolderStr='Write some sentences about your package'
+                                                handleTextAreaChange={handleContentEditable} />
                                         </div>
                                     </div>
                                     <div className="sm:w-[50%] w-[100%] flex justify-end">

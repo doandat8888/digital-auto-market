@@ -120,7 +120,7 @@ const ManageAddVersionTable = ({ versionList, handleChangeStatus }: IProps) => {
                                             </div>
                                     }
                                     <button onClick={(e) => e.stopPropagation()} className="w-[50%] border-none outline-none flex justify-center mx-2 px-2 py-2  text-white items-center cursor-pointer rounded bg-blue-600">
-                                        <a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={versionItem.deploymentUrl}> <CiShare1 />
+                                        <a target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center" href={versionItem.entryUrl}> <CiShare1 />
                                             <p className="lg:block lg:ml-2 hidden mx-2">Preview</p>
                                         </a>
                                     </button>

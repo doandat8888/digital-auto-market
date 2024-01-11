@@ -14,6 +14,7 @@ import { Editor, OnChange } from '@monaco-editor/react';
 import ContentEditableInput from '../components/ContentEditableInput';
 import { ContentEditableEvent } from 'react-contenteditable';
 import { ToastContainer, toast } from 'react-toastify';
+import TextArea from '../components/TextArea';
 
 const UpdatePackage = () => {
 
@@ -295,7 +296,7 @@ const UpdatePackage = () => {
         setDashboardConfig(value || '');
     };
 
-    const handleContentEditable = (event: ContentEditableEvent) => {
+    const handleContentEditable = (event) => {
         setPackageDescription(event.target.value);
     };
 
@@ -323,8 +324,8 @@ const UpdatePackage = () => {
                                     <div className="col-span-full sm:flex">
                                         <div className="sm:w-[50%] w-[100%]">
                                             <div className="sm:w-[95%] w-full">
-                                                <ContentEditableInput title='Description' value={packageDescription}
-                                                    placeholderStr='Write some sentences about your package' handleFileTextChange={handleContentEditable} />
+                                                <TextArea title='Description' value={packageDescription}
+                                                    placeHolderStr='Write some sentences about your package' editable={true} handleTextAreaChange={handleContentEditable} />
                                             </div>
                                         </div>
                                         <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Entry point"

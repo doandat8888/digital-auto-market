@@ -7,6 +7,7 @@ import { HiOutlineUserCircle } from "react-icons/hi";
 import { useNavigate } from 'react-router';
 import { GoPencil } from "react-icons/go";
 import uploadService from '../services/uploadService';
+import convertDateTime from '../utils/convertDateTime';
 
 const UserProfile = () => {
     const [fullName, setFullName] = useState<string>("");
@@ -55,7 +56,6 @@ const UserProfile = () => {
                 setCreatedAt(createdAtStr);
                 setEmail(data.email);
                 setimageCover(data.avt);
-
             }
         });
     }
@@ -83,7 +83,10 @@ const UserProfile = () => {
 
     return (
         <div className="user-profile py-[46px] ">
-            <LoadingDialog open={isLoading} closeModal={onCloseModal} />
+            <LoadingDialog
+                open={isLoading}
+                closeModal={onCloseModal}
+            />
             <section className={`${isLoading == true ? 'hidden' : ''} flex items-center justify-center mt-10`}>
 
                 <div className="max-w-[400px] w-[94%] p-6 rounded shadow-sm bg-white text-black">
@@ -100,18 +103,34 @@ const UserProfile = () => {
                             <input required onChange={handleInputImgCoverChange} id="user-img-upload" name="cover-img-upload" type="file" className="sr-only outline-none" value="" />
                         </label>
                         <form className="space-y-4 md:space-y-6" action="#">
-                            <TextInput handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setFullName(event.target?.value)}
-                                value={fullName} title="Full name" placeholderStr="Enter your full name" />
-                            <TextInput disabled={true} handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)} value={email} title="Email" placeholderStr="Enter your account's email" />
-                            <TextInput disabled={true} handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)}
-                                value={createdAt} title="Created at" placeholderStr="Enter your account create day" />
-                            <button disabled={showBtnSave === true ? false : true} onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onUpdateUser(event, fullName)}
-                                type="submit" className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg 
+                            <TextInput
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setFullName(event.target?.value)}
+                                value={fullName} title="Full name" placeholderStr="Enter your full name"
+                            />
+                            <TextInput
+                                disabled={true}
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)}
+                                value={email}
+                                title="Email"
+                                placeholderStr="Enter your account's email"
+                            />
+                            <TextInput
+                                disabled={true}
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)}
+                                value={convertDateTime(createdAt)} title="Created at" placeholderStr="Enter your account create day"
+                            />
+                            <button
+                                disabled={showBtnSave === true ? false : true}
+                                onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onUpdateUser(event, fullName)}
+                                type="submit"
+                                className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg 
                                 text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}
                             >
                                 Save
                             </button>
-                            <button disabled={showBtnSave === true ? false : true} onClick={() => navigate('/')}
+                            <button
+                                disabled={showBtnSave === true ? false : true}
+                                onClick={() => navigate('/')}
                                 type="submit" className={`w-full text-white bg-gray-400 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg 
                                 text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}
                             >

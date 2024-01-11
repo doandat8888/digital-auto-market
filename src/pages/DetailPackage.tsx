@@ -484,7 +484,7 @@ const DetailPackage = () => {
                                 <div className="my-4 flex">
                                     <div className="description text-black select-none">
                                         <p className="text-xl font-bold">Description</p>
-                                        <div dangerouslySetInnerHTML={{ __html: packageDetail.fullDesc }}></div>
+                                        <div className="whitespace-pre-line">{packageDetail.fullDesc}</div>
                                     </div>
                                 </div>
                                 <Slideshow slideImages={packageDetail?.images} />

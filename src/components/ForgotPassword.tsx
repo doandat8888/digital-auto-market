@@ -12,11 +12,7 @@ const ForgotPassword = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (email) {
-            setShowBtnSave(true);
-        } else {
-            setShowBtnSave(false);
-        }
+        setShowBtnSave(email !== '');
     }, [email]);
 
     const onResetPassword = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, email: string) => {
