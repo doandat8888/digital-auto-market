@@ -27,14 +27,14 @@ const ReviewItem = (props: IProps) => {
 
     useEffect(() => {
         if (currentUser) {
-            if (currentUser._id === createdBy._id) {
+            if (currentUser?._id === createdBy?._id) {
                 setCanEdit(true);
             }
         } else {
             setCanEdit(false);
         }
 
-    }, [createdBy, currentUser, currentUser._id]);
+    }, [createdBy, currentUser, currentUser?._id]);
 
 
 

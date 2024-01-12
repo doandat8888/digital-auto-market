@@ -61,7 +61,6 @@ const Home = () => {
     const deb = _.debounce((e) => {
         getPackageByName(e.target.value);
         setCurrentPage(1);
-        localStorage.setItem('name', e.target.value);
     }, 1000
     );
 

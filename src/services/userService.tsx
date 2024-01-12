@@ -40,6 +40,13 @@ const changeProfile = (fullName: string, imageCover: string) => {
     })
 }
 
+const changePassword = (oldPassword: string, newPassword: string) => {
+    return axios.put('/user/change-password', {
+        oldPassword,
+        newPassword
+    })
+}
+
 export default {
     login,
     getUser,
@@ -47,5 +54,6 @@ export default {
     getUserById,
     getCurrentUser,
     resetPassword,
-    changeProfile
+    changeProfile,
+    changePassword
 }

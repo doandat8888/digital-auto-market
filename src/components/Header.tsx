@@ -90,7 +90,7 @@ const Header = () => {
             <div className="h-12 px-2 border-b-2 flex items-center lg:text-lg sm:text-sm text-base ">
                 <Link to={"/"} className="lg:text-2xl sm:text-sm text-base justify-start font-bold cursor-pointer select-none 
                 bg-gradient-to-r from-[#005072] to-[#a2b039] bg-clip-text text-transparent " >
-                    digital store
+                    digital marketplace
                 </Link>
                 <div className="flex items-center mx-4 h-full">
                     {pageList && pageList.length > 0 && pageList.map((page: IPage, index: number) => (

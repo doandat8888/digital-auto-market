@@ -95,24 +95,24 @@ const ManageAddVersionTable = ({ versionList, handleChangeStatus }: IProps) => {
                             <td className="border-t-0 px-2 sm:px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap sm:p-4 py-2">
                                 <div className="flex">
                                     {versionItem.state === 'approved' ?
-                                        <button onClick={(e) => { e.stopPropagation(), handleChangeStatus(versionItem._id, versionItem.state) }}
+                                        <button onClick={(e) => { e.stopPropagation(), handleChangeStatus(versionItem?._id, versionItem.state) }}
                                             className="border-none outline-none flex justify-center mr-2 w-[50%] px-2 py-2 text-white items-center cursor-pointer rounded bg-red-500">
                                             <TiCancel />
                                             <p className="lg:block lg:ml-2 hidden">Reject</p>
                                         </button>
                                         : versionItem.state === 'rejected' ?
-                                            <button onClick={(e) => { e.stopPropagation(), handleChangeStatus(versionItem._id, versionItem.state) }}
+                                            <button onClick={(e) => { e.stopPropagation(), handleChangeStatus(versionItem?._id, versionItem.state) }}
                                                 className="border-none outline-none flex justify-center mr-2 w-[50%] px-2 py-2 text-white items-center cursor-pointer rounded bg-green-500">
                                                 <TiTickOutline />
                                                 <p className="lg:block lg:ml-2 hidden">Approve</p>
                                             </button>
                                             : <div className="flex w-full justify-between">
-                                                <button onClick={(e) => { e.stopPropagation(), handleChangeStatus(versionItem._id, "rejected") }}
+                                                <button onClick={(e) => { e.stopPropagation(), handleChangeStatus(versionItem?._id, "rejected") }}
                                                     className="border-none outline-none flex justify-center w-[50%] py-2 text-white items-center cursor-pointer rounded bg-green-500">
                                                     <TiTickOutline />
                                                     <p className="lg:block lg:ml-2 hidden">Approve</p>
                                                 </button>
-                                                <button onClick={(e) => { e.stopPropagation(); handleChangeStatus(versionItem._id, "approved") }}
+                                                <button onClick={(e) => { e.stopPropagation(); handleChangeStatus(versionItem?._id, "approved") }}
                                                     className="border-none outline-none flex justify-center ml-2 w-[50%] py-2 text-white items-center cursor-pointer rounded bg-red-500">
                                                     <TiCancel />
                                                     <p className="lg:block lg:ml-2 hidden">Reject</p>

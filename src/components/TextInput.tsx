@@ -3,10 +3,11 @@ interface IProps {
     value: string,
     handleFileTextChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     placeholderStr: string,
-    disabled?: boolean | undefined
+    disabled?: boolean | undefined,
+    type?: string
 }
 
-const TextInput = ({title, value, handleFileTextChange, placeholderStr, disabled}: IProps) => {
+const TextInput = ({title, value, handleFileTextChange, placeholderStr, disabled, type}: IProps) => {
     return (
         <div className="sm:col-span-4 my-4">
             <div className="flex">
@@ -20,7 +21,7 @@ const TextInput = ({title, value, handleFileTextChange, placeholderStr, disabled
                     <input
                         maxLength={380}
                         required
-                        type="text"
+                        type={type ? type : 'text'}
                         className="text-[12px] block flex-1 border-0 bg-transparent py-1.5 px-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                         placeholder={placeholderStr}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleFileTextChange(event)}

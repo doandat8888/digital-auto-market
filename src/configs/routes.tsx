@@ -14,6 +14,7 @@ import UserProfile from '../components/UserProfile.tsx';
 import ManageAddPackage from '../pages/ManageAddPackage.tsx';
 import PackageAdmin from '../pages/PackageAdmin.tsx';
 import ManageAddVersion from '../pages/ManageAddVersion.tsx';
+import ChangePassword from '../components/ChangePassword.tsx';
 
 
 const RoutesApp = () => {
@@ -40,6 +41,7 @@ const RoutesApp = () => {
             <Route path='/managepackage' element={<ManageAddPackage />}/>
             <Route path='/packageadmin' element={<PackageAdmin />}/>
             <Route path='/manageversion' element={<ManageAddVersion />}/>
+            <Route path='/change-password' element={<ChangePassword />}/>
         </Routes>
     )
 }

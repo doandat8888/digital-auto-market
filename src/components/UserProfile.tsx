@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { GoPencil } from "react-icons/go";
 import uploadService from '../services/uploadService';
 import convertDateTime from '../utils/convertDateTime';
+import { Link } from 'react-router-dom';
 
 const UserProfile = () => {
     const [fullName, setFullName] = useState<string>("");
@@ -119,6 +120,7 @@ const UserProfile = () => {
                                 handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setCreatedAt(event.target?.value)}
                                 value={convertDateTime(createdAt)} title="Created at" placeholderStr="Enter your account create day"
                             />
+                            <div className="flex justify-end text-sm"><Link to={'/change-password'}>Change password</Link></div>
                             <button
                                 disabled={showBtnSave === true ? false : true}
                                 onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onUpdateUser(event, fullName)}
@@ -128,6 +130,7 @@ const UserProfile = () => {
                             >
                                 Save
                             </button>
+                            
                             <button
                                 disabled={showBtnSave === true ? false : true}
                                 onClick={() => navigate('/')}

@@ -127,7 +127,7 @@ const DetailPackage = () => {
         } catch (error: any) {
             if (error.response.status === 403) {
                 dispatch(removeToken());
-                navigate(`/package/${packageDetail?._id}`)
+                // navigate(`/package/${packageDetail?._id}`)
             }
         }
     }
@@ -140,7 +140,7 @@ const DetailPackage = () => {
 
     const checkPackage = () => {
         if (user && packageDetail) {
-            const canEdit = packageDetail && packageDetail.createdBy._id === user._id || user.role === "admin" ? true : false;
+            const canEdit = packageDetail && packageDetail.createdBy?._id === user?._id || user.role === "admin" ? true : false;
             setCanEdit(canEdit);
         }
     }
@@ -161,7 +161,7 @@ const DetailPackage = () => {
             const params = new URLSearchParams(url.search);
             if (version) {
                 params.set("version", version.name);
-                params.set("versionId", version._id);
+                params.set("versionId", version?._id);
             }
             url.search = params.toString();
             window.location.href = url.href
@@ -170,7 +170,7 @@ const DetailPackage = () => {
 
     const findVersionById = (versionId: string) => {
         if (packageDetail && packageDetail.versions) {
-            const version: IGetVersion | undefined = packageDetail.versions.find((version) => version._id === versionId);
+            const version: IGetVersion | undefined = packageDetail.versions.find((version) => version?._id === versionId);
             setCurrentVersion(version);
         }
     }
@@ -182,7 +182,7 @@ const DetailPackage = () => {
     const getReviewByPackageId = async () => {
         if (packageDetail) {
             try {
-                await reviewService.getReviewByPackageIdPaginate(packageDetail._id, limit, currentPage).then(({ data }) => {
+                await reviewService.getReviewByPackageIdPaginate(packageDetail?._id, limit, currentPage).then(({ data }) => {
                     if (data && data.data) {
                         if (data.data.length > 0) {
                             setIsLoadingReview(false);
@@ -210,7 +210,7 @@ const DetailPackage = () => {
 
     const getTotalReview = async () => {
         if (packageDetail) {
-            await reviewService.getReviewByPackageId(packageDetail._id).then(({ data }) => {
+            await reviewService.getReviewByPackageId(packageDetail?._id).then(({ data }) => {
                 if (data && data.data && data.data.length > 0) {
                     setTotalReview(data.data.length);
                     let totalPagesReview = 0;
@@ -349,7 +349,7 @@ const DetailPackage = () => {
     const changeStatus = async () => {
         try {
             if (packageDetail) {
-                await packageService.changeStatus(packageDetail._id, currentStatus !== "" ? currentStatus : packageDetail.state).then(({ data, status }) => {
+                await packageService.changeStatus(packageDetail?._id, currentStatus !== "" ? currentStatus : packageDetail.state).then(({ data, status }) => {
                     if (status === 200) {
                         setOpenModalConfirmChangeStatus(false);
                         toast.success(data.msg);
@@ -374,7 +374,7 @@ const DetailPackage = () => {
                     <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                         <div className="w-full h-full flex items-center justify-center">
                             <div className="sm:w-[80%] lg:w-[80%] xl:w-[70%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
-                                <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
+                                <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[260px]">
                                     <div className="sm:w-[20%] flex aspect-square w-[30%] min-w-[120px]">
                                         <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt=""
                                             className="min-w-[100px] h-[50%] sm:h-[100%] rounded-lg object-contain aspect-square" />
@@ -529,7 +529,7 @@ const DetailPackage = () => {
                                     openModalLoading={() => setIsLoading(true)}
                                     onCloseModalLoading={() => setIsLoading(false)}
                                     isLoading={isLoading} reviewUpdate={reviewUpdate}
-                                    refreshData={onRefreshData} packageId={packageDetail._id}
+                                    refreshData={onRefreshData} packageId={packageDetail?._id}
                                     createdBy={packageDetail.createdBy} versionId={currentVersion ? currentVersion._id : ''}
                                     open={openModalCommentRating}
                                     onCloseModal={onCloseModal}
