@@ -1,5 +1,5 @@
 interface IProps {
-    listCategory: ICategory[];
+    listCategory: ICategory[],
     handleChangeCategory: (value: string) => void,
 }
 

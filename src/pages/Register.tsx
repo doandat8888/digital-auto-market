@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { addToken } from "../redux/token/tokenSlice";
 import LoadingDialog from "../components/LoadingDialog";
 import isValidEmail from "../utils/validEmail";
+import TextInput from "../components/TextInput";
+import CustomButton from "../components/CustomButton";
 
 const Register = () => {
     const [email, setEmail] = useState("");
@@ -22,7 +24,7 @@ const Register = () => {
         setShowBtnSave(email !== '' && password !== '' && passwordMatch && agree);
     }, [email, password, passwordMatch, agree]);
 
-    const onLogin = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, email: string, password: string) => {
+    const handleRegister = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, email: string, password: string) => {
         event.preventDefault();
         setIsLoading(true);
         if (email && password) {
@@ -35,7 +37,7 @@ const Register = () => {
                                     if (data.token) {
                                         dispatch(addToken(data.token));
                                         setIsLoading(false);
-                                        window.location.href = import.meta.env.VITE_APP_URL || "https://store.digitalauto.asia/";
+                                        window.location.href = '/' || "https://store.digitalauto.asia/";
                                     } else {
                                         alert("Token not found");
                                     }
@@ -80,44 +82,52 @@ const Register = () => {
                     </h1>
                     <form className="space-y-4 md:space-y-6 mt-4" action="#">
                         <div>
-                            <div className="flex">
-                                <label className="block mb-2 text-sm font-medium">Email</label>
-                                <p className="text-red-500 ml-1">*</p>
-                            </div>
-                            <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setValidEmail(isValidEmail(email)); setEmail(event.target?.value)}} value={email} type="email" name="email" id="email"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="name@company.com" required />
+                            <TextInput
+                                value={email} type="email"
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => { setValidEmail(isValidEmail(email)); setEmail(event.target?.value) }}
+                                placeholderStr="Enter your email"
+                                title="Email"
+                            />
                             <p className={`text-red-500 text-[12px] mt-2 ${!validEmail && email ? '' : 'hidden'}`}>Invalid email</p>
                         </div>
                         <div>
-                            <div className="flex">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Full name</label>
-                            </div>
-                            <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setFullName(event.target?.value)} value={fullName} type="text" name="fullName" id="fullName"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Your full name" required />
+                            <TextInput
+                                value={fullName}
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => { setFullName(event.target.value) }}
+                                placeholderStr="Enter your full name"
+                                title="Full name"
+                                required={false}
+                            />
                         </div>
                         <div>
-                            <div className="flex">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                                <p className="text-red-500 ml-1">*</p>
-                            </div>
-                            <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target?.value)} value={password} type="password" name="password" id="password" placeholder="••••••••"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required />
+                            <TextInput
+                                value={password}
+                                type="password"
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => { setPassword(event.target.value) }}
+                                placeholderStr="Enter password"
+                                title="Password"
+                            />
                         </div>
                         <div>
-                            <div className="flex">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Confirm password</label>
-                                <p className="text-red-500 ml-1">*</p>
-                            </div>
-                            <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => onRetypePassword(event.target.value)} value={passwordRetype} type="password" name="password" id="password" placeholder="••••••••"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" required />
+                            <TextInput
+                                title="Confirm password"
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => onRetypePassword(event.target.value)}
+                                placeholderStr="Retype your password"
+                                value={passwordRetype}
+                                type="password"
+                            />
                             <p className={`text-red-500 text-[12px] mt-2 ${!passwordMatch && passwordRetype ? '' : 'hidden'}`}>Password does not match</p>
                         </div>
                         <div className="flex">
                             <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
                             <p className="ml-2 text-sm">I agree to the <a href="#">Terms and Conditions</a></p>
                         </div>
-                        <button disabled={showBtnSave === true ? false : true} onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onLogin(event, email, password)} type="submit"
-                            className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50`}>Sign up</button>
+                        <CustomButton
+                            type="submit"
+                            title="Sign up"
+                            disabled={showBtnSave === true ? false : true}
+                            onClickBtn={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleRegister(event, email, password)}
+                        />
                         <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                             Already had an account? <Link to={'/login'} className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign in</Link>
                         </p>

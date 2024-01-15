@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { addToken } from "../redux/token/tokenSlice";
 import LoadingDialog from "../components/LoadingDialog";
 import isValidEmail from "../utils/validEmail";
+import TextInput from "../components/TextInput";
+import CustomButton from "../components/CustomButton";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -29,8 +31,8 @@ const Login = () => {
                         if (data.token) {
                             dispatch(addToken(data.token));
                             setIsLoading(false);
-                            window.location.href = import.meta.env.VITE_APP_URL 
-                            || "https://store.digitalauto.asia/";
+                            window.location.href = '/'
+                                || "https://store.digitalauto.asia/";
                         } else {
                             alert("Token not found");
                         }
@@ -60,43 +62,29 @@ const Login = () => {
                     </h1>
                     <form className="space-y-4 md:space-y-6 mt-6" action="#">
                         <div>
-                            <div className="flex">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                                <label className="text-red-500 ml-1">*</label>
-                            </div>
-                            <input
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setValidEmail(isValidEmail(email)); setEmail(event.target?.value) }}
-                                value={email}
-                                type="email"
-                                name="email" id="email"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg 
-                                focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                                placeholder="name@company.com"
-                                required 
+                            <TextInput
+                                value={email} type="email"
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => { setValidEmail(isValidEmail(email)); setEmail(event.target?.value) }}
+                                placeholderStr="Enter your email"
+                                title="Email"
                             />
                             <p className={`text-red-500 text-[12px] mt-2 ${!validEmail && email ? '' : 'hidden'}`}>Invalid email</p>
                         </div>
                         <div>
-                            <div className="flex">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                                <label className="text-red-500 ml-1">*</label>
-                            </div>
-                            <input onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target?.value)}
-                                value={password} type="password" name="password" id="password"
-                                placeholder="••••••••"
-                                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg 
-                                        focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                                required />
+                            <TextInput
+                                value={password}
+                                type="password"
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => { setPassword(event.target.value) }}
+                                placeholderStr="Enter password"
+                                title="Password"
+                            />
                         </div>
-
-                        <button disabled={showBtnSave === true ? false : true}
-                            onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onLogin(event, email, password)}
+                        <CustomButton
                             type="submit"
-                            className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 
-                            focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center 
-                            dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}>
-                            Sign in</button>
-
+                            title="Sign in"
+                            disabled={showBtnSave === true ? false : true}
+                            onClickBtn={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onLogin(event, email, password)}
+                        />
                         <div className="flex justify-between">
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                 Don't have an account yet?

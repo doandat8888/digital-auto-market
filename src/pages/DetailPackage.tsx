@@ -114,7 +114,7 @@ const DetailPackage = () => {
     useEffect(() => {
         getPackageInfo();
         findVersionById(versionIdParam ? versionIdParam : '');
-    }, [user, id, versionIdParam, isLike, downloads]);
+    }, [user, id, isLike, downloads]);
 
 
     const getUserInfo = async () => {
@@ -374,7 +374,7 @@ const DetailPackage = () => {
                     <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                         <div className="w-full h-full flex items-center justify-center">
                             <div className="sm:w-[80%] lg:w-[80%] xl:w-[70%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
-                                <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[260px]">
+                                <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
                                     <div className="sm:w-[20%] flex aspect-square w-[30%] min-w-[120px]">
                                         <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt=""
                                             className="min-w-[100px] h-[50%] sm:h-[100%] rounded-lg object-contain aspect-square" />
@@ -452,7 +452,7 @@ const DetailPackage = () => {
                                                 {packageDetail?.version?.downloadUrl &&
                                                     <button onClick={onDownLoadPackage} className="w-full mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                                     px-4 py-2 rounded-lg items-center justify-center">
-                                                        <a className="w-full flex items-center justify-center" href={!user ? import.meta.env.VITE_APP_URL + 'login' || "https://store-be.digitalauto.asia/login" : currentVersion?.downloadUrl}>
+                                                        <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.downloadUrl}>
                                                             <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2 select-none">Download</p> <BsDownload />
                                                         </a>
                                                     </button>
@@ -463,7 +463,7 @@ const DetailPackage = () => {
                                                     <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black select-none-500 border border-black
                                                     px-6 py-2 rounded-lg items-center justify-center">
                                                         <a target="_blank" rel="noopener noreferrer" className="w-full text-black select-none flex items-center justify-center"
-                                                            href={!user ? import.meta.env.VITE_APP_URL + 'login' || "https://store-be.digitalauto.asia/login" : currentVersion?.entryUrl}>
+                                                            href={!user ?  '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.entryUrl}>
                                                             <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2">Preview</p> <CiShare1 />
                                                         </a>
                                                     </button>
@@ -492,8 +492,8 @@ const DetailPackage = () => {
                                     <div className="flex mb-2">
                                         <p className="text-xl font-bold text-black select-none">Dashboard config</p>
                                     </div>
-                                    <div className="h-[180px] overflow-hidden">
-                                        <Editor height="100%" options={{ readOnly: true }} defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig} />
+                                    <div className="h-[200px] overflow-hidden">
+                                        <Editor className="overflow-hidden" height="100%" options={{ readOnly: true, minimap: {enabled: false} }} defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig} />
                                     </div>
 
                                 </div>

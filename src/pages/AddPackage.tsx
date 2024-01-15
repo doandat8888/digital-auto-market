@@ -44,7 +44,6 @@ const AddPackage = () => {
     const params = useParams();
     //Update package
     const { packageId } = params;
-    const [packageUpdate, setPackageUpdate] = useState<IGetPackage | undefined>();
     //Show btn save
     const [showBtnSave, setShowBtnSave] = useState(false);
     //Loading
@@ -80,16 +79,6 @@ const AddPackage = () => {
 
     const [user, setUser] = useState<IUser>();
 
-    const getPackageById = useCallback(async () => {
-        if (packageId) {
-            await packageService.getPackageById(packageId).then(({ data }) => {
-                if (data) {
-                    setPackageUpdate(data);
-                }
-            })
-        }
-    }, [packageId]);
-
     const getUserInfo = useCallback(async () => {
         if (token !== "") {
             // console.log("Token header: ", token);
@@ -108,22 +97,6 @@ const AddPackage = () => {
     useEffect(() => {
         getUserInfo();
     }, [getUserInfo, token]);
-
-    useEffect(() => {
-        getPackageById();
-    }, [getPackageById, packageId]);
-
-
-    useEffect(() => {
-        if (packageUpdate) {
-            setPackageName(packageUpdate.name);
-            setPackageShortDesc(packageUpdate.shortDesc);
-            setPackageDescription(packageUpdate.fullDesc);
-            setimageCover(packageUpdate.thumbnail);
-            setimageDetailList(packageUpdate.images);
-            setMode(packageUpdate.visibility);
-        }
-    }, [packageUpdate]);
 
 
     const validateInfoPackage = (): boolean => {
@@ -190,10 +163,6 @@ const AddPackage = () => {
     const onChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMode(event.target?.value);
     }
-
-    // const navigateToDetail = (packageId: string) => {
-    //     navigate(`/package/${packageId}`);
-    // }
 
     const onSaveInfoPackage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
@@ -489,7 +458,7 @@ const AddPackage = () => {
                                     ))}
                                 </div>
 
-                                {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
+                                <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />
                                 {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
                                 <div className="col-span-full">
                                     <div className="flex mb-2">

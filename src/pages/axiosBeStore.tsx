@@ -5,7 +5,7 @@ import axios from 'axios';
 const token = localStorage.getItem("token") || "https://store-be.digitalauto.asia/";
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_APP_BE_STORE_URL,
+    baseURL: import.meta.env.VITE_APP_BE_STORE_URL || 'https://store-be.digitalauto.asia',
     headers: {
         'Content-Type': 'application/json;',
         'Authorization': `Bearer ${token}`

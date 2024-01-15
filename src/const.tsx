@@ -16,6 +16,11 @@ const pageList: IPage[] = [
     },
     {
         id: 4,
+        name: 'GenAI',
+        path: '/packagetype/genai'
+    },
+    {
+        id: 5,
         name: 'Vehicle app',
         path: '/packagetype/vehicalapp'
     }
@@ -31,6 +36,11 @@ const categoryFake: ICategory[] = [
         id: "2",
         name: "vehicalapp",
         textShow: "Vehicle app"
+    },
+    {
+        id: "3",
+        name: "genai",
+        textShow: "GenAI"
     },
 ]
 
