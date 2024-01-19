@@ -11,8 +11,6 @@ import CategorySelectUpdate from '../components/CategorySelectUpdate';
 import _const from '../const';
 import { FaRegImages } from 'react-icons/fa';
 import { Editor, OnChange } from '@monaco-editor/react';
-import ContentEditableInput from '../components/ContentEditableInput';
-import { ContentEditableEvent } from 'react-contenteditable';
 import { ToastContainer, toast } from 'react-toastify';
 import TextArea from '../components/TextArea';
 
@@ -52,6 +50,7 @@ const UpdatePackage = () => {
     const [isLoadingCoverImg, setIsLoadingCoverImg] = useState(false);
     const [isLoadingDetailImgs, setIsLoadingDetailImgs] = useState(false);
     const [isLoadingZipFile, setIsLoadingZipFile] = useState(false);
+    const [linkSourceCode, setLinkSourceCode] = useState('');
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsLoadingDetailImgs(true);
@@ -89,8 +88,8 @@ const UpdatePackage = () => {
                 }
             })
         }
-    }, [packageId]) 
-    
+    }, [packageId])
+
     const getUserInfo = useCallback(async () => {
         if (token !== "") {
             try {
@@ -103,7 +102,7 @@ const UpdatePackage = () => {
                 console.log(error);
             }
         }
-    }, [token]) 
+    }, [token])
 
     useEffect(() => {
         getUserInfo();
@@ -112,8 +111,8 @@ const UpdatePackage = () => {
     useEffect(() => {
         getPackageById();
     }, [getPackageById, packageId]);
-    
-    
+
+
 
     useEffect(() => {
         if (packageUpdate) {
@@ -126,6 +125,7 @@ const UpdatePackage = () => {
             setEntryPoint(packageUpdate.entryPoint);
             setDashboardConfig(packageUpdate.dashboardConfig);
             setMode(packageUpdate.visibility);
+            setLinkSourceCode(packageUpdate.source);
             setIsLoading(false);
         }
     }, [packageUpdate])
@@ -214,7 +214,8 @@ const UpdatePackage = () => {
                         deploymentUrl: deploymentUrl,
                         category: category,
                         entryPoint: entryPoint,
-                        dashboardConfig
+                        dashboardConfig,
+                        source: linkSourceCode
                     };
                     try {
                         await packageService.updatePackage(packageObj, packageUpdate._id).then(async ({ status }) => {
@@ -296,7 +297,7 @@ const UpdatePackage = () => {
         setDashboardConfig(value || '');
     };
 
-    const handleContentEditable = (event) => {
+    const handleContentEditable = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setPackageDescription(event.target.value);
     };
 
@@ -464,6 +465,15 @@ const UpdatePackage = () => {
                                         handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
                                     {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
                                 </div>
+                            </div>
+                            <div className="col-span-full">
+                                <TextInput
+                                    required={false}
+                                    title='Link source code'
+                                    placeholderStr='Enter your source code link'
+                                    value={linkSourceCode}
+                                    handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setLinkSourceCode(event.target.value)}
+                                />
                             </div>
                             <div className="col-span-full">
                                 <div className="flex mb-2">

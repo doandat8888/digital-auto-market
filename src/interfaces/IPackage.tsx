@@ -8,7 +8,8 @@ type IPackage = {
     license: string,
     visibility: string,
     authors: IAuthor[], 
-    entryPoint: string
+    entryPoint: string,
+    source?: string
 }
 
 type IMyPackage = IListPackage & {
@@ -20,7 +21,7 @@ type IAddPackage = IPackage &  {
     // deploymentUrl: string | undefined,
     category: string | undefined,
     dashboardConfig: string | undefined,
-    status: string
+    status: string,
 }
 
 type IGetPackage = IPackage & {

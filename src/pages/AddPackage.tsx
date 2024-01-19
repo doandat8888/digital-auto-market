@@ -1,4 +1,3 @@
-import { PhotoIcon } from '@heroicons/react/24/solid';
 import React, { useCallback, useEffect, useState } from 'react';
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
@@ -9,12 +8,13 @@ import UploadFile from "../components/UploadFile";
 import TextInput from '../components/TextInput';
 import CategorySelect from '../components/CategorySelect';
 import _const from '../const';
-import { FaRegImages } from 'react-icons/fa';
 import versionService from '../services/versionService';
 import Editor, { OnChange } from '@monaco-editor/react';
 import { ContentEditableEvent } from 'react-contenteditable';
 import { ToastContainer, toast } from 'react-toastify';
 import TextArea from '../components/TextArea';
+import UploadImage from '../components/UploadImage';
+import CustomButton from '../components/CustomButton';
 
 const AddPackage = () => {
 
@@ -43,13 +43,13 @@ const AddPackage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const params = useParams();
     //Update package
-    const { packageId } = params;
     //Show btn save
     const [showBtnSave, setShowBtnSave] = useState(false);
     //Loading
     const [isLoadingCoverImg, setIsLoadingCoverImg] = useState(false);
     const [isLoadingDetailImgs, setIsLoadingDetailImgs] = useState(false);
     const [isLoadingZipFile, setIsLoadingZipFile] = useState(false);
+    const [linkSourceCode, setLinkSourceCode] = useState('');
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsLoadingDetailImgs(true);
@@ -108,7 +108,7 @@ const AddPackage = () => {
     }
 
     useEffect(() => {
-        if (packageName && packageDescription && imageCover && 
+        if (packageName && packageDescription && imageCover &&
             imageDetailList.length > 0 && zipFile && mode && category && entryPoint) {
             setShowBtnSave(true);
         } else {
@@ -191,6 +191,7 @@ const AddPackage = () => {
                     // deploymentUrl: deploymentUrl,
                     category: category,
                     entryPoint: entryPoint,
+                    source: linkSourceCode,
                     status: 'wait-for-approve'
                 };
                 try {
@@ -220,24 +221,6 @@ const AddPackage = () => {
             setIsLoading(false);
         }
     }
-
-    const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-    }
-
-    const handleImgCoverDrop = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        const file = event.dataTransfer.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const base64String = e.target?.result as string;
-                setimageCover(base64String);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
 
     const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, imgLink: string) => {
         event.preventDefault();
@@ -384,23 +367,7 @@ const AddPackage = () => {
                                         </label>
                                         <span className="required text-red-500 ml-1">*</span>
                                     </div>
-                                    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                                        <div className="text-center">
-                                            <PhotoIcon className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
-                                            <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600 text-center" onDrop={handleImgCoverDrop} onDragOver={handleDrag}>
-                                                <label
-                                                    htmlFor="cover-img-upload"
-                                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 
-                                                    focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                                >
-                                                    <span>Upload image</span>
-                                                    <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only" value="" />
-                                                </label>
-                                                {/* <p className="pl-1">or drag and drop</p> */}
-                                            </div>
-                                            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 2MB</p>
-                                        </div>
-                                    </div>
+                                    <UploadImage onUploadImgAreaChange={handleInputImgCoverChange}/>
                                     {isLoadingCoverImg == true ? <p className="text-black">Loading...</p> : ''}
                                     {imageCover && (
                                         <div className="image-container sm:w-1/2 sm:mx-auto w-full relative my-4">
@@ -423,23 +390,7 @@ const AddPackage = () => {
                                         </label>
                                         <span className="required text-red-500 ml-1">*</span>
                                     </div>
-                                    <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                                        <div className="text-center">
-                                            <FaRegImages className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
-                                            <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
-                                                <label
-                                                    htmlFor="detail-imgs-upload"
-                                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 
-                                                    focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                                >
-                                                    <span>Upload images</span>
-                                                    <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file" className="sr-only" onDrag={handleDrag} value="" />
-                                                </label>
-                                                {/* <p className="pl-1">or drag and drop</p> */}
-                                            </div>
-                                            <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
-                                        </div>
-                                    </div>
+                                    <UploadImage multiple={true} onUploadImgAreaChange={handleInputImgDetailChange}/>
                                 </div>
                                 {isLoadingDetailImgs == true ? <p className="text-black">Loading...</p> : ''}
                                 <div className="my-4 images-container sm:grid sm:grid-cols-2 lg:grid-cols-3 col-span-full sm:justify-between">
@@ -461,6 +412,15 @@ const AddPackage = () => {
                                 <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />
                                 {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
                                 <div className="col-span-full">
+                                    <TextInput
+                                        required={false}
+                                        title='Link source code'
+                                        placeholderStr='Enter your source code link'
+                                        value={linkSourceCode}
+                                        handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setLinkSourceCode(event.target.value)}
+                                    />
+                                </div>
+                                <div className="col-span-full">
                                     <div className="flex mb-2">
                                         <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">
                                             Dashboard config
@@ -473,22 +433,16 @@ const AddPackage = () => {
                     </div>
                     <div className="mt-6 flex items-center justify-end gap-x-6">
                         <div className="flex justify-between">
-                            <button
-                                className={`disabled:opacity-50 rounded-md bg-gray-400 px-3 mr-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500 
-                                focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600`}
-                                onClick={() => navigate('/')}
-                            >
-                                Cancel
-                            </button>
-                            <button
+                            <CustomButton 
+                                title='Cancel'
+                                onClickBtn={() => navigate('/')}
+                            />
+                            <CustomButton 
                                 disabled={showBtnSave === true ? false : true}
-                                type="submit"
-                                className={`disabled:opacity-50 rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 
-                                focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
-                                onClick={onSaveInfoPackage}
-                            >
-                                Save
-                            </button>
+                                type='submit'
+                                onClickBtn={onSaveInfoPackage}
+                                title='Save'
+                            />
                         </div>
 
                     </div>

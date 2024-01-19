@@ -4,6 +4,7 @@ import LoadingDialog from "../components/LoadingDialog";
 import TextInput from "./TextInput";
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router';
+import CustomButton from './CustomButton';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
@@ -53,20 +54,22 @@ const ForgotPassword = () => {
                                 Reset password
                             </h1>
                             <form className="space-y-4 md:space-y-6" action="#">
-                                <TextInput handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target?.value)}
-                                    value={email} title="Email" placeholderStr="Enter your email" />
-                                <button disabled={showBtnSave === true ? false : true}
-                                    onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onResetPassword(event, email)} type="submit"
-                                    className={`w-full text-white bg-blue-500 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 
-                                font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}>
-                                    Reset
-                                </button>
-                                <button onClick={() => navigate('/login')}
-                                    type="submit" className={`w-full text-white bg-gray-400 hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg 
-                                text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50`}
-                                >
-                                    Back
-                                </button>
+                                <TextInput 
+                                    handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEmail(event.target?.value)}
+                                    value={email} title="Email" placeholderStr="Enter your email" 
+                                />
+                                <CustomButton 
+                                    disabled={showBtnSave === true ? false : true}
+                                    onClickBtn={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => onResetPassword(event, email)}
+                                    type='submit'
+                                    title='Reset'
+                                />
+                                <CustomButton 
+                                    onClickBtn={() => navigate('/login')}
+                                    type='submit'
+                                    title='Back'
+                                    bgColor='bg-gray-400'
+                                />
                             </form>
                         </div>
                     </div>

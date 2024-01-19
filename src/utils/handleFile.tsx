@@ -22,8 +22,6 @@ const downloadZipFile = (zipFile: Blob | null) => {
     }
 }
 
-
-
 export default {
     base64ToBlob,
     downloadZipFile

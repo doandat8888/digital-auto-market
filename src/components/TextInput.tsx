@@ -5,7 +5,7 @@ interface IProps {
     placeholderStr: string,
     disabled?: boolean | undefined,
     type?: string,
-    required?: boolean
+    required?: boolean,
 }
 
 const TextInput = ({title, value, handleFileTextChange, placeholderStr, disabled, type, required}: IProps) => {

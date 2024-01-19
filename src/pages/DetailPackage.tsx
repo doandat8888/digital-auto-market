@@ -63,7 +63,7 @@ const DetailPackage = () => {
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
     const versionParam = params.get("version");
-    const versionIdParam = params.get("versionId");
+    const versionIdParam = params.get("versionId") ? params.get("versionId") : '';
     //Get user info
 
     //Current status
@@ -72,7 +72,7 @@ const DetailPackage = () => {
     useEffect(() => {
         const localToken = localStorage.getItem('token') || "";
         setTokenUser(localToken);
-    }, [id])
+    }, [id]);
 
     useEffect(() => {
         if (tokenUser !== "") {
@@ -157,7 +157,7 @@ const DetailPackage = () => {
 
     const changeVersion = (versionId: string) => {
         if (packageDetail && packageDetail.versions) {
-            const version: IGetVersion | undefined = packageDetail.versions.find((version) => version._id === versionId);
+            const version: IGetVersion | undefined = packageDetail.versions.find((version) => version?._id === versionId);
             const params = new URLSearchParams(url.search);
             if (version) {
                 params.set("version", version.name);
@@ -210,18 +210,22 @@ const DetailPackage = () => {
 
     const getTotalReview = async () => {
         if (packageDetail) {
-            await reviewService.getReviewByPackageId(packageDetail?._id).then(({ data }) => {
-                if (data && data.data && data.data.length > 0) {
-                    setTotalReview(data.data.length);
-                    let totalPagesReview = 0;
-                    if (data.data.length % limit === 0) {
-                        totalPagesReview = Math.floor(data.data.length / limit);
-                    } else {
-                        totalPagesReview = Math.floor(data.data.length / limit) + 1;
+            try {
+                await reviewService.getReviewByPackageId(packageDetail?._id).then(({ data }) => {
+                    if (data && data.data && data.data.length > 0) {
+                        setTotalReview(data.data.length);
+                        let totalPagesReview = 0;
+                        if (data.data.length % limit === 0) {
+                            totalPagesReview = Math.floor(data.data.length / limit);
+                        } else {
+                            totalPagesReview = Math.floor(data.data.length / limit) + 1;
+                        }
+                        setTotalPage(totalPagesReview);
                     }
-                    setTotalPage(totalPagesReview);
-                }
-            })
+                })
+            } catch (error: any) {
+                console.log(error.data.response.msg);
+            }
         }
     };
 
@@ -386,28 +390,40 @@ const DetailPackage = () => {
                                                 <div className="flex">
                                                     {canEdit &&
                                                         <div onClick={() => updatePackage(packageDetail)} className="bg-yellow-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg"><AiOutlineEdit /><p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Update</p>
+                                                        rounded-lg">
+                                                            <AiOutlineEdit />
+                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Update</p>
                                                         </div>
                                                     }
                                                     {canEdit &&
                                                         <div onClick={() => onRemovePackage()} className="bg-red-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg"><AiOutlineDelete /><p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Delete</p>
+                                                        rounded-lg">
+                                                            <AiOutlineDelete />
+                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Delete</p>
                                                         </div>
                                                     }
                                                     {user?.role == "admin" && packageDetail.state === 'rejected' ?
                                                         <div onClick={() => handleChangeStatus()} className="bg-green-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg"><TiTickOutline /><p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Approve</p>
+                                                        rounded-lg">
+                                                            <TiTickOutline />
+                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Approve</p>
                                                         </div>
                                                         : user?.role == "admin" && packageDetail.state == 'approved' ?
                                                             <div onClick={() => handleChangeStatus()} className="bg-red-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg"><TiCancel /><p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Reject</p>
+                                                        rounded-lg">
+                                                            <TiCancel />
+                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Reject</p>
                                                             </div> : user?.role == "admin" &&
                                                             <div className="flex">
                                                                 <div onClick={() => handleChangeStatus("rejected")} className="bg-green-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                            rounded-lg"><TiTickOutline /><p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Approve</p>
+                                                            rounded-lg">
+                                                                <TiTickOutline />
+                                                                <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Approve</p>
                                                                 </div>
                                                                 <div onClick={() => handleChangeStatus("approved")} className="bg-red-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                            rounded-lg"><TiCancel /><p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Reject</p>
+                                                            rounded-lg">
+                                                                <TiCancel />
+                                                                <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Reject</p>
                                                                 </div>
                                                             </div>
                                                     }
@@ -424,7 +440,7 @@ const DetailPackage = () => {
                                             <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)}
                                                 className="block sm:ml-2 sm:text-sm text-[10px] border px-2 py-1 border-gray-500 rounded bg-white text-black select-none">
                                                 {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
-                                                    <option selected={version.name === versionParam} value={version._id}>{version.name}</option>
+                                                    <option selected={version.name === versionParam} value={version?._id}>{version?.name}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -483,11 +499,20 @@ const DetailPackage = () => {
                                 </div>
                                 <div className="my-4 flex">
                                     <div className="description text-black select-none">
-                                        <p className="text-xl font-bold">Description</p>
-                                        <div className="whitespace-pre-line">{packageDetail.fullDesc}</div>
+                                        <p className="lg:text-xl md:text-lg text-sm font-bold">Description</p>
+                                        <div className="whitespace-pre-line lg:text-[16px] md:text-[14px] text-sm">{packageDetail.fullDesc}</div>
                                     </div>
                                 </div>
                                 <Slideshow slideImages={packageDetail?.images} />
+                                {canEdit && packageDetail && packageDetail.source &&
+                                    <div className="my-4 flex">
+                                        <div className="source text-black select-none">
+                                            <p className="lg:text-xl md:text-lg text-sm font-bold">Source</p>
+                                            <a target="blank" href={packageDetail.source} className="whitespace-pre-line lg:text-[16px] md:text-[14px] text-sm">{packageDetail.source}</a>
+                                        </div>
+                                    </div>
+                                }
+                                
                                 <div className="col-span-full my-4">
                                     <div className="flex mb-2">
                                         <p className="text-xl font-bold text-black select-none">Dashboard config</p>
@@ -508,7 +533,7 @@ const DetailPackage = () => {
                                     </div>
                                     <div className="w-full rounded-lg py-4">
                                         {isLoadingReview ? <p className="text-black select-none">Loading...</p> : ''}
-                                        {hasReviews === 1 ? <ReviewList currentUser={user && user} onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} reviewsFilter={reviews} /> :
+                                        {hasReviews === 1 ? <ReviewList currentUser={user ? user : undefined} onDeleteReview={onDeleteReview} onUpdateReview={onUpdateReview} reviewsFilter={reviews} /> :
                                             hasReviews === -1 ?
                                                 <div className="no-comment text-center">
                                                     <img className="mx-auto w-[10%] opacity-30"
@@ -530,7 +555,7 @@ const DetailPackage = () => {
                                     onCloseModalLoading={() => setIsLoading(false)}
                                     isLoading={isLoading} reviewUpdate={reviewUpdate}
                                     refreshData={onRefreshData} packageId={packageDetail?._id}
-                                    createdBy={packageDetail.createdBy} versionId={currentVersion ? currentVersion._id : ''}
+                                    createdBy={packageDetail.createdBy} versionId={currentVersion ? currentVersion?._id : ''}
                                     open={openModalCommentRating}
                                     onCloseModal={onCloseModal}
                                 />
