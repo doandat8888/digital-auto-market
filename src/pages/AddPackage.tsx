@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import packageService from "../services/packageService";
 import uploadService from "../services/uploadService";
 import UploadFile from "../components/UploadFile";
@@ -15,6 +15,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import TextArea from '../components/TextArea';
 import UploadImage from '../components/UploadImage';
 import CustomButton from '../components/CustomButton';
+import PackageMode from '../components/PackageMode';
+import ImageCoverView from '../components/ImageCoverView';
+import ImageDetailView from '../components/ImageDetailView';
 
 const AddPackage = () => {
 
@@ -31,7 +34,7 @@ const AddPackage = () => {
     const [dashboardConfigStr, setDashboardConfigStr] = useState<string>("");
     //Zip file
     const [zipFile, setZipFile] = useState<string>("");
-    const [deploymentUrl, setDeploymentUrl] = useState("");
+    const [, setDeploymentUrl] = useState("");
     const [zipFilePublishVersion, setZipFilePublishVersion] = useState<File>();
     // const [zipBase64, setZipBase64] = useState<string>("");
     const [fileZipName, setFileZipName] = useState<string>("");
@@ -41,7 +44,6 @@ const AddPackage = () => {
     const token = localStorage.getItem("token");
     //Loading 
     const [isLoading, setIsLoading] = useState(false);
-    const params = useParams();
     //Update package
     //Show btn save
     const [showBtnSave, setShowBtnSave] = useState(false);
@@ -298,13 +300,14 @@ const AddPackage = () => {
                                                 handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
                                         </div>
                                     </div>
-                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Short description" value={packageShortDesc}
-                                        placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)} />
+                                    <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'>
+                                        <TextInput title="Short description" value={packageShortDesc}
+                                            placeholderStr="Write one sentence about your package" handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageShortDesc(event.target.value)}
+                                        />
                                     </div>
                                     </div>
                                 </div>
                                 <div className="col-span-full sm:flex">
-                                    {/* <div className="sm:w-[50%] w-[100%]"><div className="sm:w-[90%] w-full"><TextArea title="Description" value={packageDescription} handleTextAreaChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setPackageDescription(event.target.value)} placeHolderStr="Write some sentences about your package" /></div></div> */}
                                     <div className="sm:w-[50%] w-[100%]">
                                         <div className="sm:w-[95%] w-full">
                                             <TextArea title='Description' value={packageDescription} placeHolderStr='Write some sentences about your package'
@@ -319,46 +322,10 @@ const AddPackage = () => {
                                     </div>
                                 </div>
                                 <div className="col-span-full flex">
-                                    <div className="w-[50%]"><CategorySelect listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} /></div>
-                                    <fieldset className='w-[50%] flex justify-end'>
-                                        <div className="w-[95%]">
-                                            <div className="flex w-[95%]">
-                                                <legend className="text-sm font-semibold leading-6 text-gray-900">Mode</legend>
-                                                <span className="required text-red-500 ml-1">*</span>
-                                            </div>
-                                            <div className="space-y-3 w-[95%] flex items-center">
-                                                <div className="flex items-center mr-4">
-                                                    <input
-                                                        checked={mode === "public"}
-                                                        id="public"
-                                                        name="public"
-                                                        type="radio"
-                                                        className="h-4 w-4 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                        onChange={onChangeMode}
-                                                        value={"public"}
-                                                    />
-                                                    <label htmlFor="push-everything" className="block text-sm font-medium leading-6 text-gray-900">
-                                                        Public
-                                                    </label>
-                                                </div>
-                                                <div className="flex items-center mode-private">
-                                                    <input
-                                                        checked={mode === "private"}
-                                                        id="private"
-                                                        name="private"
-                                                        type="radio"
-                                                        className="mr-1 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                        onChange={onChangeMode}
-                                                        value={"private"}
-                                                    />
-                                                    <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
-                                                        Only me
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </fieldset>
+                                    <div className="w-[50%]">
+                                        <CategorySelect listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} />
+                                    </div>
+                                    <PackageMode mode={mode} onChangeMode={onChangeMode} />
                                 </div>
                                 <div className="col-span-full">
                                     <div className="flex mt-4">
@@ -367,20 +334,10 @@ const AddPackage = () => {
                                         </label>
                                         <span className="required text-red-500 ml-1">*</span>
                                     </div>
-                                    <UploadImage onUploadImgAreaChange={handleInputImgCoverChange}/>
+                                    <UploadImage onUploadImgAreaChange={handleInputImgCoverChange} />
                                     {isLoadingCoverImg == true ? <p className="text-black">Loading...</p> : ''}
                                     {imageCover && (
-                                        <div className="image-container sm:w-1/2 sm:mx-auto w-full relative my-4">
-                                            <img
-                                                src={imageCover}
-                                                alt="Uploaded"
-                                                className="w-full object-cover"
-                                            />
-                                            <button className="absolute top-2 right-2 rounded-full bg-white text-white px-3 py-1 z-40"
-                                                onClick={(event) => onDeleteCoverImage(event, imageCover)}>
-                                                <p className='text-[16px] font-bold text-red-500'>x</p>
-                                            </button>
-                                        </div>
+                                        <ImageCoverView imageCover={imageCover} onDeleteCoverImage={onDeleteCoverImage} />
                                     )}
                                 </div>
                                 <div className="col-span-full ">
@@ -390,25 +347,17 @@ const AddPackage = () => {
                                         </label>
                                         <span className="required text-red-500 ml-1">*</span>
                                     </div>
-                                    <UploadImage multiple={true} onUploadImgAreaChange={handleInputImgDetailChange}/>
+                                    <UploadImage
+                                        multiple={true}
+                                        onUploadImgAreaChange={handleInputImgDetailChange} 
+                                    />
                                 </div>
                                 {isLoadingDetailImgs == true ? <p className="text-black">Loading...</p> : ''}
                                 <div className="my-4 images-container sm:grid sm:grid-cols-2 lg:grid-cols-3 col-span-full sm:justify-between">
                                     {imageDetailList && imageDetailList.length > 0 && imageDetailList.map((base64, index) => (
-                                        <div className="relative mx-2">
-                                            <img
-                                                className="pt-4 w-full h-[200px] object-cover"
-                                                key={index}
-                                                src={base64}
-                                                alt={`Uploaded ${index}`}
-                                            />
-                                            <button className="absolute top-6 right-2 rounded-full bg-white text-white px-3 py-1 z-40" onClick={(event) => onDeleteDetailImage(event, index)}>
-                                                <p className='text-[16px] font-bold text-red-500'>x</p>
-                                            </button>
-                                        </div>
+                                        <ImageDetailView index={index} base64={base64} onDeleteDetailImage={onDeleteDetailImage} />
                                     ))}
                                 </div>
-
                                 <UploadFile zipFile={zipFile} fileZipName={""} handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />
                                 {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
                                 <div className="col-span-full">
@@ -432,19 +381,19 @@ const AddPackage = () => {
                         </div>
                     </div>
                     <div className="mt-6 flex items-center justify-end gap-x-6">
-                        <div className="flex justify-between">
-                            <CustomButton 
+                        <div className="flex justify-between space-x-3">
+                            <CustomButton
                                 title='Cancel'
                                 onClickBtn={() => navigate('/')}
+                                bgColor='bg-gray-400'
                             />
-                            <CustomButton 
+                            <CustomButton
                                 disabled={showBtnSave === true ? false : true}
                                 type='submit'
                                 onClickBtn={onSaveInfoPackage}
                                 title='Save'
                             />
                         </div>
-
                     </div>
                 </form>
             </div>

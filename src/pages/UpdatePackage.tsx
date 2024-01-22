@@ -1,4 +1,3 @@
-import { PhotoIcon } from '@heroicons/react/24/solid';
 import React, { useCallback, useEffect, useState } from 'react';
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
@@ -9,10 +8,14 @@ import UploadFile from "../components/UploadFile";
 import TextInput from '../components/TextInput';
 import CategorySelectUpdate from '../components/CategorySelectUpdate';
 import _const from '../const';
-import { FaRegImages } from 'react-icons/fa';
 import { Editor, OnChange } from '@monaco-editor/react';
 import { ToastContainer, toast } from 'react-toastify';
 import TextArea from '../components/TextArea';
+import CustomButton from '../components/CustomButton';
+import PackageMode from '../components/PackageMode';
+import UploadImage from '../components/UploadImage';
+import ImageCoverView from '../components/ImageCoverView';
+import ImageDetailView from '../components/ImageDetailView';
 
 const UpdatePackage = () => {
 
@@ -244,23 +247,6 @@ const UpdatePackage = () => {
         }
     }
 
-    const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-    }
-
-    const handleImgCoverDrop = (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        const file = event.dataTransfer.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const base64String = e.target?.result as string;
-                setimageCover(base64String);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     const onDeleteCoverImage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
         setimageCover("");
@@ -310,7 +296,8 @@ const UpdatePackage = () => {
                             <div className="border-b border-gray-900/10 pb-12">
                                 <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-4">
                                     <div className="col-span-full sm:flex">
-                                        <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[95%] w-full'><TextInput title="Package name" value={packageName}
+                                        <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[95%] w-full'>
+                                            <TextInput title="Package name" value={packageName}
                                             placeholderStr="Enter your package name"
                                             handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
                                         </div>
@@ -338,45 +325,7 @@ const UpdatePackage = () => {
                                     <div className="col-span-full flex">
                                         <div className="w-[50%]"><CategorySelectUpdate listCategory={_const.categoryFake}
                                             handleChangeCategory={(value: string) => setCategory(value)} categoryName={category} /></div>
-                                        <fieldset className='w-[50%] flex justify-end'>
-                                            <div className="w-[95%]">
-                                                <div className="flex">
-                                                    <legend className="text-sm font-semibold leading-6 text-gray-900">Mode</legend>
-                                                    <span className="required text-red-500 ml-1">*</span>
-                                                </div>
-                                                <div className="mt-3 space-y-3 flex">
-                                                    <div className="flex items-center mr-4">
-                                                        <input
-                                                            checked={mode === "public"}
-                                                            id="public"
-                                                            name="public"
-                                                            type="radio"
-                                                            className="h-4 w-4 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                            onChange={onChangeMode}
-                                                            value={"public"}
-                                                        />
-                                                        <label htmlFor="push-everything" className="block text-sm font-medium leading-6 text-gray-900">
-                                                            Public
-                                                        </label>
-                                                    </div>
-                                                    <div className="flex items-center mode-private">
-                                                        <input
-                                                            checked={mode === "private"}
-                                                            id="private"
-                                                            name="private"
-                                                            type="radio"
-                                                            className="h-4 w-4 mr-1 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                            onChange={onChangeMode}
-                                                            value={"private"}
-                                                        />
-                                                        <label htmlFor="push-nothing" className="block text-sm font-medium leading-6 text-gray-900">
-                                                            Only me
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </fieldset>
+                                        <PackageMode mode={mode} onChangeMode={onChangeMode} />
                                     </div>
                                     <div className="col-span-full">
                                         <div className="flex mt-4">
@@ -385,37 +334,10 @@ const UpdatePackage = () => {
                                             </label>
                                             <span className="required text-red-500 ml-1">*</span>
                                         </div>
-                                        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                                            <div className="text-center">
-                                                <PhotoIcon className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
-                                                <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600" onDrop={handleImgCoverDrop} onDragOver={handleDrag}>
-                                                    <label
-                                                        htmlFor="cover-img-upload"
-                                                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none 
-                                                        focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                                    >
-                                                        <span>Upload image</span>
-                                                        <input required onChange={handleInputImgCoverChange} id="cover-img-upload" name="cover-img-upload" type="file" className="sr-only" />
-                                                    </label>
-                                                    {/* <p className="pl-1">or drag and drop</p> */}
-                                                </div>
-                                                <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 100MB</p>
-                                            </div>
-                                        </div>
+                                        <UploadImage onUploadImgAreaChange={handleInputImgCoverChange} />
                                         {isLoadingCoverImg == true ? <p className="text-black">Loading...</p> : ''}
                                         {imageCover && (
-                                            <div className="image-container sm:w-1/2 sm:mx-auto w-full relative my-6">
-                                                <img
-                                                    src={imageCover}
-                                                    alt="Uploaded"
-                                                    className="w-full object-cover"
-                                                />
-                                                <button className="absolute top-2 right-2 rounded-full bg-white text-white px-3 py-1 z-40"
-                                                    onClick={(event) => onDeleteCoverImage(event)}><p className='opacity-80'>
-                                                        <p className='text-[16px] font-bold text-red-500'>x</p>
-                                                    </p>
-                                                </button>
-                                            </div>
+                                            <ImageCoverView imageCover={imageCover} onDeleteCoverImage={onDeleteCoverImage} />
                                         )}
                                     </div>
                                     <div className="col-span-full ">
@@ -425,40 +347,15 @@ const UpdatePackage = () => {
                                             </label>
                                             <span className="required text-red-500 ml-1">*</span>
                                         </div>
-                                        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                                            <div className="text-center">
-                                                <FaRegImages className="mx-auto h-24 w-24 text-gray-300" aria-hidden="true" />
-                                                <div className="mt-4 flex justify-center text-sm leading-6 text-gray-600">
-                                                    <label
-                                                        htmlFor="detail-imgs-upload"
-                                                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 
-                                                        focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                                    >
-                                                        <span>Upload images</span>
-                                                        <input required onChange={handleInputImgDetailChange} multiple id="detail-imgs-upload" name="detail-imgs-upload" type="file"
-                                                            className="sr-only" onDrag={handleDrag} />
-                                                    </label>
-                                                    {/* <p className="pl-1">or drag and drop</p> */}
-                                                </div>
-                                                <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 100MB</p>
-                                            </div>
-                                        </div>
+                                        <UploadImage
+                                            multiple={true}
+                                            onUploadImgAreaChange={handleInputImgDetailChange}
+                                        />
                                     </div>
                                     {isLoadingDetailImgs == true ? <p className="text-black">Loading...</p> : ''}
                                     <div className="images-container sm:grid sm:grid-cols-2 lg:grid-cols-3 col-span-full sm:justify-between">
                                         {imageDetailList && imageDetailList.length > 0 && imageDetailList.map((base64, index) => (
-                                            <div className="relative mx-2">
-                                                <img
-                                                    className="pt-4 w-full h-[40vh] object-cover"
-                                                    key={index}
-                                                    src={base64}
-                                                    alt={`Uploaded ${index}`}
-                                                />
-                                                <button className="absolute top-6 right-2 rounded-full bg-white text-white px-3 py-1 z-40"
-                                                    onClick={(event) => onDeleteDetailImage(event, index)}>
-                                                    <p className='text-[16px] font-bold text-red-500'>x</p>
-                                                </button>
-                                            </div>
+                                            <ImageDetailView index={index} base64={base64} onDeleteDetailImage={onDeleteDetailImage} />
                                         ))}
                                     </div>
                                     {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""}
@@ -486,23 +383,18 @@ const UpdatePackage = () => {
                         </div>
 
                         <div className="mt-6 flex items-center justify-end gap-x-6">
-                            <div className="flex justify-between">
-                                <button
-                                    className={`disabled:opacity-50 rounded-md bg-gray-400 px-3 mr-3 py-2 text-sm font-semibold text-white shadow-sm 
-                                    hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600`}
-                                    onClick={() => navigate('/')}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
+                            <div className="flex justify-between space-x-3">
+                                <CustomButton
+                                    title='Cancel'
+                                    onClickBtn={() => navigate('/')}
+                                    bgColor='bg-gray-400'
+                                />
+                                <CustomButton
                                     disabled={showBtnSave === true ? false : true}
-                                    className={`rounded-md bg-blue-600 disabled:opacity-50 px-3 py-2 text-sm font-semibold text-white shadow-sm 
-                                    hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
-                                    onClick={onSaveInfoPackage}
-                                >
-                                    Save
-                                </button>
+                                    type='submit'
+                                    onClickBtn={onSaveInfoPackage}
+                                    title='Save'
+                                />
                             </div>
                         </div>
                     </form>
