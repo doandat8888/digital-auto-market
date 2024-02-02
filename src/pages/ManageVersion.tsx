@@ -21,7 +21,7 @@ const ManageVersion = () => {
     //User info
     const [tokenUser, setTokenUser] = useState<string>("");
     const [user, setUser] = useState<IUser | null>();
-    const limit = window.screen.height > 900 ? 8 : window.screen.height > 1200 ? 8 : 4;
+    const limit = window.screen.height > 900 ? 6 : window.screen.height > 1200 ? 8 : 4;
     const [total, setTotal] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -154,9 +154,8 @@ const ManageVersion = () => {
                             <AiOutlineCloudUpload /><p className="lg:block text-[12px] lg:ml-2 ml-2">Publish new version</p>
                         </button>}
                     <ManageVersionTable onDeleteVersion={onDeleteVersion} canEdit={canEdit} versionList={versionList} onUpdateVersion={onUpdateVersion} />
-                    <div className="h-[90vh]"> <ModalPublishVersion versionUpdate={versionUpdate} refreshData={getVersionList}
+                    <ModalPublishVersion versionUpdate={versionUpdate} refreshData={getVersionList}
                         open={openModalPublish} handleClose={handleCloseModal} packageId={packageId ? packageId : ''} />
-                    </div>
                     <ModalConfirm content="Do you want to delete?" action={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)} />
                 </div>
             </div>

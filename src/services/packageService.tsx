@@ -22,6 +22,10 @@ const getPackageByCategory = (limit: number, currentPage: number, category: stri
     return axios.get(`/package?category=${category}&limit=${limit}&page=${currentPage}&state=approved`);
 }
 
+const getPackageByCategoryNotPaginate = (limit: number, category: string) => {
+    return axios.get(`/package?category=${category}&limit=${limit}&state=approved`);
+}
+
 
 const getMyPackageByPage = (limit: number, page: number) => {
     return axios.get(`/package/current?limit=${limit}&page=${page}&state=approved`);
@@ -137,5 +141,6 @@ export default {
     getPackageOfCurrentUserAdmin,
     getPackageByNameAdmin,
     getMyPackageByNameAdmin,
-    getPackageByCategoryAndNameAdmin
+    getPackageByCategoryAndNameAdmin,
+    getPackageByCategoryNotPaginate
 }

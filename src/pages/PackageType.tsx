@@ -7,6 +7,7 @@ import NoPackage from "../components/NoPackage";
 import { useParams } from "react-router";
 import _ from "lodash";
 import NotFound from "../components/404NotFound";
+import Banner from "../components/Banner";
 
 const limit = window.screen.height > 900 ? 12 : 8;
 
@@ -62,12 +63,12 @@ const PackageType = () => {
         } else {
             getAllPackage();
         }
-    }, [currentPage, getAllPackage, getPackageByCategoryAndName, type]);
+    }, [currentPage, type]);
 
     useEffect(() => {
         setCurrentPage(1);
         getAllPackage();
-    }, [getAllPackage, type]);
+    }, [type]);
 
     useEffect(() => {
         if (packageList) {
@@ -79,8 +80,7 @@ const PackageType = () => {
         getPackageByCategoryAndName(e.target.value);
         setCurrentPage(1);
         localStorage.setItem('name', e.target.value);
-    }, 1000
-    );
+    }, 1000);
 
     const onSearchHandler = (e: any) => {
         deb(e);
@@ -96,8 +96,9 @@ const PackageType = () => {
     }, [type])
 
     return (
-        <div>
-            {packageList ? <div className={`${isLoading === true ? 'hidden' : ''} pt-[46px]`}>
+        <div className="pt-[46px] ">
+            <Banner title={type} contentBtn="Add your package"/>
+            {packageList ? <div className={`${isLoading === true ? 'hidden' : ''}py-4 lg:px-20 sm:px-10 px-5`}>
                 <LoadingDialog open={isLoading} closeModal={onCloseModal} />
                 <div className="body px-6 py-4">
                     <div className="search flex justify-end mb-6 text-black border-gray">
@@ -107,9 +108,9 @@ const PackageType = () => {
                     {packageList.length > 0 ? <PackageList showMode={false} packages={packageList} /> : searchValue ?
                         <NotFound /> : <NoPackage content={`There is no ${type} in the system`} />}
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center 
+                <Pagination className={`w-full flex py-2 bg-white text-white mx-auto justify-center 
                 ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
-            </div> : <NoPackage content="There is no packages in the system" />}
+            </div> : <NoPackage content={`There is no ${type} in the system`} />}
         </div>
     )
 }

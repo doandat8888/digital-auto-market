@@ -377,13 +377,20 @@ const DetailPackage = () => {
                 <div className={`${isLoading === true ? 'hidden' : ''} pt-[46px]`}>
                     <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                         <div className="w-full h-full flex items-center justify-center">
-                            <div className="sm:w-[80%] lg:w-[80%] xl:w-[70%] w-[100%] bg-slate-200 mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
-                                <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[400px]">
-                                    <div className="sm:w-[20%] flex aspect-square w-[30%] min-w-[120px]">
-                                        <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt=""
-                                            className="min-w-[100px] h-[50%] sm:h-[100%] rounded-lg object-contain aspect-square" />
+                            <div className="sm:w-[80%] lg:w-[80%] xl:w-[70%] w-[100%] mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
+                                <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[200px]">
+                                    <div className="sm:w-[70%] flex items-start aspect-square w-[70%] min-w-[120px]">
+                                        <div className="flex items-center  space-x-3 ">
+                                            <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt=""
+                                                className="max-w-[70px] rounded-lg object-contain aspect-square" />
+                                            <div>
+                                                <p className="lg:text-3xl sm:text-xl text-[18px] font-bold text-black select-none">{packageDetail?.name}</p>
+                                            </div>
+                                        </div>
+
+
                                     </div>
-                                    <div className="sm:w-[80%] w-[65%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
+                                    {/* <div className="sm:w-[80%] w-[65%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
                                         <div className="items-center sm:flex">
                                             <div className="flex justify-between">
                                                 <p className="lg:text-xl truncate w-[200px] sm:text-lg text-[14px] font-bold text-black select-none">{packageDetail?.name}</p>
@@ -495,7 +502,7 @@ const DetailPackage = () => {
                                             </div>
                                         </div>
 
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="my-4 flex">
                                     <div className="description text-black select-none">
@@ -512,13 +519,13 @@ const DetailPackage = () => {
                                         </div>
                                     </div>
                                 }
-                                
+
                                 <div className="col-span-full my-4">
                                     <div className="flex mb-2">
                                         <p className="text-xl font-bold text-black select-none">Dashboard config</p>
                                     </div>
                                     <div className="h-[200px] overflow-hidden">
-                                        <Editor className="overflow-hidden" height="100%" options={{ readOnly: true, minimap: {enabled: false} }} defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig} />
+                                        <Editor className="overflow-hidden" height="100%" options={{ readOnly: true, minimap: { enabled: false } }} defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig} />
                                     </div>
 
                                 </div>

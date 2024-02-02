@@ -76,7 +76,7 @@ button:focus-visible {
 
 body {
     display: block !important;
-    background-color: #f1f5f9;
+    background-color: white;
 }
 
 @tailwind base;

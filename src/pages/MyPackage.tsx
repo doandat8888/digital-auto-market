@@ -10,6 +10,7 @@ import NoPackage from "../components/NoPackage";
 import _ from "lodash";
 import { Pagination } from "@mui/material";
 import calcTotalPages from "../utils/calcTotalPages";
+import Banner from "../components/Banner";
 
 const limit = window.screen.height > 900 ? 12 : 8;
 
@@ -84,20 +85,20 @@ const MyPackage = () => {
         if (tokenUser !== "") {
             getUserInfo();
         }
-    }, [getUserInfo, tokenUser]);
+    }, [tokenUser]);
 
     useEffect(() => {
         if (user) {
             getMyPackageList();
         }
-    }, [getMyPackageList, user]);
+    }, [user]);
 
     useEffect(() => {
         if (token === "") {
             navigate('/login');
             setIsLoading(false);
         }
-    }, [token, myPackageList, navigate]);
+    }, [token, myPackageList]);
 
 
     const deb = _.debounce((e) => {
@@ -119,7 +120,7 @@ const MyPackage = () => {
             getTotalPage();
             getMyPackageList();
         }
-    }, [currentPage, getMyPackageByName, getMyPackageList, getTotalPage]);
+    }, [currentPage]);
 
 
     const onChangePage = (event: any, value: any) => {
@@ -131,10 +132,11 @@ const MyPackage = () => {
     }, []);
 
     return (
-        <div>
-            {myPackageList ? <div className={`${isLoading === true ? 'hidden' : ''} pt-[46px]`}>
+        <div className=" pt-[46px] ">
+            <Banner title="Your package" contentBtn="Add"/>
+            {myPackageList ? <div className={`${isLoading === true ? 'hidden' : ''}py-4 lg:px-20 sm:px-10 px-5`}>
                 <LoadingDialog open={isLoading} closeModal={onCloseModal} />
-                <div className="body px-6 py-4">
+                <div className="body px-6">
                     <div className="search flex justify-end mb-6 text-black border-gray">
                         <input className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]'
                             type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler} />
@@ -144,7 +146,7 @@ const MyPackage = () => {
 
                 </div>
                 <Pagination 
-                    className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total <= limit ? 'hidden' : ''}`}
+                    className={`w-full flex py-2 bg-white text-white mx-auto justify-center ${myPackageList ? total <= limit ? 'hidden' : '' : 'hidden'}`}
                     count={totalPage}
                     onChange={onChangePage} 
                 />
