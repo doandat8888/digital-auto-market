@@ -4,7 +4,7 @@ import { BsDownload } from 'react-icons/bs';
 import 'swiper/css';
 import Slideshow from "../components/ImageSlider";
 import { useDispatch } from "react-redux";
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import packageService from "../services/packageService";
@@ -17,12 +17,13 @@ import ReviewList from "../components/ReviewList";
 import { removeToken } from "../redux/token/tokenSlice";
 import ModalConfirm from "../components/ModalConfirm";
 import { CiShare1 } from "react-icons/ci";
-import { GoCopy } from "react-icons/go";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Editor } from "@monaco-editor/react";
 import { Pagination } from "@mui/material";
 import { TiCancel, TiTickOutline } from "react-icons/ti";
+import { HiOutlineBadgeCheck } from "react-icons/hi";
+import { GoVersions } from "react-icons/go";
 
 const DetailPackage = () => {
 
@@ -374,21 +375,74 @@ const DetailPackage = () => {
             {/* <button onClick={() => onRemovePackage(packageDetail?._id ? packageDetail._id : "")}>Remove this package</button> */}
             <LoadingModal open={isLoading} closeModal={onCloseModal} />
             {packageDetail &&
-                <div className={`${isLoading === true ? 'hidden' : ''} pt-[46px]`}>
+                <div className={`${isLoading === true ? 'hidden' : ''} pt-[46px] text-black`}>
                     <div className="w-full h-full pt-4 pb-2 px-2 md:px-4 flex justify-center">
                         <div className="w-full h-full flex items-center justify-center">
                             <div className="sm:w-[80%] lg:w-[80%] xl:w-[70%] w-[100%] mt-2 px-2 md:px-6 sm:py-6 py-2 rounded-lg">
-                                <div className="w-full sm:flex bg-white rounded-lg sm:p-6 p-2 flex max-h-[200px]">
-                                    <div className="sm:w-[70%] flex items-start aspect-square w-[70%] min-w-[120px]">
-                                        <div className="flex items-center  space-x-3 ">
-                                            <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt=""
-                                                className="max-w-[70px] rounded-lg object-contain aspect-square" />
+                                <div className="w-full sm:flex justify-between bg-white rounded-lg sm:p-6 p-2 max-h-[200px]">
+                                    <div className="flex items-center space-x-4">
+                                        <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt=""
+                                            className="max-w-[70px] rounded-lg object-contain aspect-square" />
+                                        <div className="flex w-full justify-between sm:justify-normal">
                                             <div>
-                                                <p className="lg:text-3xl sm:text-xl text-[18px] font-bold text-black select-none">{packageDetail?.name}</p>
+                                                <p className="lg:text-2xl sm:text-xl text-[18px] font-bold text-black select-none">{packageDetail?.name}</p>
+                                            </div>
+                                            <div className="flex items-center">
+                                                <div className="flex">
+                                                    {canEdit &&
+                                                        <div onClick={() => updatePackage(packageDetail)} className="bg-yellow-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                        rounded-lg">
+                                                            <AiOutlineEdit />
+                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Update</p>
+                                                        </div>
+                                                    }
+                                                    {canEdit &&
+                                                        <div onClick={() => onRemovePackage()} className="bg-red-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                        rounded-lg">
+                                                            <AiOutlineDelete />
+                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Delete</p>
+                                                        </div>
+                                                    }
+                                                    {user?.role == "admin" && packageDetail.state === 'rejected' ?
+                                                        <div onClick={() => handleChangeStatus()} className="bg-green-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                        rounded-lg">
+                                                            <TiTickOutline />
+                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Approve</p>
+                                                        </div>
+                                                        : user?.role == "admin" && packageDetail.state == 'approved' ?
+                                                            <div onClick={() => handleChangeStatus()} className="bg-red-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                        rounded-lg">
+                                                                <TiCancel />
+                                                                <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Reject</p>
+                                                            </div> : user?.role == "admin" &&
+                                                            <div className="flex">
+                                                                <div onClick={() => handleChangeStatus("rejected")} className="bg-green-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                            rounded-lg">
+                                                                    <TiTickOutline />
+                                                                    <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Approve</p>
+                                                                </div>
+                                                                <div onClick={() => handleChangeStatus("approved")} className="bg-red-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                            rounded-lg">
+                                                                    <TiCancel />
+                                                                    <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Reject</p>
+                                                                </div>
+                                                            </div>
+                                                    }
+                                                </div>
+
                                             </div>
                                         </div>
-
-
+                                    </div>
+                                    <div className="flex items-center">
+                                        {packageDetail?.version?.downloadUrl &&
+                                            <button className="mt-4 round cursor-pointer hover:opacity-60 select-none-500 border shadow-md
+                                                    px-8 py-2 rounded-full bg-[#1e64d4] items-center justify-center">
+                                                <a target="_blank" rel="noopener noreferrer" className="w-full font-bold text-white select-none flex items-center justify-center"
+                                                    href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.entryUrl}>
+                                                    <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2 font-bold">Preview</p> <CiShare1 />
+                                                </a>
+                                            </button>
+                                        }
                                     </div>
                                     {/* <div className="sm:w-[80%] w-[65%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
                                         <div className="items-center sm:flex">
@@ -504,13 +558,63 @@ const DetailPackage = () => {
 
                                     </div> */}
                                 </div>
+                                <div className="sm:flex sm:px-6 items-center justify-between">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="flex space-x-3">
+                                            <div className="flex text-[#3e88ff] my-auto items-center space-x-2 font-semibold">
+                                                <HiOutlineBadgeCheck />
+                                                <p className=" text-[12px] sm:text-sm lg:text-lg">{packageDetail?.authors[0]}</p>
+                                            </div>
+                                            <div className="flex items-center">
+                                                <div className="flex items-center mx-1 opacity-70 text-black select-none"><BiLike />
+                                                    <p className="text-[14px] ml-[2px] ">{packageDetail?.likes.length}</p>
+                                                </div>
+                                                <div className="flex items-center opacity-70 text-black select-none"><BiDownload />
+                                                    <p className="text-[14px] ml-[2px] ">{packageDetail?.downloads}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex space-x-3 items-center">
+                                            <div className={`flex ${!user ? 'hidden' : ''}`}>
+                                                <div onClick={() => handleLike(isLike === true ? "unlike" : "like")} className="py-1.5 px-4 round flex items-center cursor-pointer hover:opacity-60 bg-blue-500 text-white 
+                                            rounded-lg"><BiLike />
+                                                    <p className="text-[12px] ml-1 select-none">{isLike === false ? "Like" : "Unlike"}</p>
+                                                </div>
+                                            </div>
+                                            {packageDetail?.version?.downloadUrl &&
+                                                <button onClick={onDownLoadPackage} className="round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
+                                                    px-4 py-1.5 rounded-lg items-center justify-center">
+                                                    <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.downloadUrl}>
+                                                        <p className="text-[12px] mx-2 select-none">Download</p> <BsDownload />
+                                                    </a>
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+                                    <Link to={`/manageversion/${packageDetail?._id}`} className=" text-[12px] sm:text-[14px] opacity-80 truncate text-black select-none">
+                                        <button onClick={onDownLoadPackage} className="round cursor-pointer hover:opacity-60 border-black text-black
+                                                    px-4 py-1.5 rounded-full items-center justify-center">
+                                            <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.downloadUrl}>
+                                                <p className="text-[12px] mx-2 select-none">Version history</p> <GoVersions />
+                                            </a>
+                                        </button>
+                                    </Link>
+                                </div>
+                                <div className="flex py-4 sm:px-6 text-[#4c4c4c]">
+                                    <div className="px-4 py-2 rounded-lg bg-[#eff2ef]">
+                                        {packageDetail.category}
+                                    </div>
+                                </div>
+
+                                <Slideshow slideImages={packageDetail?.images} />
+
                                 <div className="my-4 flex">
                                     <div className="description text-black select-none">
-                                        <p className="lg:text-xl md:text-lg text-sm font-bold">Description</p>
+                                        <p className="lg:text-xl md:text-lg text-sm font-bold mb-2">About this package</p>
                                         <div className="whitespace-pre-line lg:text-[16px] md:text-[14px] text-sm">{packageDetail.fullDesc}</div>
                                     </div>
                                 </div>
-                                <Slideshow slideImages={packageDetail?.images} />
+
                                 {canEdit && packageDetail && packageDetail.source &&
                                     <div className="my-4 flex">
                                         <div className="source text-black select-none">

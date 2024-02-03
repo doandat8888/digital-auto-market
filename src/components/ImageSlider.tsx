@@ -56,7 +56,7 @@ const Slideshow = (props: IProps) => {
             <Slider {...settings}>
                 {slideImages && slideImages.length > 0 && slideImages.map((slideImage) => (
                     <div className="flex justify-center items-center mb-4" style={{display: 'flex !important'}}>
-                        <img className="bg-white mx-auto aspect-video px-4 py-4 rounded-[18px] w-[96%] object-contain cursor-pointer"
+                        <img className="shadow-sm border-black bg-white mx-auto aspect-video px-6 py-6 rounded-[18px] w-[96%] object-contain cursor-pointer"
                             onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
                     </div>
                 ))}

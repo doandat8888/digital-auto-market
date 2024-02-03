@@ -187,10 +187,8 @@ const AddPackage = () => {
                     fullDesc: packageDescription,
                     license: "abc",
                     visibility: mode,
-                    authors: authorArr,
+                    authors: user?.fullName,
                     dashboardConfig: dashboardConfigStr,
-                    // downloadUrl: zipFile,
-                    // deploymentUrl: deploymentUrl,
                     category: category,
                     entryPoint: entryPoint,
                     source: linkSourceCode,
@@ -334,7 +332,7 @@ const AddPackage = () => {
                                         </label>
                                         <span className="required text-red-500 ml-1">*</span>
                                     </div>
-                                    <UploadImage onUploadImgAreaChange={handleInputImgCoverChange} />
+                                    <UploadImage id='img-cover-upload' name='img-cover-upload' onUploadImgAreaChange={handleInputImgCoverChange} />
                                     {isLoadingCoverImg == true ? <p className="text-black">Loading...</p> : ''}
                                     {imageCover && (
                                         <ImageCoverView imageCover={imageCover} onDeleteCoverImage={onDeleteCoverImage} />
@@ -350,6 +348,8 @@ const AddPackage = () => {
                                     <UploadImage
                                         multiple={true}
                                         onUploadImgAreaChange={handleInputImgDetailChange} 
+                                        id='img-details-upload'
+                                        name='img-details-upload'
                                     />
                                 </div>
                                 {isLoadingDetailImgs == true ? <p className="text-black">Loading...</p> : ''}

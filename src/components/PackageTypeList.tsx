@@ -29,20 +29,17 @@ const PackageTypeList = ({ type, userRole, label }: IProps) => {
 
     return (
         <div>
-            
             <div className='py-4 xl:px-40 lg:px-20 sm:px-10 px-5'>
-        
-            <div className="flex px-4 justify-between">
-                <p className='text-black font-bold text-xl'>{label}</p>
-                <Link className={`text-[#165fd2] font-bold ${packageList ? packageList.length < limit ? 'hidden' : '' : 'hidden'}`} to={`/packagetype/${type}`}>See more</Link>
-            </div>
-            <div className="body">
-                <PackageList userRole={userRole} showMode={false} packages={packageList} />
+                <div className="flex px-4 justify-between">
+                    <p className='text-black font-bold text-xl'>{label}</p>
+                    <Link className={`text-[#165fd2] font-bold ${packageList ? packageList.length < limit ? 'hidden' : '' : 'hidden'}`} to={`/packagetype/${type}`}>See more</Link>
+                </div>
+                <div className="body">
+                    <PackageList userRole={userRole} showMode={false} packages={packageList} />
+                </div>
             </div>
         </div>
-            
-        </div>
-        
+
     )
 }
 

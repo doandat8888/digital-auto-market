@@ -9,7 +9,7 @@ import _ from "lodash";
 import NotFound from "../components/404NotFound";
 import Banner from "../components/Banner";
 
-const limit = window.screen.height > 900 ? 12 : 8;
+const limit = window.screen.height > 900 ? 12 : 4;
 
 const PackageType = () => {
 
@@ -54,7 +54,7 @@ const PackageType = () => {
             setPackageList([]);
             setTotalPage(0);
         }
-    }, [currentPage, type]) 
+    }, [currentPage, type])
 
     useEffect(() => {
         const searchVal = localStorage.getItem('name');
@@ -97,7 +97,7 @@ const PackageType = () => {
 
     return (
         <div className="pt-[46px] ">
-            <Banner title={type} contentBtn="Add your package"/>
+            <Banner title={type} contentBtn="Add your package" />
             {packageList ? <div className={`${isLoading === true ? 'hidden' : ''}py-4 lg:px-20 sm:px-10 px-5`}>
                 <LoadingDialog open={isLoading} closeModal={onCloseModal} />
                 <div className="body px-6 py-4">
@@ -105,8 +105,10 @@ const PackageType = () => {
                         <input value={searchValue} className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]'
                             type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler} />
                     </div>
-                    {packageList.length > 0 ? <PackageList showMode={false} packages={packageList} /> : searchValue ?
-                        <NotFound /> : <NoPackage content={`There is no ${type} in the system`} />}
+                    <div className="py-4 sm:px-10 px-2">
+                        {packageList.length > 0 ? <PackageList showMode={false} packages={packageList} /> : searchValue ?
+                            <NotFound /> : <NoPackage content={`There is no ${type} in the system`} />}
+                    </div>
                 </div>
                 <Pagination className={`w-full flex py-2 bg-white text-white mx-auto justify-center 
                 ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
