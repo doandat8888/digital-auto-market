@@ -23,7 +23,7 @@ import { Editor } from "@monaco-editor/react";
 import { Pagination } from "@mui/material";
 import { TiCancel, TiTickOutline } from "react-icons/ti";
 import { HiOutlineBadgeCheck } from "react-icons/hi";
-import { GoCopy, GoVersions } from "react-icons/go";
+import { GoVersions } from "react-icons/go";
 
 const DetailPackage = () => {
 
@@ -382,7 +382,7 @@ const DetailPackage = () => {
                                 <div className="w-full sm:flex justify-between bg-white rounded-lg sm:p-6 p-2 max-h-[200px]">
                                     <div className="flex items-center space-x-4">
                                         <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt=""
-                                            className="max-w-[70px] rounded-lg object-contain aspect-square" />
+                                            className="max-w-[70px] rounded-lg object-contain aspect-square bg-gray-200" />
                                         <div className="flex w-full justify-between sm:justify-normal">
                                             <div className="space-y-3">
                                                 <div className="flex items-center space-x-2">
