@@ -159,7 +159,7 @@ const ManageVersion = () => {
                     <ModalConfirm content="Do you want to delete?" action={removeVersion} open={openModalConfirmDelete} handleClose={() => setopenModalConfirmDelete(false)} />
                 </div>
             </div>
-            <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
+            <Pagination className={`w-full flex py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
         </div>
     )
 }

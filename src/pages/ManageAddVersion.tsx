@@ -136,7 +136,7 @@ const ManageAddVersion = () => {
                 <ModalConfirm content={`Do you want to ${currentStatus === 'approved' ? 'reject' : 'approve'} this version?`} action={changeStatus}
                     open={openModalConfirm} handleClose={() => setOpenModalConfirm(false)} />
             </div>
-            <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center ${total < limit ? 'hidden' : ''}`}
+            <Pagination className={`w-full py-2 bg-white text-white mx-auto flex justify-center ${total < limit ? 'hidden' : ''}`}
                 count={totalPage} onChange={onChangePage} />
             <ToastContainer />
         </div>
