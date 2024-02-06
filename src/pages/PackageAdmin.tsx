@@ -126,14 +126,14 @@ const PackageAdmin = () => {
         <div>
             {packageList ? <div className={`${isLoading === true ? 'hidden' : ''} pt-[46px]`}>
                 <LoadingDialog open={isLoading} closeModal={onCloseModal} />
-                <div className="body px-6 py-4">
+                <div className="body py-4 xl:px-40 lg:px-20 sm:px-10 px-5">
                     <div className="search sm:flex justify-between mb-6 text-black border-gray">
                         <StatusSelect listStatus={_const.statusFake} handleChangeStatus={handleChangeStatus} />
                         <SearchBar widthLg='30%' widthSm='50%' width='100%' placeHolder='Search package name, authors,...' onSearchHandler={onSearchHandler} />
                     </div>
                     {packageList.length > 0 ? <PackageList isAdminPage={true} userRole={userRole} showMode={false} packages={packageList} /> : <NotFound />}
                 </div>
-                <Pagination className={`w-full flex fixed bottom-0 py-2 bg-white text-white mx-auto justify-center 
+                <Pagination className={`w-full flex py-2 bg-white text-white mx-auto justify-center 
                 ${total <= limit ? 'hidden' : ''}`} count={totalPage} onChange={onChangePage} />
             </div> : <NoPackage content="There is no packages in the system" />}
         </div>

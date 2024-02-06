@@ -1,11 +1,12 @@
 interface IProps {
     listCategory: ICategory[],
     handleChangeCategory: (value: string) => void,
+    defaultVal: string
 }
 
 const CategorySelect = (props: IProps) => {
 
-    const { listCategory, handleChangeCategory } = props;
+    const { listCategory, handleChangeCategory, defaultVal } = props;
 
     return (
         <div className="category-select sm:col-span-full">
@@ -16,7 +17,7 @@ const CategorySelect = (props: IProps) => {
                 <span className="required text-red-500 ml-1">*</span>
             </div>
             <select
-                defaultValue={"widget"}
+                defaultValue={defaultVal}
                 onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeCategory(event.target.value)}
                 className="bg-white w-[50%] text-black block px-1 mt-1 sm:text-sm sm:text-[10px] text-[14px] border py-1 border-gray-500 rounded"
             >

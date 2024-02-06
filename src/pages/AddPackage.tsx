@@ -32,6 +32,8 @@ const AddPackage = () => {
     const [imageCover, setimageCover] = useState<string>("");
     const [entryPoint, setEntryPoint] = useState<string>("");
     const [dashboardConfigStr, setDashboardConfigStr] = useState<string>("");
+    const [genAIType, setGenAIType] = useState<string>("");
+    const [genAIModelId, setGanAIModelId] = useState<string>("");
     //Zip file
     const [zipFile, setZipFile] = useState<string>("");
     const [, setDeploymentUrl] = useState("");
@@ -178,6 +180,7 @@ const AddPackage = () => {
                 if (user) {
                     authorArr.push(user.fullName);
                 }
+
                 const packageObj: IAddPackage = {
                     name: packageName,
                     thumbnail: imageCover,
@@ -192,7 +195,9 @@ const AddPackage = () => {
                     category: category,
                     entryPoint: entryPoint,
                     source: linkSourceCode,
-                    status: 'wait-for-approve'
+                    status: 'wait-for-approve',
+                    modelId: genAIModelId,
+                    type: genAIType
                 };
                 try {
                     //console.log("File: ", zipFilePublishVersion);
@@ -275,7 +280,7 @@ const AddPackage = () => {
         setIsLoading(false);
     }, []);
 
-    const handleEditorChange: OnChange = (value, event) => {
+    const handleEditorChange: OnChange = (value) => {
         setDashboardConfigStr(value || '');
     };
 
@@ -321,10 +326,27 @@ const AddPackage = () => {
                                 </div>
                                 <div className="col-span-full flex">
                                     <div className="w-[50%]">
-                                        <CategorySelect listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} />
+                                        <CategorySelect defaultVal='widget' listCategory={_const.categoryFake} handleChangeCategory={(value: string) => setCategory(value)} />
                                     </div>
                                     <PackageMode mode={mode} onChangeMode={onChangeMode} />
                                 </div>
+                                {category === "genai" &&
+                                    <div className="col-span-full sm:flex items-center">
+                                        <div className="sm:w-[50%] w-[100%]">
+                                            <CategorySelect defaultVal='GenAI_Widget' listCategory={_const.categoryGenAI} handleChangeCategory={(value: string) => setGenAIType(value)} />
+                                        </div>
+                                        <div className="grow flex justify-end">
+                                            <div className="sm:w-[95%] w-full">
+                                                <TextInput
+                                                    title="Model id"
+                                                    value={genAIModelId}
+                                                    handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setGanAIModelId(event.target.value)}
+                                                    placeholderStr='Enter genAI model id...'
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                                 <div className="col-span-full">
                                     <div className="flex mt-4">
                                         <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
@@ -347,7 +369,7 @@ const AddPackage = () => {
                                     </div>
                                     <UploadImage
                                         multiple={true}
-                                        onUploadImgAreaChange={handleInputImgDetailChange} 
+                                        onUploadImgAreaChange={handleInputImgDetailChange}
                                         id='img-details-upload'
                                         name='img-details-upload'
                                     />

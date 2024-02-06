@@ -136,7 +136,7 @@ const MyPackage = () => {
             <Banner title="Your package" contentBtn="Add"/>
             {myPackageList ? <div className={`${isLoading === true ? 'hidden' : ''}py-4 lg:px-20 sm:px-10 px-5`}>
                 <LoadingDialog open={isLoading} closeModal={onCloseModal} />
-                <div className="body py-4 sm:px-20 px-5">
+                <div className="body py-4 sm:px-10 px-5">
                     <div className="search flex justify-end mb-6 text-black border-gray">
                         <input className='bg-white text-[14px] rounded border px-3 py-2 lg:w-[30%] sm:w-[100%] w-[100%]'
                             type="text" placeholder='Search package name, authors,..' onChange={onSearchHandler} />

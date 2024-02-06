@@ -23,7 +23,7 @@ import { Editor } from "@monaco-editor/react";
 import { Pagination } from "@mui/material";
 import { TiCancel, TiTickOutline } from "react-icons/ti";
 import { HiOutlineBadgeCheck } from "react-icons/hi";
-import { GoVersions } from "react-icons/go";
+import { GoCopy, GoVersions } from "react-icons/go";
 
 const DetailPackage = () => {
 
@@ -384,53 +384,63 @@ const DetailPackage = () => {
                                         <img src={packageDetail.thumbnail && packageDetail.thumbnail === "abc" ? 'https://pixsector.com/cache/517d8be6/av5c8336583e291842624.png' : packageDetail.thumbnail} alt=""
                                             className="max-w-[70px] rounded-lg object-contain aspect-square" />
                                         <div className="flex w-full justify-between sm:justify-normal">
-                                            <div>
-                                                <p className="lg:text-2xl sm:text-xl text-[18px] font-bold text-black select-none">{packageDetail?.name}</p>
-                                            </div>
-                                            <div className="flex items-center">
-                                                <div className="flex">
-                                                    {canEdit &&
-                                                        <div onClick={() => updatePackage(packageDetail)} className="bg-yellow-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                            <div className="space-y-3">
+                                                <div className="flex items-center space-x-2">
+                                                    <p className="lg:text-2xl sm:text-xl text-[18px] font-bold text-black select-none">{packageDetail?.name}</p>
+                                                    <div className="flex">
+                                                        {canEdit &&
+                                                            <div onClick={() => updatePackage(packageDetail)} className="bg-yellow-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
                                                         rounded-lg">
-                                                            <AiOutlineEdit />
-                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Update</p>
-                                                        </div>
-                                                    }
-                                                    {canEdit &&
-                                                        <div onClick={() => onRemovePackage()} className="bg-red-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg">
-                                                            <AiOutlineDelete />
-                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Delete</p>
-                                                        </div>
-                                                    }
-                                                    {user?.role == "admin" && packageDetail.state === 'rejected' ?
-                                                        <div onClick={() => handleChangeStatus()} className="bg-green-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg">
-                                                            <TiTickOutline />
-                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Approve</p>
-                                                        </div>
-                                                        : user?.role == "admin" && packageDetail.state == 'approved' ?
-                                                            <div onClick={() => handleChangeStatus()} className="bg-red-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg">
-                                                                <TiCancel />
-                                                                <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Reject</p>
-                                                            </div> : user?.role == "admin" &&
-                                                            <div className="flex">
-                                                                <div onClick={() => handleChangeStatus("rejected")} className="bg-green-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                            rounded-lg">
-                                                                    <TiTickOutline />
-                                                                    <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Approve</p>
-                                                                </div>
-                                                                <div onClick={() => handleChangeStatus("approved")} className="bg-red-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                            rounded-lg">
-                                                                    <TiCancel />
-                                                                    <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Reject</p>
-                                                                </div>
+                                                                <AiOutlineEdit />
+                                                                <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Update</p>
                                                             </div>
-                                                    }
-                                                </div>
+                                                        }
+                                                        {canEdit &&
+                                                            <div onClick={() => onRemovePackage()} className="bg-red-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                        rounded-lg">
+                                                                <AiOutlineDelete />
+                                                                <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Delete</p>
+                                                            </div>
+                                                        }
+                                                        {user?.role == "admin" && packageDetail.state === 'rejected' ?
+                                                            <div onClick={() => handleChangeStatus()} className="bg-green-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                        rounded-lg">
+                                                                <TiTickOutline />
+                                                                <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Approve</p>
+                                                            </div>
+                                                            : user?.role == "admin" && packageDetail.state == 'approved' ?
+                                                                <div onClick={() => handleChangeStatus()} className="bg-red-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                        rounded-lg">
+                                                                    <TiCancel />
+                                                                    <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Reject</p>
+                                                                </div> : user?.role == "admin" &&
+                                                                <div className="flex">
+                                                                    <div onClick={() => handleChangeStatus("rejected")} className="bg-green-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                            rounded-lg">
+                                                                        <TiTickOutline />
+                                                                        <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Approve</p>
+                                                                    </div>
+                                                                    <div onClick={() => handleChangeStatus("approved")} className="bg-red-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
+                                                            rounded-lg">
+                                                                        <TiCancel />
+                                                                        <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Reject</p>
+                                                                    </div>
+                                                                </div>
+                                                        }
+                                                    </div>
 
+                                                </div>
+                                                
+                                                <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
+                                                    <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)}
+                                                        className="block sm:text-sm text-[10px] border py-1 px-2 border-gray-500 rounded bg-white text-black select-none">
+                                                        {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
+                                                            <option selected={version.name === versionParam} value={version?._id}>{version?.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
                                             </div>
+
                                         </div>
                                     </div>
                                     <div className="flex items-center">
@@ -444,126 +454,13 @@ const DetailPackage = () => {
                                             </button>
                                         }
                                     </div>
-                                    {/* <div className="sm:w-[80%] w-[65%] sm:pl-3 pl-1 flex flex-col sm:ml-4 ml-2">
-                                        <div className="items-center sm:flex">
-                                            <div className="flex justify-between">
-                                                <p className="lg:text-xl truncate w-[200px] sm:text-lg text-[14px] font-bold text-black select-none">{packageDetail?.name}</p>
-                                                <div className="flex">
-                                                    {canEdit &&
-                                                        <div onClick={() => updatePackage(packageDetail)} className="bg-yellow-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg">
-                                                            <AiOutlineEdit />
-                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Update</p>
-                                                        </div>
-                                                    }
-                                                    {canEdit &&
-                                                        <div onClick={() => onRemovePackage()} className="bg-red-500 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg">
-                                                            <AiOutlineDelete />
-                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Delete</p>
-                                                        </div>
-                                                    }
-                                                    {user?.role == "admin" && packageDetail.state === 'rejected' ?
-                                                        <div onClick={() => handleChangeStatus()} className="bg-green-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg">
-                                                            <TiTickOutline />
-                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Approve</p>
-                                                        </div>
-                                                        : user?.role == "admin" && packageDetail.state == 'approved' ?
-                                                            <div onClick={() => handleChangeStatus()} className="bg-red-400 ml-2 py-1 px-1.5 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                        rounded-lg">
-                                                            <TiCancel />
-                                                            <p className="text-[8px] hidden lg:block sm:text-[10px] ml-1">Reject</p>
-                                                            </div> : user?.role == "admin" &&
-                                                            <div className="flex">
-                                                                <div onClick={() => handleChangeStatus("rejected")} className="bg-green-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                            rounded-lg">
-                                                                <TiTickOutline />
-                                                                <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Approve</p>
-                                                                </div>
-                                                                <div onClick={() => handleChangeStatus("approved")} className="bg-red-400 ml-2 py-1 px-1 round flex items-center cursor-pointer hover:opacity-60 text-white select-none
-                                                            rounded-lg">
-                                                                <TiCancel />
-                                                                <p className="text-[8px] hidden sm:block sm:text-[10px] ml-1">Reject</p>
-                                                                </div>
-                                                            </div>
-                                                    }
-
-                                                </div>
-
-                                            </div>
-                                            <div className="grow"></div>
-                                            <Link to={`/manageversion/${packageDetail?._id}`} className=" text-[12px] sm:text-[14px] opacity-80 truncate text-black select-none">Version history</Link>
-                                        </div>
-                                        <div className="grow"></div>
-                                        <div className="flex justify-between sm-text-[14px] lg:text-[16px]">
-                                            <p className="text-[12px] sm:text-[14px] opacity-75 text-black select-none">{packageDetail?.createdBy.fullName}</p>
-                                            <select onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleChangeVersion(event.target.value)}
-                                                className="block sm:ml-2 sm:text-sm text-[10px] border px-2 py-1 border-gray-500 rounded bg-white text-black select-none">
-                                                {packageDetail && packageDetail.versions && packageDetail.versions.map((version) => (
-                                                    <option selected={version.name === versionParam} value={version?._id}>{version?.name}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="grow"></div>
-                                        <div className={`flex mt-2 ${!user ? 'hidden' : ''}`}>
-                                            <div onClick={() => handleLike(isLike === true ? "unlike" : "like")} className="py-1.5 px-2 round flex items-center cursor-pointer hover:opacity-60 bg-blue-500 text-white 
-                                            rounded-lg"><BiLike />
-                                                <p className="text-[12px] sm:text-[12px] ml-1 select-none">{isLike === false ? "Like" : "Unlike"}</p>
-                                            </div>
-                                        </div>
-                                        <div className={`grow ${!user ? 'hidden' : ''}`}></div>
-                                        <div className="sm:flex">
-
-                                        </div>
-                                        <div className="flex mt-2">
-                                            <div className="flex items-center mx-1 opacity-70 text-black select-none"><BiLike />
-                                                <p className="text-[14px] ml-[2px] ">{packageDetail?.likes.length}</p>
-                                            </div>
-                                            <div className="flex items-center mx-1 opacity-70 text-black select-none"><BiDownload />
-                                                <p className="text-[14px] ml-[2px] ">{packageDetail?.downloads}</p>
-                                            </div>
-                                        </div>
-                                        <div className="lg:flex lg:w-[80%] w-[100%]">
-                                            <div className="w-[20%] min-w-[180px] sm:block mr-8">
-                                                {packageDetail?.version?.downloadUrl &&
-                                                    <button onClick={onDownLoadPackage} className="w-full mt-4 round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
-                                                    px-4 py-2 rounded-lg items-center justify-center">
-                                                        <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.downloadUrl}>
-                                                            <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2 select-none">Download</p> <BsDownload />
-                                                        </a>
-                                                    </button>
-                                                }
-                                            </div>
-                                            <div className="w-[20%] min-w-[180px] sm:block mr-8">
-                                                {packageDetail?.version?.downloadUrl &&
-                                                    <button className="w-full mt-4 round cursor-pointer hover:opacity-60 text-black select-none-500 border border-black
-                                                    px-6 py-2 rounded-lg items-center justify-center">
-                                                        <a target="_blank" rel="noopener noreferrer" className="w-full text-black select-none flex items-center justify-center"
-                                                            href={!user ?  '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.entryUrl}>
-                                                            <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2">Preview</p> <CiShare1 />
-                                                        </a>
-                                                    </button>
-                                                }
-                                            </div>
-                                            <div className="w-[20%] min-w-[180px] sm:block">
-                                                {packageDetail?.version?.downloadUrl &&
-                                                    <button className="select-none w-full flex mt-4 round cursor-pointer hover:opacity-60 text-black select-none-500 border border-black
-                                                py-2 rounded-lg items-center justify-center" onClick={() => onCopyUrl(currentVersion?.entryUrl)}>
-                                                        <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2 truncate">Copy URL</p> <GoCopy />
-                                                    </button>
-                                                }
-                                            </div>
-                                        </div>
-
-                                    </div> */}
                                 </div>
                                 <div className="sm:flex sm:px-6 items-center justify-between">
                                     <div className="flex items-center space-x-3">
                                         <div className="flex space-x-3">
                                             <div className="flex text-[#3e88ff] my-auto items-center space-x-2 font-semibold">
                                                 <HiOutlineBadgeCheck />
-                                                <p className=" text-[12px] sm:text-sm lg:text-lg">{packageDetail?.authors[0]}</p>
+                                                <p className=" text-[12px] sm:text-sm lg:text-lg">{packageDetail?.createdBy.fullName}</p>
                                             </div>
                                             <div className="flex items-center">
                                                 <div className="flex items-center mx-1 opacity-70 text-black select-none"><BiLike />
@@ -577,18 +474,19 @@ const DetailPackage = () => {
                                         <div className="flex space-x-3 items-center">
                                             <div className={`flex ${!user ? 'hidden' : ''}`}>
                                                 <div onClick={() => handleLike(isLike === true ? "unlike" : "like")} className="py-1.5 px-4 round flex items-center cursor-pointer hover:opacity-60 bg-blue-500 text-white 
-                                            rounded-lg"><BiLike />
+                                            rounded-full"><BiLike />
                                                     <p className="text-[12px] ml-1 select-none">{isLike === false ? "Like" : "Unlike"}</p>
                                                 </div>
                                             </div>
                                             {packageDetail?.version?.downloadUrl &&
                                                 <button onClick={onDownLoadPackage} className="round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
-                                                    px-4 py-1.5 rounded-lg items-center justify-center">
+                                                    px-4 py-1.5 rounded-full items-center justify-center">
                                                     <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.downloadUrl}>
                                                         <p className="text-[12px] mx-2 select-none">Download</p> <BsDownload />
                                                     </a>
                                                 </button>
                                             }
+
                                         </div>
                                     </div>
                                     <Link to={`/manageversion/${packageDetail?._id}`} className=" text-[12px] sm:text-[14px] opacity-80 truncate text-black select-none">
@@ -600,7 +498,7 @@ const DetailPackage = () => {
                                         </button>
                                     </Link>
                                 </div>
-                                <div className="flex py-4 sm:px-6 text-[#4c4c4c]">
+                                <div className="flex py-4 text-sm sm:px-6 text-[#4c4c4c]">
                                     <div className="px-4 py-2 rounded-lg bg-[#eff2ef]">
                                         {packageDetail.category}
                                     </div>

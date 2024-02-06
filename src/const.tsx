@@ -44,6 +44,24 @@ const categoryFake: ICategory[] = [
     },
 ]
 
+const categoryGenAI: ICategory[] = [
+    {
+        id: "1",
+        name: 'GenAI_Widget',
+        textShow: "GenAI Widget"
+    },
+    {
+        id: "2",
+        name: 'GenAI_Python',
+        textShow: "GenAI Python"
+    },
+    {
+        id: "3",
+        name: 'GenAI_Dashboard',
+        textShow: "GenAI Dashboard"
+    },
+]
+
 const statusFake: ICategory[] = [
     {
         id: "1",
@@ -70,5 +88,6 @@ const statusFake: ICategory[] = [
 export default {
     pageList,
     categoryFake,
-    statusFake
+    statusFake,
+    categoryGenAI
 }

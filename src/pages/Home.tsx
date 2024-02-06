@@ -1,21 +1,16 @@
 import { useEffect, useState } from 'react';
-// import LoadingDialog from '../components/LoadingDialog';
-import _ from 'lodash';
 import userService from '../services/userService';
 import PackageTypeList from '../components/PackageTypeList';
 import _const from '../const';
 import Banner from '../components/Banner';
 
 const Home = () => {
-
-    // const [isLoading, setIsLoading] = useState(true);
     // //User info
     const [userRole, setUserRole] = useState<string>();
 
     useEffect(() => {
         getCurrentUser();
     }, [])
-
 
     const getCurrentUser = async () => {
         await userService.getCurrentUser().then(({ status, data }) => {

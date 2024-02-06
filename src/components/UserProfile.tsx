@@ -83,14 +83,14 @@ const UserProfile = () => {
     }, []);
 
     return (
-        <div className="user-profile py-[46px] ">
+        <div className="user-profile py-[46px]">
             <LoadingDialog
                 open={isLoading}
                 closeModal={onCloseModal}
             />
             <section className={`${isLoading == true ? 'hidden' : ''} flex items-center justify-center mt-10`}>
 
-                <div className="max-w-[400px] w-[94%] p-6 rounded shadow-sm bg-white text-black">
+                <div className="max-w-[400px] w-[94%] p-6 rounded shadow-md bg-gray-100 text-black">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <div className="profile-img flex justify-center text-[80px]">
                             {imageCover == "" ? <HiOutlineUserCircle /> : <img className='w-[80px] h-[80px] rounded-[50%] object-contain' src={imageCover} />}

@@ -18,9 +18,7 @@ import ImageCoverView from '../components/ImageCoverView';
 import ImageDetailView from '../components/ImageDetailView';
 
 const UpdatePackage = () => {
-
     const navigate = useNavigate();
-    //const packages = useSelector((state: RootState) => state.packages.value);
     //Package info
     const [packageName, setPackageName] = useState("");
     const [packageShortDesc, setPackageShortDesc] = useState("");
@@ -32,6 +30,8 @@ const UpdatePackage = () => {
     const [isDeleteImgCover, setIsDeleteImgCover] = useState(false);
     const [entryPoint, setEntryPoint] = useState<string>("");
     const [dashboardConfig, setDashboardConfig] = useState<string>("");
+    const [genAIType, setGenAIType] = useState<string>("");
+    const [genAIModelId, setGanAIModelId] = useState<string>("");
     //Zip file
     const [zipFile, setZipFile] = useState<string>("");
     const [deploymentUrl, setDeploymentUrl] = useState("");
@@ -128,7 +128,9 @@ const UpdatePackage = () => {
             setEntryPoint(packageUpdate.entryPoint);
             setDashboardConfig(packageUpdate.dashboardConfig);
             setMode(packageUpdate.visibility);
-            setLinkSourceCode(packageUpdate.source);
+            setLinkSourceCode(packageUpdate.source!);
+            setGenAIType(packageUpdate.type!);
+            setGanAIModelId(packageUpdate.modelId!)
             setIsLoading(false);
         }
     }, [packageUpdate])
@@ -218,7 +220,9 @@ const UpdatePackage = () => {
                         category: category,
                         entryPoint: entryPoint,
                         dashboardConfig,
-                        source: linkSourceCode
+                        source: linkSourceCode,
+                        modelId: genAIModelId,
+                        type: genAIType
                     };
                     try {
                         await packageService.updatePackage(packageObj, packageUpdate._id).then(async ({ status }) => {
@@ -298,8 +302,8 @@ const UpdatePackage = () => {
                                     <div className="col-span-full sm:flex">
                                         <div className="sm:w-[50%] w-[100%]"><div className='sm:w-[95%] w-full'>
                                             <TextInput title="Package name" value={packageName}
-                                            placeholderStr="Enter your package name"
-                                            handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
+                                                placeholderStr="Enter your package name"
+                                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setPackageName(event.target.value)} />
                                         </div>
                                         </div>
                                         <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'>
@@ -327,6 +331,23 @@ const UpdatePackage = () => {
                                             handleChangeCategory={(value: string) => setCategory(value)} categoryName={category} /></div>
                                         <PackageMode mode={mode} onChangeMode={onChangeMode} />
                                     </div>
+                                    {category === "genai" &&
+                                    <div className="col-span-full sm:flex items-center">
+                                        <div className="sm:w-[50%] w-[100%]">
+                                            <CategorySelectUpdate categoryName={genAIType} listCategory={_const.categoryGenAI} handleChangeCategory={(value: string) => setGenAIType(value)} />
+                                        </div>
+                                        <div className="grow flex justify-end">
+                                            <div className="sm:w-[95%] w-full">
+                                                <TextInput
+                                                    title="Model id"
+                                                    value={genAIModelId}
+                                                    handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setGanAIModelId(event.target.value)}
+                                                    placeholderStr='Enter genAI model id...'
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                                     <div className="col-span-full">
                                         <div className="flex mt-4">
                                             <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
@@ -334,7 +355,11 @@ const UpdatePackage = () => {
                                             </label>
                                             <span className="required text-red-500 ml-1">*</span>
                                         </div>
-                                        <UploadImage onUploadImgAreaChange={handleInputImgCoverChange} />
+                                        <UploadImage
+                                            id='img-cover-upload'
+                                            name='img-cover-upload'
+                                            onUploadImgAreaChange={handleInputImgCoverChange} 
+                                        />
                                         {isLoadingCoverImg == true ? <p className="text-black">Loading...</p> : ''}
                                         {imageCover && (
                                             <ImageCoverView imageCover={imageCover} onDeleteCoverImage={onDeleteCoverImage} />
@@ -350,6 +375,8 @@ const UpdatePackage = () => {
                                         <UploadImage
                                             multiple={true}
                                             onUploadImgAreaChange={handleInputImgDetailChange}
+                                            id='img-details-upload'
+                                            name='img-details-upload'
                                         />
                                     </div>
                                     {isLoadingDetailImgs == true ? <p className="text-black">Loading...</p> : ''}
