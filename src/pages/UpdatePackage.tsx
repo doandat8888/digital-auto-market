@@ -3,6 +3,7 @@ import userService from "../services/userService";
 import LoadingModal from "../components/LoadingDialog";
 import { useNavigate, useParams } from "react-router";
 import packageService from "../services/packageService";
+import versionService from '../services/versionService';
 import uploadService from "../services/uploadService";
 import UploadFile from "../components/UploadFile";
 import TextInput from '../components/TextInput';
@@ -54,6 +55,10 @@ const UpdatePackage = () => {
     const [isLoadingDetailImgs, setIsLoadingDetailImgs] = useState(false);
     const [isLoadingZipFile, setIsLoadingZipFile] = useState(false);
     const [linkSourceCode, setLinkSourceCode] = useState('');
+
+    const [genAIToken, setGenAIToken] = useState<string>("");
+    const [linkGenAIUrl, setLinkGenAIUrl] = useState<string>("");
+    const [genAISampleCode, setGenAISampleCode] = useState<string>("");
 
     const handleInputImgDetailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsLoadingDetailImgs(true);
@@ -118,6 +123,7 @@ const UpdatePackage = () => {
 
 
     useEffect(() => {
+        console.log(`packageUpdate`, packageUpdate)
         if (packageUpdate) {
             setPackageName(packageUpdate.name);
             setPackageShortDesc(packageUpdate.shortDesc);
@@ -132,11 +138,20 @@ const UpdatePackage = () => {
             setGenAIType(packageUpdate.type!);
             setGanAIModelId(packageUpdate.modelId!)
             setIsLoading(false);
+
+            if(packageUpdate.version) {
+                setGenAISampleCode(packageUpdate.version.samples || "");
+                setGenAIToken(packageUpdate.version.apiKey || "");
+                setLinkGenAIUrl(packageUpdate.version.endpointUrl || "");
+            }
         }
     }, [packageUpdate])
 
     const validateInfoPackageUpdate = (): boolean => {
-        const packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, mode, user?._id];
+        let packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, mode, user?._id];
+        if(category === "genai") {
+            packageInfoArr = [packageName, user?.fullName, packageDescription, imageCover, imageDetailList, mode, user?._id, linkGenAIUrl];
+        }
         for (let i = 0; i < packageInfoArr.length; i++) {
             if (packageInfoArr[i] === "") return false;
         }
@@ -144,12 +159,21 @@ const UpdatePackage = () => {
     }
 
     useEffect(() => {
-        if (packageName && imageCover && mode && entryPoint) {
-            setShowBtnSave(true);
+        if(category === "genai") {
+            if (packageName && imageCover && mode && linkGenAIUrl) {
+                setShowBtnSave(true);
+            } else {
+                setShowBtnSave(false);
+            }
         } else {
-            setShowBtnSave(false);
+            if (packageName && imageCover && mode && entryPoint) {
+                setShowBtnSave(true);
+            } else {
+                setShowBtnSave(false);
+            }
         }
-    }, [packageName, imageCover, mode, category, entryPoint]);
+        
+    }, [packageName, imageCover, mode, category, entryPoint, linkGenAIUrl]);
 
 
 
@@ -229,13 +253,21 @@ const UpdatePackage = () => {
                             if (status === 200) {
                                 toast.success("Update info successfully!");
                                 //Delete img cover and image details
-                                const imageCoverName = imageCover.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
+                                const imageCoverName = imageCover.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.tech/"}data`, "");
                                 for (let i = 0; i < imageDeleteListName.length; i++) {
                                     await uploadService.deleteFile(imageDeleteListName[i]);
                                 }
                                 if (isDeleteImgCover) {
                                     await uploadService.deleteFile(imageCoverName);
                                 }
+                                await versionService.updateVersion({
+                                    _id: packageUpdate.version._id,
+                                    name: packageUpdate.version.name,
+                                    desc: packageUpdate.version.desc,
+                                    endpointUrl: linkGenAIUrl,
+                                    apiKey: genAIToken,
+                                    samples: genAISampleCode
+                                })
                                 navigateToDetail(packageUpdate._id);
                             }
                         })
@@ -259,7 +291,7 @@ const UpdatePackage = () => {
 
     const onDeleteZipFile = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        const fileDeleteName = fileZipName.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
+        const fileDeleteName = fileZipName.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.tech/"}data`, "");
         await uploadService.deleteFile(fileDeleteName).then(({ status }) => {
             if (status === 200) {
                 setZipFile("");
@@ -273,7 +305,7 @@ const UpdatePackage = () => {
         event.preventDefault();
         const detailsImg = [...imageDetailList];
         const imgDelete = detailsImg[index];
-        const imgDeleteName = imgDelete.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
+        const imgDeleteName = imgDelete.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.tech/"}data`, "");
         imageDeleteListName.push(imgDeleteName);
         detailsImg.splice(index, 1);
         setimageDetailList(detailsImg);
@@ -313,41 +345,42 @@ const UpdatePackage = () => {
                                         </div>
                                         </div>
                                     </div>
-                                    <div className="col-span-full sm:flex">
-                                        <div className="sm:w-[50%] w-[100%]">
-                                            <div className="sm:w-[95%] w-full">
-                                                <TextArea title='Description' value={packageDescription}
-                                                    placeHolderStr='Write some sentences about your package' editable={true} handleTextAreaChange={handleContentEditable} />
-                                            </div>
+                                    <div className="col-span-full">
+                                        <div className="sm:w-[95%] w-full">
+                                            <TextArea title='Description' value={packageDescription}
+                                                placeHolderStr='Write some sentences about your package' editable={true} handleTextAreaChange={handleContentEditable} />
                                         </div>
-                                        <div className="sm:w-[50%] w-[100%] flex justify-end"><div className='sm:w-[95%] w-full'><TextInput title="Entry point"
+                                    </div>
+
+                                    <div className="col-span-full">
+                                        <div className='sm:w-[95%] w-full'><TextInput title="Entry point"
                                             value={entryPoint} placeholderStr="Enter file name you want to demo"
                                             handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setEntryPoint(event.target.value)} />
                                         </div>
-                                        </div>
                                     </div>
+
                                     <div className="col-span-full flex">
                                         <div className="w-[50%]"><CategorySelectUpdate listCategory={_const.categoryFake}
                                             handleChangeCategory={(value: string) => setCategory(value)} categoryName={category} /></div>
                                         <PackageMode mode={mode} onChangeMode={onChangeMode} />
                                     </div>
                                     {category === "genai" &&
-                                    <div className="col-span-full sm:flex items-center">
-                                        <div className="sm:w-[50%] w-[100%]">
-                                            <CategorySelectUpdate categoryName={genAIType} listCategory={_const.categoryGenAI} handleChangeCategory={(value: string) => setGenAIType(value)} />
-                                        </div>
-                                        <div className="grow flex justify-end">
-                                            <div className="sm:w-[95%] w-full">
-                                                <TextInput
-                                                    title="Model id"
-                                                    value={genAIModelId}
-                                                    handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setGanAIModelId(event.target.value)}
-                                                    placeholderStr='Enter genAI model id...'
-                                                />
+                                        <div className="col-span-full sm:flex items-center">
+                                            <div className="sm:w-[50%] w-[100%]">
+                                                <CategorySelectUpdate label='Sub-Categories' categoryName={genAIType} listCategory={_const.categoryGenAI} handleChangeCategory={(value: string) => setGenAIType(value)} />
                                             </div>
+                                            {/* <div className="grow flex justify-end">
+                                                <div className="sm:w-[95%] w-full">
+                                                    <TextInput
+                                                        title="Model id"
+                                                        value={genAIModelId}
+                                                        handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setGanAIModelId(event.target.value)}
+                                                        placeholderStr='Enter genAI model id...'
+                                                    />
+                                                </div>
+                                            </div> */}
                                         </div>
-                                    </div>
-                                }
+                                    }
                                     <div className="col-span-full">
                                         <div className="flex mt-4">
                                             <label htmlFor="cover-photo" className="block text-sm font-bold leading-6 text-gray-900">
@@ -385,44 +418,86 @@ const UpdatePackage = () => {
                                             <ImageDetailView index={index} base64={base64} onDeleteDetailImage={onDeleteDetailImage} />
                                         ))}
                                     </div>
-                                    {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""}
-                                        handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
-                                    {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
+
+                                    {
+                                        category !== "genai" && <>
+                                            {!packageUpdate && <UploadFile zipFile={zipFile} fileZipName={""}
+                                                handleFileInputChange={handleFileInputChange} onDeleteZipFile={onDeleteZipFile} />}
+                                            {isLoadingZipFile == true ? <p className="text-black">Loading...</p> : ''}
+                                        </>
+                                    }
+                                    
                                 </div>
                             </div>
-                            <div className="col-span-full">
-                                <TextInput
-                                    required={false}
-                                    title='Link source code'
-                                    placeholderStr='Enter your source code link'
-                                    value={linkSourceCode}
-                                    handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setLinkSourceCode(event.target.value)}
-                                />
-                            </div>
-                            <div className="col-span-full">
-                                <div className="flex mb-2">
-                                    <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">
-                                        Dashboard config
-                                    </label>
+
+                            {   category !== "genai" && <>
+                                <div className="col-span-full">
+                                    <TextInput
+                                        required={false}
+                                        title='Link source code'
+                                        placeholderStr='Enter your source code link'
+                                        value={linkSourceCode}
+                                        handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setLinkSourceCode(event.target.value)}
+                                    />
                                 </div>
-                                <Editor height="300px" defaultLanguage="javascript" defaultValue={`{\n   \n}`} value={dashboardConfig} onChange={handleEditorChange} />;
-                            </div>
+                                <div className="col-span-full">
+                                    <div className="flex mb-2">
+                                        <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">
+                                            Options:
+                                        </label>
+                                    </div>
+                                    <Editor height="180px" defaultLanguage="javascript" defaultValue={`{\n   \n}`} value={dashboardConfig} onChange={handleEditorChange} />;
+                                </div>
+                                </>
+                            }
+
+                            {   category === "genai"  && <>
+                                        <div className="col-span-full">
+                                            <TextInput
+                                                required={false}
+                                                title='genAI POST Request URL *'
+                                                placeholderStr='Enter your genAI POST Request URL'
+                                                value={linkGenAIUrl}
+                                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setLinkGenAIUrl(event.target.value)}
+                                            />
+                                        </div>
+
+                                        <div className="col-span-full">
+                                            <TextInput
+                                                required={false}
+                                                title='genAI Token'
+                                                placeholderStr='Token for genAI'
+                                                value={genAIToken}
+                                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => setGenAIToken(event.target.value)}
+                                            />
+                                        </div>
+
+                                        <div className="col-span-full">
+                                            <div className="flex mb-2">
+                                                <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">
+                                                    Sample code for genAI
+                                                </label>
+                                            </div>
+                                            <Editor height="300px" defaultLanguage="" defaultValue={``} value={genAISampleCode} onChange={(value) =>  setGenAISampleCode(value?.trim() || "")} />
+                                        </div>
+                                    </>
+                                }
+
                         </div>
 
                         <div className="mt-6 flex items-center justify-end gap-x-6">
-                            <div className="flex justify-between space-x-3">
-                                <CustomButton
-                                    title='Cancel'
-                                    onClickBtn={() => navigate('/')}
-                                    bgColor='bg-gray-400'
-                                />
-                                <CustomButton
-                                    disabled={showBtnSave === true ? false : true}
-                                    type='submit'
-                                    onClickBtn={onSaveInfoPackage}
-                                    title='Save'
-                                />
-                            </div>
+                            <CustomButton
+                                title='Cancel'
+                                onClickBtn={() => navigate('/')}
+                                bgColor='bg-gray-400'
+                            />
+                            <div className="grow w-[100px]"></div>
+                            <CustomButton
+                                disabled={!showBtnSave}
+                                type='submit'
+                                onClickBtn={onSaveInfoPackage}
+                                title='Save'
+                            />
                         </div>
                     </form>
                 </div>

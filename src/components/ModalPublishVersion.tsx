@@ -69,7 +69,7 @@ const ModalPublishVersion = (props: IProps) => {
 
     const onDeleteZipFile = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        const fileDeleteName = zipFile.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.asia/"}data`, "");
+        const fileDeleteName = zipFile.replace(`${import.meta.env.VITE_APP_UPLOAD_URL || "https://upload.digitalauto.tech/"}data`, "");
         await uploadService.deleteFile(fileDeleteName).then(({ status }) => {
             if (status === 200) {
                 setZipFile("");

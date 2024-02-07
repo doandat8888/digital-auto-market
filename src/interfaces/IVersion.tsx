@@ -12,14 +12,21 @@ type IAddVersion = {
     // downloadUrl: string,
     // deploymentUrl: string,
     desc?: string | undefined,
+    description?: string | undefined,
     packageId: string,
-    file: File | undefined
+    file?: File | undefined,
+    endpointUrl?: string | undefined,
+    apiKey?: string | undefined
+    samples?: string | undefined
 }
 
 type IUpdateVersion = {
     _id: string,
     name: string,
-    desc: string | undefined
+    desc: string | undefined,
+    endpointUrl?: string | undefined,
+    apiKey?: string | undefined
+    samples?: string | undefined
 }
 
 type IGetVersion = IVersion &{
@@ -28,5 +35,8 @@ type IGetVersion = IVersion &{
     deploymentUrl: string,
     entryUrl: string
     __v: number,
-    package: IPackage
+    package: IPackage,
+    endpointUrl?: string | undefined,
+    apiKey?: string | undefined
+    samples?: string | undefined
 }

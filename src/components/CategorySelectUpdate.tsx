@@ -1,7 +1,8 @@
 interface IProps {
     listCategory: ICategory[];
     handleChangeCategory: (value: string) => void,
-    categoryName: string
+    categoryName: string,
+    label?: string
 }
 
 const CategorySelectUpdate = (props: IProps) => {
@@ -12,7 +13,7 @@ const CategorySelectUpdate = (props: IProps) => {
         <div className="category-select sm:col-span-full">
             <div className="flex">
                 <label htmlFor="versioname" className="block text-sm font-bold leading-6 text-gray-900">
-                    Category
+                    { props.label || 'Category' }
                 </label>
                 <span className="required text-red-500 ml-1">*</span>
             </div>

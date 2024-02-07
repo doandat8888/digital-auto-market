@@ -2,7 +2,7 @@ import axios from 'axios';
 const token = localStorage.getItem("token");
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_APP_BE_STORE_URL || 'https://store-be.digitalauto.asia',
+    baseURL: import.meta.env.VITE_APP_BE_STORE_URL || 'https://store-be.digitalauto.tech',
     headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Authorization': `Bearer ${token}`,
@@ -10,7 +10,7 @@ const instance = axios.create({
 });
 
 export const instancePublishVersion = axios.create({
-    baseURL: import.meta.env.VITE_APP_BE_STORE_URL || 'https://store-be.digitalauto.asia',
+    baseURL: import.meta.env.VITE_APP_BE_STORE_URL || 'https://store-be.digitalauto.tech',
     headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`,

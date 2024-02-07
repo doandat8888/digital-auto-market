@@ -19,6 +19,12 @@ const addVersion = (version: IAddVersion) => {
     })
 }
 
+const addVersionWithoutSource = (version: IAddVersion) => {
+    return axios.post('/version/without-source', {
+        ...version
+    })
+}
+
 const updateVersion = (version: IUpdateVersion) => {
     return axios.put(`/version/${version._id}`, {
         ...version
@@ -36,6 +42,7 @@ const changeStatus = (packageId: string, status: string) => {
 export default {
     getVersionByPackageId,
     addVersion,
+    addVersionWithoutSource,
     updateVersion,
     deleteVersion,
     getAllVersion,

@@ -31,7 +31,7 @@ const Login = () => {
                         if (data.token) {
                             dispatch(addToken(data.token));
                             setIsLoading(false);
-                            window.location.href = '/' || "https://store.digitalauto.asia/";
+                            window.location.href = '/' || "https://store.digitalauto.tech/";
                         } else {
                             alert("Token not found");
                         }

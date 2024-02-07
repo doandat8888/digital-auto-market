@@ -448,7 +448,7 @@ const DetailPackage = () => {
                                             <button className="mt-4 round cursor-pointer hover:opacity-60 select-none-500 border shadow-md
                                                     px-8 py-2 rounded-full bg-[#1e64d4] items-center justify-center">
                                                 <a target="_blank" rel="noopener noreferrer" className="w-full font-bold text-white select-none flex items-center justify-center"
-                                                    href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.entryUrl}>
+                                                    href={!user ? '/login' || "https://store-be.digitalauto.tech/login" : currentVersion?.entryUrl}>
                                                     <p className="text-[12px] sm:text-[12px] lg:text-[14px] mx-2 font-bold">Preview</p> <CiShare1 />
                                                 </a>
                                             </button>
@@ -481,7 +481,7 @@ const DetailPackage = () => {
                                             {packageDetail?.version?.downloadUrl &&
                                                 <button onClick={onDownLoadPackage} className="round cursor-pointer hover:opacity-60 bg-emerald-500 text-white 
                                                     px-4 py-1.5 rounded-full items-center justify-center">
-                                                    <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.downloadUrl}>
+                                                    <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.tech/login" : currentVersion?.downloadUrl}>
                                                         <p className="text-[12px] mx-2 select-none">Download</p> <BsDownload />
                                                     </a>
                                                 </button>
@@ -492,7 +492,7 @@ const DetailPackage = () => {
                                     <Link to={`/manageversion/${packageDetail?._id}`} className=" text-[12px] sm:text-[14px] opacity-80 truncate text-black select-none">
                                         <button onClick={onDownLoadPackage} className="round cursor-pointer hover:opacity-60 border-black text-black
                                                     px-4 py-1.5 rounded-full items-center justify-center">
-                                            <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.asia/login" : currentVersion?.downloadUrl}>
+                                            <a className="w-full flex items-center justify-center" href={!user ? '/login' || "https://store-be.digitalauto.tech/login" : currentVersion?.downloadUrl}>
                                                 <p className="text-[12px] mx-2 select-none">Version history</p> <GoVersions />
                                             </a>
                                         </button>
@@ -513,24 +513,28 @@ const DetailPackage = () => {
                                     </div>
                                 </div>
 
-                                {canEdit && packageDetail && packageDetail.source &&
-                                    <div className="my-4 flex">
-                                        <div className="source text-black select-none">
-                                            <p className="lg:text-xl md:text-lg text-sm font-bold">Source</p>
-                                            <a target="blank" href={packageDetail.source} className="whitespace-pre-line lg:text-[16px] md:text-[14px] text-sm">{packageDetail.source}</a>
+                                {
+                                    packageDetail.category != 'genai' && <>
+                                        {canEdit && packageDetail && packageDetail.source &&
+                                            <div className="my-4 flex">
+                                                <div className="source text-black select-none">
+                                                    <p className="lg:text-xl md:text-lg text-sm font-bold">Source</p>
+                                                    <a target="blank" href={packageDetail.source} className="whitespace-pre-line lg:text-[16px] md:text-[14px] text-sm">{packageDetail.source}</a>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <div className="col-span-full my-4">
+                                            <div className="flex mb-2">
+                                                <p className="text-xl font-bold text-black select-none">Options</p>
+                                            </div>
+                                            <div className="h-[200px] overflow-hidden">
+                                                <Editor className="overflow-hidden" height="100%" options={{ readOnly: true, minimap: { enabled: false } }} defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig} />
+                                            </div>
                                         </div>
-                                    </div>
+                                    </>
                                 }
 
-                                <div className="col-span-full my-4">
-                                    <div className="flex mb-2">
-                                        <p className="text-xl font-bold text-black select-none">Dashboard config</p>
-                                    </div>
-                                    <div className="h-[200px] overflow-hidden">
-                                        <Editor className="overflow-hidden" height="100%" options={{ readOnly: true, minimap: { enabled: false } }} defaultLanguage="javascript" defaultValue="// some comment" value={packageDetail.dashboardConfig} />
-                                    </div>
-
-                                </div>
                                 <div className="comment-rating my-6 text-black select-none">
                                     <div className="flex justify-between">
                                         <div className="text-xl font-semibold">Reviews</div>

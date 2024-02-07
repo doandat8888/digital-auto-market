@@ -95,9 +95,9 @@ const Header = () => {
                 <div className="flex items-center mx-4 h-full">
                     {pageList && pageList.length > 0 && pageList.map((page: IPage, index: number) => (
                         page.name === 'My package' ?
-                            <Link className={`${!user ? 'hidden' : 'block'} flex text-[16px] custom-link h-full items-center mx-2 px-2 cursor-pointer page-item 
+                            <Link key={index} className={`${!user ? 'hidden' : 'block'} flex text-[16px] custom-link h-full items-center mx-2 px-2 cursor-pointer page-item 
                             ${indexActive === index ? ' border-b-2 border-b-black font-bold' : ''}`} to={page.path}>{page.name}</Link>
-                            : <Link className={`hidden text-[16px] custom-link h-full md:flex items-center mx-2 px-2 cursor-pointer page-item ${indexActive === index ? ' border-b-2 border-b-black font-bold' : ''}`} to={page.path}>{page.name}</Link>
+                            : <Link key={index} className={`hidden text-[16px] custom-link h-full md:flex items-center mx-2 px-2 cursor-pointer page-item ${indexActive === index ? ' border-b-2 border-b-black font-bold' : ''}`} to={page.path}>{page.name}</Link>
                     ))}
                 </div>
                 <div className="grow"></div>
@@ -105,7 +105,7 @@ const Header = () => {
                 <div ref={ref} onClick={handleOnClick} className="relative h-full flex items-center cursor-pointer hover:opacity-70 font-semibold text-[14px]">
                     <div className="text-black flex items-center">
                         {user ?
-                            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024"
+                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 1024 1024"
                                 className="mr-2" height="22" width="22" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M858.5 763.6a374 374 0 0 0-80.6-119.5 375.63 375.63 0 0 0-119.5-80.6c-.4-.2-.8-.3-1.2-.5C719.5 518 760 444.7 760 362c0-137-111-248-248-248S264 225 264 362c0 82.7 40.5 156 102.8 201.1-.4.2-.8.3-1.2.5-44.8 18.9-85 46-119.5 80.6a375.63 375.63 0 0 0-80.6 119.5A371.7 371.7 0 0 0 136 901.8a8 8 0 0 0 8 8.2h60c4.4 0 7.9-3.5 8-7.8 2-77.2 33-149.5 87.8-204.3 56.7-56.7 132-87.9 212.2-87.9s155.5 31.2 212.2 87.9C779 752.7 810 825 812 902.2c.1 4.4 3.6 7.8 8 7.8h60a8 8 0 0 0 8-8.2c-1-47.8-10.9-94.3-29.5-138.2zM512 534c-45.9 0-89.1-17.9-121.6-50.4S340 407.9 340 362c0-45.9 17.9-89.1 50.4-121.6S466.1 190 512 190s89.1 17.9 121.6 50.4S684 316.1 684 362c0 45.9-17.9 89.1-50.4 121.6S557.9 534 512 534z"></path>
                             </svg>
@@ -118,11 +118,11 @@ const Header = () => {
                 <div className="md:hidden cursor-pointer hover:opacity-70" onClick={() => setShowPageList(!showPageList)}><GrMenu /></div>
             </div>
             <div className={`${showPageList === false ? "hidden" : ""} md:hidden`}>
-                {pageList && pageList.length > 0 && pageList.map((page: IPage) => (
+                {pageList && pageList.length > 0 && pageList.map((page: IPage, index: number) => (
                     page.name === "My package" ?
-                        <Link onClick={() => setShowPageList(false)}
+                        <Link key={index} onClick={() => setShowPageList(false)}
                             className={`${!user ? 'hidden' : 'block'} w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
-                        : <Link onClick={() => setShowPageList(false)}
+                        : <Link key={index} onClick={() => setShowPageList(false)}
                             className={`w-full flex px-2 custom-link h-full items-center py-3 cursor-pointer page-item border bg-white hover:opacity-70`} to={page.path}>{page.name}</Link>
                 ))}
             </div>
