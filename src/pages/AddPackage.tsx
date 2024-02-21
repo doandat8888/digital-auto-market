@@ -32,7 +32,7 @@ const AddPackage = () => {
     const [imageCover, setimageCover] = useState<string>("");
     const [entryPoint, setEntryPoint] = useState<string>("");
     const [dashboardConfigStr, setDashboardConfigStr] = useState<string>("");
-    const [genAIType, setGenAIType] = useState<string>("");
+    const [genAIType, setGenAIType] = useState<string>("GenAI_Widget");
     const [genAIModelId, setGenAIModelId] = useState<string>("");
     const [genAIToken, setGenAIToken] = useState<string>("");
     const [linkGenAIUrl, setLinkGenAIUrl] = useState<string>("");
