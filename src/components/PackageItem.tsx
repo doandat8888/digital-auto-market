@@ -6,6 +6,7 @@ import { useState } from 'react';
 import packageService from '../services/packageService';
 import { ToastContainer, toast } from 'react-toastify';
 import { AiOutlineDelete } from 'react-icons/ai';
+import Lazyloading from './LazyLoading';
 
 interface IProps {
     packageItem: IGetPackage;
@@ -28,7 +29,6 @@ const PackageItem = (props: IProps) => {
             if (response && response.status === 200) {
                 setOpenModalConfirm(false);
                 toast.success(response.data.msg);
-                window.location.reload();
             }
         } catch (error) {
             toast.error("Fail to change status");
@@ -40,7 +40,6 @@ const PackageItem = (props: IProps) => {
             const response = await packageService.removePackage(packageItem._id);
             if (response && response.status === 200) {
                 alert("Deleted successfully!");
-                window.location.reload();
             }
         } catch (error: any) {
             alert(error.response.data.msg);
@@ -74,7 +73,7 @@ const PackageItem = (props: IProps) => {
         <>
             {packageItem ? <Link to={`/package/${packageItem._id}?version=latest`} className='w-[90%] mx-auto py-4 my-4 bg-[#eff2ef] rounded-2xl hover:bg-[#e3e3e3] shadow-md'>
                 <div className="left mx-auto">
-                    <img className="w-[88%] mx-auto bg-white h-[140px] sm:h-[140px] lg:h-[140px] xl:h-[160px] rounded-2xl object-cover aspect-square" src={packageItem.thumbnail != 'abc' ? packageItem.thumbnail :
+                    <img className="w-[88%] mx-auto bg-white h-[140px] sm:h-[140px] lg:h-[140px] xl:h-[160px] rounded-2xl object-contain aspect-square" src={packageItem.thumbnail != 'abc' ? packageItem.thumbnail :
                         "https://media.istockphoto.com/vectors/no-image-vector-symbol-missing-available-icon-no-gallery-for-this-vector-id1128826884?k=6&m=1128826884&s=170667a&w=0&h=F6kUwTcsLXUojmGFxN2wApEKgjx63zcIshCSOmnfEFs="} alt="" />
                 </div>
                 <div className="custom-link flex px-5 mt-4 cursor-pointer rounded">
