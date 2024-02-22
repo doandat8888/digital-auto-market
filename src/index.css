@@ -101,7 +101,7 @@ body {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  z-index: 400;
+  z-index: 20;
 }
 
 .slick-next::before {
