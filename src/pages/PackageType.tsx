@@ -9,7 +9,7 @@ import _ from "lodash";
 import NotFound from "../components/404NotFound";
 import Banner from "../components/Banner";
 
-const limit = window.screen.height > 900 ? 12 : 4;
+const limit = 16;
 
 const PackageType = () => {
 
