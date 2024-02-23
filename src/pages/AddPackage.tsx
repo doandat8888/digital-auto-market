@@ -214,8 +214,8 @@ const AddPackage = () => {
                     entryPoint: entryPoint || 'NAN',
                     source: linkSourceCode,
                     status: 'wait-for-approve',
-                    modelId: genAIModelId,
-                    type: genAIType
+                    modelId: category === "genai" ? genAIModelId : "",
+                    type: category === "genai" ? genAIType : ""
                 };
                 try {
                     //console.log("File: ", zipFilePublishVersion);

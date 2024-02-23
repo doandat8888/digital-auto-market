@@ -33,16 +33,16 @@ const UserInfo = (props: IProps) => {
 
     return (
         <div className={`text-black absolute sm:left-[-150px] rounded-[8px] left-[-150px] top-[100%] bg-white border  shadow-lg `}>
-            <Link to={'/user-profile'} className="hover:bg-slate-400 px-2 pt-2 py-1 flex items-center border-black"><AiOutlineUser className="text-xl" />
+            <Link to={'/user-profile'} className="px-2 pt-2 py-1 flex items-center border-black"><AiOutlineUser className="text-xl" />
                 <p className="w-[120px] truncate mx-2 text-sm">User Profile</p>
             </Link>
-            {user.role === 'admin' && <Link to={'/packageadmin'} className="hover:bg-slate-400 px-2 pt-2 py-1 flex items-center border-black"><GoPackage className="text-xl" />
+            {user.role === 'admin' && <Link to={'/packageadmin'} className="px-2 pt-2 py-1 flex items-center border-black"><GoPackage className="text-xl" />
                 <p className="w-[120px] truncate mx-2 text-sm">Manage package</p>
             </Link>}
-            {user.role === 'admin' && <Link to={'/manageversion'} className="hover:bg-slate-400 px-2 pt-2 py-1 flex items-center border-black"><GoVersions className="text-xl" />
+            {user.role === 'admin' && <Link to={'/manageversion'} className="px-2 pt-2 py-1 flex items-center border-black"><GoVersions className="text-xl" />
                 <p className="w-[120px] truncate mx-2 text-sm">Manage version</p>
             </Link>}
-            <div onClick={onLogout} className="hover:bg-slate-400 px-2 pt-2 py-1  flex items-center"><RiLogoutBoxLine className="text-xl" />
+            <div onClick={onLogout} className="px-2 pt-2 py-1  flex items-center"><RiLogoutBoxLine className="text-xl" />
                 <p className="mx-2 text-sm">Log out</p>
             </div>
         </div>

@@ -245,8 +245,8 @@ const UpdatePackage = () => {
                         entryPoint: entryPoint,
                         dashboardConfig,
                         source: linkSourceCode,
-                        modelId: genAIModelId,
-                        type: genAIType
+                        modelId: category === "genai" ? genAIModelId : "",
+                        type: category === "genai" ? genAIType : ""
                     };
                     try {
                         await packageService.updatePackage(packageObj, packageUpdate._id).then(async ({ status }) => {

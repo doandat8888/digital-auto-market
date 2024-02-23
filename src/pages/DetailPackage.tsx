@@ -365,6 +365,7 @@ const DetailPackage = () => {
             }
 
         } catch (error) {
+            console.log("status change error:",error)
             toast.error("Fail to change status");
             setCurrentStatus("");
         }
