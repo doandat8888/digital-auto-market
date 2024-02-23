@@ -14,7 +14,7 @@ const Login = () => {
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [showBtnSave, setShowBtnSave] = useState(false);
-    const [validEmail, setValidEmail] = useState(true);
+    const [validEmail, setValidEmail] = useState(false);
 
     useEffect(() => {
         setShowBtnSave(!!(email && password));
