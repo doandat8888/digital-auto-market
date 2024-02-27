@@ -84,7 +84,7 @@ const Register = () => {
                         <div>
                             <TextInput
                                 value={email} type="email"
-                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => { setValidEmail(isValidEmail(email)); setEmail(event.target?.value) }}
+                                handleFileTextChange={(event: React.ChangeEvent<HTMLInputElement>) => { setValidEmail(isValidEmail(event.target.value)); setEmail(event.target?.value) }}
                                 placeholderStr="Enter your email"
                                 title="Email"
                             />

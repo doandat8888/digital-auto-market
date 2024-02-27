@@ -8,7 +8,7 @@ interface IProps {
     slideImages: string[] | undefined,
 }
 
-const settings = {
+const settingsFirst = {
     dots: true,
     infinite: true,
     speed: 500,
@@ -37,15 +37,20 @@ const settings = {
     ]
 };
 
+const settingsSecond = {...settingsFirst};
+settingsSecond.slidesToShow = 1;
+
 const Slideshow = (props: IProps) => {
 
     const { slideImages } = props;
     const [open, setOpen] = useState<boolean>(false);
     const [imgFull, setImgFull] = useState("");
+    const [activeIndex, setActiveIndex] = useState(0);
 
-    const showFullImg = (slideImg: string) => {
+    const showFullImg = (slideImg: string, index: number) => {
         setOpen(true);
         setImgFull(slideImg);
+        setActiveIndex(index);
     }
     const onCloseModal = () => {
         setOpen(false);
@@ -53,11 +58,11 @@ const Slideshow = (props: IProps) => {
 
     return (
         <div>
-            <Slider {...settings}>
-                {slideImages && slideImages.length > 0 && slideImages.map((slideImage) => (
+            <Slider {...settingsFirst}>
+                {slideImages && slideImages.length > 0 && slideImages.map((slideImage, index) => (
                     <div className="flex justify-center items-center mb-4" style={{display: 'flex !important'}}>
                         <img className="shadow-sm border-black bg-gray-100 mx-auto aspect-video px-6 py-6 rounded-[18px] w-[96%] object-contain cursor-pointer"
-                            onClick={() => showFullImg(slideImage)} src={slideImage} alt="image" />
+                            onClick={() => showFullImg(slideImage, index)} src={slideImage} alt="image" />
                     </div>
                 ))}
             </Slider>
@@ -68,8 +73,7 @@ const Slideshow = (props: IProps) => {
                 aria-describedby="modal-modal-description"
                 className="flex items-center justify-center"
             >
-                <img src={imgFull} alt="imgFull" className="bg-white sm:w-[40%] sm:h-[80%] w-[90%] h-[80%] object-contain" />
-
+                <img src={imgFull} alt="imgFull" className="bg-white sm:w-[80%] sm:h-[80%] w-[90%] h-[80%] object-contain" />
             </Modal>
         </div>
 
