@@ -2,7 +2,9 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Modal } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { isArray } from "lodash";
 
 interface IProps {
     slideImages: string[] | undefined,
@@ -44,7 +46,7 @@ const Slideshow = (props: IProps) => {
 
     const { slideImages } = props;
     const [open, setOpen] = useState<boolean>(false);
-    const [imgFull, setImgFull] = useState("");
+    const [imgFull, setImgFull] = useState<string | undefined>("");
     const [activeIndex, setActiveIndex] = useState(0);
 
     const showFullImg = (slideImg: string, index: number) => {
@@ -55,6 +57,26 @@ const Slideshow = (props: IProps) => {
     const onCloseModal = () => {
         setOpen(false);
     }
+
+    const handleSwitchSlice = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, type: string) => {
+        event.stopPropagation();
+        event.preventDefault();
+        if(isArray(slideImages) && slideImages.length > 0) {
+            if(type === "back") {
+                setActiveIndex(activeIndex <= 0 ? slideImages.length - 1 : activeIndex - 1);
+            }else {
+                setActiveIndex(activeIndex >= slideImages.length - 1 ? 0 : activeIndex + 1);
+            }
+        }
+    }
+
+    useEffect(() => {
+        if(isArray(slideImages) && slideImages.length > 0) {
+            const imgShow = slideImages.find((slideImg, index) => index === activeIndex);
+            setImgFull(imgShow);
+        }
+        
+    }, [activeIndex, slideImages])
 
     return (
         <div>
@@ -73,7 +95,18 @@ const Slideshow = (props: IProps) => {
                 aria-describedby="modal-modal-description"
                 className="flex items-center justify-center"
             >
-                <img src={imgFull} alt="imgFull" className="bg-white sm:w-[80%] sm:h-[80%] w-[90%] h-[80%] object-contain" />
+                <div onClick={onCloseModal} className="flex items-center justify-between sm:w-[95%] w-[90%] h-[80%] border-none outline-none">
+                    <div onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => handleSwitchSlice(event, "back")} className="cursor-pointer sm:w-[60px] sm:h-[60px] w-[40px] h-[40px] rounded-full bg-white flex justify-center items-center">
+                        <IoIosArrowBack />
+                    </div>
+                    <div className="w-[90%] h-[100%] flex justify-center">
+                        <img onClick={(event: React.MouseEvent<HTMLImageElement, MouseEvent>) => event.stopPropagation()} src={imgFull} alt="imgFull" className="bg-white w-[90%] sm:h-[100%] h-[100%] object-contain" />
+                    </div>
+                    <div onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => handleSwitchSlice(event, "next")} className="cursor-pointer sm:w-[60px] sm:h-[60px] w-[40px] h-[40px] rounded-full bg-white flex justify-center items-center">
+                        <IoIosArrowForward />
+                    </div>
+                </div>
+                
             </Modal>
         </div>
 
