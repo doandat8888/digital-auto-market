@@ -1,49 +1,59 @@
-import axios from "../axios.tsx";
+import axios from '../axios.tsx'
 
 const login = (email: string, password: string) => {
-    return axios.post("/user/login", {
+    return axios.post('/user/login', {
         email: email,
-        password: password
-    });
+        password: password,
+    })
 }
 
 const register = (email: string, password: string, fullName: string) => {
-    return axios.post("/user/register", {
+    return axios.post('/user/register', {
         email: email,
         password: password,
-        fullName: fullName
-    });
+        fullName: fullName,
+    })
+}
+
+export const refreshTokens = () => {
+    return axios.post<{
+        token: string
+    }>('/user/refresh-tokens')
+}
+
+export const logOut = () => {
+    return axios.post('/user/logout')
 }
 
 const getUser = () => {
-    return axios.get("/user/current");
+    return axios.get('/user/current')
 }
 
 const getUserById = (idUser: string) => {
-    return axios.get(`/user/${idUser}`);
+    return axios.get(`/user/${idUser}`)
 }
 
 const getCurrentUser = () => {
-    return axios.get('/user/current');
+    return axios.get('/user/current')
 }
 
 const resetPassword = (email: string) => {
     return axios.post('/user/forget-password', {
-        email
+        email,
     })
 }
 
 const changeProfile = (fullName: string, imageCover: string) => {
     return axios.put(`/user/current`, {
         fullName,
-        avt: imageCover
+        avt: imageCover,
     })
 }
 
 const changePassword = (oldPassword: string, newPassword: string) => {
     return axios.put('/user/change-password', {
         oldPassword,
-        newPassword
+        newPassword,
     })
 }
 
@@ -55,5 +65,5 @@ export default {
     getCurrentUser,
     resetPassword,
     changeProfile,
-    changePassword
+    changePassword,
 }
