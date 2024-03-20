@@ -22,6 +22,7 @@ export const refreshTokens = () => {
 }
 
 export const logOut = () => {
+    localStorage.removeItem('token')
     return axios.post('/user/logout')
 }
 
