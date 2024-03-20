@@ -17,6 +17,7 @@ import ManageAddVersion from '../pages/ManageAddVersion.tsx'
 import ChangePassword from '../components/ChangePassword.tsx'
 import HackathonGenAI from '../pages/HackathonGenAI.tsx'
 import MainLayout from '../layouts/MainLayout.tsx'
+import PrivateLayout from '../layouts/PrivateLayout.tsx'
 
 const RoutesApp = () => {
     const location = useLocation()
@@ -32,25 +33,34 @@ const RoutesApp = () => {
                 children={
                     <>
                         <Route path='/' element={<Home />} />
-                        <Route path='/mypackage' element={<MyPackage />} />
                         <Route path='/package/:id' element={<DetailPackage />} />
                         <Route path='/package/:id/:version' element={<DetailPackage />} />
-                        <Route path='/addpackage' element={<AddPackage />} />
-                        <Route path='/login' element={<Login />} />
-                        <Route path='/user-profile' element={<UserProfile />} />
-                        <Route path='/forgot-password' element={<ForgotPassword />}></Route>
-                        <Route path='/register' element={<Register />} />
-                        <Route path='/manageversion/:packageId' element={<ManageVersion />} />
-                        <Route path='/updatepackage/:packageId' element={<UpdatePackage />} />
                         <Route path='/packagetype/:type' element={<PackageType />} />
-                        <Route path='/managepackage' element={<ManageAddPackage />} />
-                        <Route path='/packageadmin' element={<PackageAdmin />} />
-                        <Route path='/manageversion' element={<ManageAddVersion />} />
-                        <Route path='/change-password' element={<ChangePassword />} />
+
                         <Route path='/hackathon' element={<HackathonGenAI />} />
+                        <Route
+                            path='/'
+                            element={<PrivateLayout />}
+                            children={
+                                <>
+                                    <Route path='/packageadmin' element={<PackageAdmin />} />
+                                    <Route path='/manageversion/:packageId' element={<ManageVersion />} />
+                                    <Route path='/updatepackage/:packageId' element={<UpdatePackage />} />
+                                    <Route path='/user-profile' element={<UserProfile />} />
+                                    <Route path='/addpackage' element={<AddPackage />} />
+                                    <Route path='/mypackage' element={<MyPackage />} />
+                                    <Route path='/managepackage' element={<ManageAddPackage />} />
+                                    <Route path='/manageversion' element={<ManageAddVersion />} />
+                                    <Route path='/change-password' element={<ChangePassword />} />
+                                </>
+                            }
+                        />
                     </>
                 }
             />
+            <Route path='/forgot-password' element={<ForgotPassword />}></Route>
+            <Route path='/register' element={<Register />} />
+            <Route path='/login' element={<Login />} />
         </Routes>
     )
 }
