@@ -34,9 +34,12 @@ const Header = () => {
     }
 
     const onLogout = async () => {
-        await logOut()
-        dispatch(removeToken())
-        window.location.pathname = '/login'
+        try {
+            await logOut()
+            await dispatch(removeToken())
+        } finally {
+            window.location.pathname = '/login'
+        }
     }
 
     const toggleBox = () => {

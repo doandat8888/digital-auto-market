@@ -18,6 +18,7 @@ import ChangePassword from '../components/ChangePassword.tsx'
 import HackathonGenAI from '../pages/HackathonGenAI.tsx'
 import MainLayout from '../layouts/MainLayout.tsx'
 import PrivateLayout from '../layouts/PrivateLayout.tsx'
+import HackathonSubmit from '../pages/HackathonSubmit.tsx'
 
 const RoutesApp = () => {
     const location = useLocation()
@@ -38,6 +39,8 @@ const RoutesApp = () => {
                         <Route path='/packagetype/:type' element={<PackageType />} />
 
                         <Route path='/hackathon' element={<HackathonGenAI />} />
+                        <Route path='/hackathon/submit' element={<HackathonSubmit />} />
+
                         <Route
                             path='/'
                             element={<PrivateLayout />}
